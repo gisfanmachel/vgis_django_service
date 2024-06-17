@@ -1,0 +1,2957 @@
+{
+    "info": {
+        "_postman_id": "aca8ca7e-e2bb-4c84-960f-dafd14b29be7",
+        "name": "通用项目",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "9849475"
+    },
+    "item": [
+        {
+            "name": "系统管理",
+            "item": [
+                {
+                    "name": "获取用户列表-sql",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/sqlsearch?user_name=",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "sqlsearch"
+                            ],
+                            "query": [
+                                {
+                                    "key": "user_name",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取用户状态列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/userstatus",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "userstatus"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "设置用户状态",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"user_id\":3,\r\n    \"user_status\":1\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/setstatus/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "setstatus",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取部门列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/sqlsearch",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "sqlsearch"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取角色列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "添加用户",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"zhang3f\",\r\n    \"password\": \"admin\",\r\n    \"fullname\": \"张飞\",\r\n    \"department_id\": 6,\r\n    \"roleIdList\":[1,3],\r\n    \"email\": \"235@qq.com\",\r\n    \"sex\": \"男\",\r\n    \"mobile\": \"15899954666\",\r\n    \"status\": 1\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "更新用户通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"wangq\",\r\n    \"fullname\": \"王强3\",\r\n    \"department_id\": 6,\r\n    \"roleIdList\":[1],\r\n    \"email\": \"235@qq.com\",\r\n    \"sex\": \"男\",\r\n    \"mobile\": \"15899954666\",\r\n    \"status\": 1\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/32/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "32",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取用户详情通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/6/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "6",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "删除用户通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"insurance_category_id\":1,\r\n    \"insurance_number\":\"PGGG201811010000000182\",\r\n    \"insured_name\":\"北京奔驰汽车有限公司顺义分公司\",\r\n    \"insurance_start_date\":\"2018-11-01\",\r\n    \"insurance_end_date\":\"2023-04-30\",\r\n    \"insurance_amount\":\"6760000000\",\r\n    \"affiliated_organization\":\"朝阳支公司\",\r\n    \"insurance_target_address\":\"北京市顺义区S330昌金路\",\r\n    \"insurance_target_lon\":116.5526077338,\r\n    \"insurance_target_lat\":40.2112643729,\r\n    \"insurance_target_project_name\":\"北京奔驰顺义项目\"\r\n\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/user/32/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "user",
+                                "32",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取部门状态列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/departstatus",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "departstatus"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "设置部门状态",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"department_id\":3,\r\n    \"department_status\":\"1\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/setstatus/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "setstatus",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取部门列表-sql查询",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/sqlsearch?department_name=&department_status=",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "sqlsearch"
+                            ],
+                            "query": [
+                                {
+                                    "key": "department_name",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "department_status",
+                                    "value": "",
+                                    "description": "状态 1正常 0停用"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "添加部门",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"department_name\": \"财务处\",\r\n    \"parent_id\": 3,\r\n    \"state\": 1,\r\n    \"master\": \"王强\",\r\n    \"tel\": \"15566332339\",\r\n    \"email\": \"15566332339@qq.com\"\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "更新部门通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"department_name\": \"财务处\",\r\n    \"parent_id\": 2,\r\n    \"state\": 1,\r\n    \"master\": \"王强\",\r\n    \"tel\": \"15566332339\",\r\n    \"email\": \"15566332339@qq.com\"\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/9/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "9",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "删除部门通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"department_id\": 7\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/delete/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "delete",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取角色列表-sql查询",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/sqlsearch?role_name=",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                "sqlsearch"
+                            ],
+                            "query": [
+                                {
+                                    "key": "role_name",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取菜单列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysMenu/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysMenu",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "添加角色",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"role_name\": \"灾害分析员34\",\r\n    \"remark\": \"灾害分析员\",\r\n    \"menuIdList\": [\r\n        15000101,\r\n        14000001\r\n    ]\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "更新角色通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"role_name\": \"灾害分析w员\",\r\n    \"remark\": \"灾害分析员r2\",\r\n    \"menuIdList\": [\r\n        15000101,\r\n        15000102,\r\n        14000001\r\n    ]\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/13/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                "13",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取角色详情通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/5/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                "5",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "删除角色通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"insurance_category_id\":1,\r\n    \"insurance_number\":\"PGGG201811010000000182\",\r\n    \"insured_name\":\"北京奔驰汽车有限公司顺义分公司\",\r\n    \"insurance_start_date\":\"2018-11-01\",\r\n    \"insurance_end_date\":\"2023-04-30\",\r\n    \"insurance_amount\":\"6760000000\",\r\n    \"affiliated_organization\":\"朝阳支公司\",\r\n    \"insurance_target_address\":\"北京市顺义区S330昌金路\",\r\n    \"insurance_target_lon\":116.5526077338,\r\n    \"insurance_target_lat\":40.2112643729,\r\n    \"insurance_target_project_name\":\"北京奔驰顺义项目\"\r\n\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysLog/6/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysLog",
+                                "6",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取日志列表-sql查询",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysLog/sqlsearch?username=",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysLog",
+                                "sqlsearch"
+                            ],
+                            "query": [
+                                {
+                                    "key": "username",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "删除日志通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var response_data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "console.log(\"返回结果:\",response_data)\r",
+                                    "\r",
+                                    "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                    "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                    "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                    "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                    "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                    "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"insurance_category_id\":1,\r\n    \"insurance_number\":\"PGGG201811010000000182\",\r\n    \"insured_name\":\"北京奔驰汽车有限公司顺义分公司\",\r\n    \"insurance_start_date\":\"2018-11-01\",\r\n    \"insurance_end_date\":\"2023-04-30\",\r\n    \"insurance_amount\":\"6760000000\",\r\n    \"affiliated_organization\":\"朝阳支公司\",\r\n    \"insurance_target_address\":\"北京市顺义区S330昌金路\",\r\n    \"insurance_target_lon\":116.5526077338,\r\n    \"insurance_target_lat\":40.2112643729,\r\n    \"insurance_target_project_name\":\"北京奔驰顺义项目\"\r\n\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysLog/3/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysLog",
+                                "3",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "获取用户信息",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            " var data = JSON.parse(responseBody);\r",
+                            "\r",
+                            "if (data.token) {\r",
+                            "tests[\"Body has token\"] = true;\r",
+                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                            "}\r",
+                            "else {\r",
+                            "tests[\"Body has token\"] = false;\r",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"userid\":31\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/authUser/get_details/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "authUser",
+                        "get_details",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "获取验证码",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/user/verfication/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "user",
+                        "verfication",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "用户退出",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"userid\":2\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/user/logout/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "user",
+                        "logout",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "用户登陆",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "var response_data = JSON.parse(responseBody);\r",
+                            "\r",
+                            "console.log(\"返回结果:\",response_data)\r",
+                            "\r",
+                            "var AES_key= \"myaovgis0713wxgz\" //密钥\r",
+                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                            "\r",
+                            "var response_data2 = JSON.parse(data_dec_str);\r",
+                            "\r",
+                            "if (response_data2.token) {\r",
+                            "    tests[\"Body has token\"] = true;\r",
+                            "\r",
+                            "    postman.setEnvironmentVariable(\"token\", \"Token \"+response_data2.token);\r",
+                            "}\r",
+                            "else {\r",
+                            "    tests[\"Body has token\"] = false;\r",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"username\":\"chenxw\",\r\n    \"password\":\"admin\",\r\n    \"verifcation\":\"2418H1\",\r\n    \"client_time\":1684489627117\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/user/login/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "user",
+                        "login",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "用户登陆-强制登录",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "var response_data = JSON.parse(responseBody);\r",
+                            "\r",
+                            "console.log(\"返回结果:\",response_data)\r",
+                            "\r",
+                            "var AES_key= \"myaovgis0713wxgz\" //密钥\r",
+                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                            "\r",
+                            "var response_data2 = JSON.parse(data_dec_str);\r",
+                            "\r",
+                            "if (response_data2.token) {\r",
+                            "    tests[\"Body has token\"] = true;\r",
+                            "\r",
+                            "    postman.setEnvironmentVariable(\"token\", \"Token \"+response_data2.token);\r",
+                            "}\r",
+                            "else {\r",
+                            "    tests[\"Body has token\"] = false;\r",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"data\": \"314a6861592b7a3967494c6842384f354f36393850582b72703369544c544e4141416867785869635559755163543953303258387749394e656767382b716e4576586a44494b706c31636f59786b30625236544a345a2f6e59336647364e444c33636c3847416752584a447374394c305568556b316f31724537643848656367\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/user/loginWithForce/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "user",
+                        "loginWithForce",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "文件上传",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "type": "text",
+                        "value": "{{token}}"
+                    }
+                ],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "file",
+                            "type": "file",
+                            "src": "/E:/系统开发/新保险/zhbxygfx_service/django_project/doc/bxxmtemplate_ccx.xlsx"
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{service_host}}/ttUploadFileData/uploadFile/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "ttUploadFileData",
+                        "uploadFile",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "获取全国的分区分省数据",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/tmDdistrict/getRegionAndProvince",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "tmDdistrict",
+                        "getRegionAndProvince"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "通过省获取地市数据",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/tmDdistrict/getCityByProvince?province_code=620000",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "tmDdistrict",
+                        "getCityByProvince"
+                    ],
+                    "query": [
+                        {
+                            "key": "province_code",
+                            "value": "620000",
+                            "description": "省编码"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "通过地市获取区县数据",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/tmDdistrict/getCountyByCity?city_code=620400",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "tmDdistrict",
+                        "getCountyByCity"
+                    ],
+                    "query": [
+                        {
+                            "key": "city_code",
+                            "value": "620400",
+                            "description": "地市编码"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "获取用户信息（角色，菜单等)",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "var response_data = JSON.parse(responseBody);\r",
+                            "\r",
+                            "console.log(\"返回结果:\",response_data)\r",
+                            "\r",
+                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"data\":\"64304f33577a6264724a77647a7237487438587855513d3d\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/authUser/get_details/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "authUser",
+                        "get_details",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "业务操作",
+            "item": [
+                {
+                    "name": "保险项目里程碑表",
+                    "item": [
+                        {
+                            "name": "获取保险项目里程碑表列表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "新增保险项目里程碑表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"data\":\"34475266766159387932524e70552f3232573263796c537373776f676f52624e56393535524c6933527a4853707a716d594c694f476a5078414c63354e756f4f56716f4343582f474169564e612f5349786d794c414377415455424a34304d337a306257344b2b623639685463307361366735556158364e6a3757724e50364b7543584f4154672f616272665774346e4877723044424a6c342b5876314a3031785a58372f64557964576c4e68796e2f313961456434386957616e37594d46786d7846552b315a676a2f436b6363434264585967476a362f4b79476a4d795259706e792f48754d735a6f4e673633532b5a2f457151387030564f375150617450466f424775503535307a646178394d514d674f65594265643750726f6257766a78512f42446434592b61733834647a2b4e644e384a547a54367059326c3876623471476b6f644e3858744137504230704f58775a417134702f6f5859376865356d45736a7069502b3358334b675249376e4973476f6d4559374a5555384a5a4d7535337765426a46304a59324476344a6c69716e68634f5a746d426e544c4d5a7347434f3447627647577772765870496c71766134674673547a76544265374f6c7577434258303532312b7678342b355832386232513d3d\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "更新保险项目里程碑表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"data\":\"34475266766159387932524e70552f3232573263796c537373776f676f52624e56393535524c6933527a4853707a716d594c694f476a5078414c63354e756f4f56716f4343582f474169564e612f5349786d794c414377415455424a34304d337a306257344b2b623639685463307361366735556158364e6a3757724e50364b7543584f4154672f616272665774346e4877723044424a6c342b5876314a3031785a58372f64557964576c4e68796e2f313961456434386957616e37594d46786d7846552b315a676a2f436b6363434264585967476a362f4b79476a4d795259706e792f48754d735a6f4e673633532b5a2f457151387030564f375150617450466f424775503535307a646178394d514d674f65594265643750726f6257766a78512f42446434592b61733834647a2b4e644e384a547a54367059326c3876623471476b6f644e3858744137504230704f58775a417134702f6f5859376865356d45736a7069502b3358334b675249376e4973476f6d4559374a5555384a5a4d7535337765426a46304a59324476344a6c69716e68634f5a746d426e544c4d5a7347434f3447627647577772765870496c71766134674673547a76544265374f6c7577434258303532312b7678342b355832386232513d3d\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "获取保险项目里程碑表详情通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "删除保险项目里程碑表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone/26/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone",
+                                        "26",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "保险项目报告类型表",
+                    "item": [
+                        {
+                            "name": "获取保险项目报告类型表列表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "新增保险项目报告类型表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"data\":\"6a513652383869372f7236526563564a42667456684c38684c70686c4b434f634e49676b34526f742f59454d4377394b6636713845324d4a57597271624b724f304863633248492f4b74635638764475635a3938674e63506d6272623765525634635a396969634843676637784d7561312f774b33496f726945312f7a425742\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "更新保险项目报告类型表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"data\":\"6a513652383869372f7236526563564a42667456684c38684c70686c4b434f634e49676b34526f742f59454d4377394b6636713845324d4a57597271624b724f304863633248492f4b74635638764475635a3938674e63506d6272623765525634635a396969634843676637784d7561312f774b33496f726945312f7a425742\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "获取保险项目报告类型表详情通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "删除保险项目报告类型表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType/26/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType",
+                                        "26",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "保险项目风险风险评估表",
+                    "item": [
+                        {
+                            "name": "获取保险项目风险风险评估表列表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "新增保险项目风险风险评估表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"data\":\"415046786c725644353569643079425673374a332f5431616253765457517077544d584b6c61476231716d4f6f5261547753496c47567435523744322b324b6b6b435973544175376a2f75776c6749783077387457594d47387256457066556c6e337662304e416d764e4e574d422f7a617631644638356771736845716c3752342b6c7839537236716b4e7344786f772f79532b446f795075784739646d616d75724f42412f64702b4b532b7a4253454f5054796a6c434b2f4e4d516b447048653361745a6259776779597a78526452646d557166773d3d\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "更新保险项目风险风险评估表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"data\":\"415046786c725644353569643079425673374a332f5431616253765457517077544d584b6c61476231716d4f6f5261547753496c47567435523744322b324b6b6b435973544175376a2f75776c6749783077387457594d47387256457066556c6e337662304e416d764e4e574d422f7a617631644638356771736845716c3752342b6c7839537236716b4e7344786f772f79532b446f795075784739646d616d75724f42412f64702b4b532b7a4253454f5054796a6c434b2f4e4d516b447048653361745a6259776779597a78526452646d557166773d3d\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "获取保险项目风险风险评估表详情通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "删除保险项目风险风险评估表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment/26/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment",
+                                        "26",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "保险项目阶段表",
+                    "item": [
+                        {
+                            "name": "获取保险项目阶段表列表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "新增保险项目阶段表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"data\":\"43693957342f5250516e4261384b4575327761694b413d3d\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "更新保险项目阶段表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"data\":\"43693957342f5250516e4261384b4575327761694b413d3d\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "获取保险项目阶段表详情通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "删除保险项目阶段表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "var response_data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "console.log(\"返回结果:\",response_data)\r",
+                                            "\r",
+                                            "var AES_key= \"myaovgis0713wxgz\" //秘钥\r",
+                                            "var ECBOptions = {mode: CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7};\r",
+                                            "var AesSecert = CryptoJS.enc.Utf8.parse(AES_key);\r",
+                                            "var data_dec = CryptoJS.AES.decrypt(response_data.data, AesSecert, ECBOptions)\r",
+                                            "var data_dec_str = data_dec.toString(CryptoJS.enc.Utf8)\r",
+                                            "console.log(\"解密之后的结果:\",data_dec_str)\r",
+                                            ""
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage/26/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage",
+                                        "26",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

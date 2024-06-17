@@ -1,0 +1,13 @@
+{
+  "python_version": "3.10",
+  "all_versions": ["3.9", "3.10", "2.7"],
+  "root_path": "E:\\complie\\django_complie",
+  "project_name": "django_service",
+  "project_sub_dir_name": "django_service-初始化版",
+  "sub_app_name": "t231_app",
+  "sub_project_name": "my_project",
+  "sub_sub_project_name": "my_project",
+  "jmpy_exe_dir_path_bak": "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python310\\Scripts",
+  "jmpy_exe_dir_path": "E:\\ProgramData\\miniconda3\\envs\\geodjango\\Scripts"
+}
+

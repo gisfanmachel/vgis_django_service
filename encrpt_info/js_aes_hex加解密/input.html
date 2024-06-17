@@ -1,0 +1,86 @@
+<!--
+ * @Author: your name
+ * @Date: 2022-03-18 13:32:31
+ * @LastEditTime: 2022-03-18 14:04:56
+ * @LastEditors: Please set LastEditors
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \消防e:\系统开发\去产能\GITEE\qcn_front\public\encrypt\input.html
+-->
+<script src="str2hex.js"></script>
+<script src="aes.js"></script>
+<script src="jsencrypt.min.js"></script>
+<script src="mode-ecb.js"></script>
+<script src="pad-zeropadding.js"></script>
+采用AES_HEX加密算法进行加解密 <br> <br><br> 此文件中的钥匙请妥善保存
+<br><br> 原始字符：
+
+<input type="text" id="originValue" size="80"><br>
+
+<input type="button" value="开始加密" onclick="encryptStr()"><br>加密后字符：
+<input type="text" id="encryptValue" size="80"><input type="button" value="复制" onclick="copyValue()">
+
+
+<br>
+
+<input type="button" value="开始解密" onclick="decryptStr()"><br>解密后字符：
+<input type="text" id="decrpytValue" size="80">
+
+<script>
+    <!-- AES的密钥,用RSA加密-->
+    var pk1 = "pSVFAby13HS4WJuQyL6O3EYaNi7TAxAY2glpL64ILeErG8xTB+WUqTKAEygjM/tFaoIbwJSvSxSuA4Lss336IAgso0AyRYycQVVOWvzi2JSg+y6tIirUO1pAWyP0mv0kn/hYwLqW5SOcBtbMP+5RZ/cfyMXiCQ8MnY6XaGHrY4A=";
+    <!-- RSA的私钥-->
+    var pk2 = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAKorxSFzJbPVbv+/EOX7YJffb5wz+IbBbippuOhgFquLOVjQWK/9sYsB4+FK0A7hRigbo/XkqW4CgVqCFMx5Yt+7gS/ivKo0uNbWMvnoy5RkZYQ8nNsWhVl1NWrlDcTa7j6VEdauc6bgC8G6583qPz6OxDJ/3q5YuvHmilVVajopAgMBAAECgYAF3u61IbjaRHHI5vmZRZvmgXHjTLO1SnUXh4A2nCIMFwiKdN2qbLE0X4NSIXeeG82E0rdMY3Ao+HMoATbgewubJ/FR97pqD4Q1VBXKh8Q8Bz36fAH6rGgkqjxcQNroJ7hjjoI1l5VE1HCIcFs3j/UU9maOvDtHco5IaYaDFI3gFQJBAOTqrkHiEx+tT9Yg8B4uQVLc9GXi9RM7qZYmBmSlEAfB2awCI09Uc2D2zQL39Go7zeU5zDxEVoy3zYfL3v1Q7TMCQQC+TdOY4oout2tXIFkZOAMUBguYLIR7qnxPtyKxpLbKu7RnySaLS4nOaTVhz+35UR75FBCTw5fJjUd9xqi4ryMzAkEAxPW3ITCnS6YO/yov74fU5Lr//Xoda4L2Ex58ebQb6tC7vOfKAcOj0lYHZvp47b6vFP953pDd9w1eZezf3Az5SQJAeNoNvTJoVICQvzTAwF4svkOUi2ACBlLfPPRtKOkUWCzZxWsdeipPanCvwNz+IG1ewQj3+g6lTw7UTtChBx/ZtwJBALz9OTLv5VGJGwWc/T9KozfkJRRLj/hP3nKe+qjwyzOvRJET/f2NqQMNu4t1O7A4xSkA/3WHKiaREKVhpeAJyGU=";
+    var decrypt_op = new JSEncrypt();
+    decrypt_op.setPrivateKey(pk2);
+    pk1 = decrypt_op.decrypt(pk1);
+    console.log(pk1)
+
+
+    // AES加密
+    function aes_encrypt(data, key) { //key,iv：16位的字符串
+        var key1 = CryptoJS.enc.Latin1.parse(key);
+        return CryptoJS.AES.encrypt(data, key1, {
+            mode: CryptoJS.mode.ECB,
+            padding: CryptoJS.pad.ZeroPadding
+        }).toString();
+    }
+
+    // AES解密
+    function aes_decrypt(data, key) { //key,iv：16位的字符串
+        var key1 = CryptoJS.enc.Latin1.parse(key);
+        var decrypted = CryptoJS.AES.decrypt(data, key1, {
+            mode: CryptoJS.mode.ECB,
+            padding: CryptoJS.pad.ZeroPadding
+        });
+        return decrypted.toString(CryptoJS.enc.Utf8);
+    }
+
+    // 对字符串进行双重加密（AES加密---字符串转十六进制）
+    function encryptStr() {
+        var data_dec_str = aes_encrypt(document.getElementById("originValue").value, pk1, null)
+        console.log("aes解密：" + data_dec_str)
+        data_dec_str = stringToHex(data_dec_str)
+        document.getElementById("encryptValue").value = data_dec_str;
+    }
+
+    // 进行双重解密（十六进制转字符串---AES解密）
+    function decryptStr() {
+        data_dec_str = hexToString(document.getElementById("encryptValue").value)
+        var data_dec_str = aes_decrypt(data_dec_str, pk1, null)
+        document.getElementById("decrpytValue").value = data_dec_str;
+    }
+
+    // 复制加密文本
+    function copyValue() {
+        var createInput = document.createElement('input');
+        createInput.value = document.getElementById("encryptValue").value;
+        document.body.appendChild(createInput);
+        createInput.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        createInput.className = 'createInput';
+        createInput.style.display = 'none';
+    }
+
+
+
+</script>

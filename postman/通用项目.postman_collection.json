@@ -1,0 +1,2794 @@
+{
+    "info": {
+        "_postman_id": "aca8ca7e-e2bb-4c84-960f-dafd14b29be7",
+        "name": "通用项目",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "9849475"
+    },
+    "item": [
+        {
+            "name": "系统管理",
+            "item": [
+                {
+                    "name": "获取用户列表-sql",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/sqlsearch?user_name=",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "sqlsearch"
+                            ],
+                            "query": [
+                                {
+                                    "key": "user_name",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取用户状态列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/userstatus",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "userstatus"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "设置用户状态",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"user_id\":3,\r\n    \"user_status\":1\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/setstatus/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "setstatus",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取部门列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/sqlsearch",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "sqlsearch"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取角色列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "添加用户",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"zhang3f\",\r\n    \"password\": \"admin\",\r\n    \"fullname\": \"张飞\",\r\n    \"department_id\": 6,\r\n    \"roleIdList\":[1,3],\r\n    \"email\": \"235@qq.com\",\r\n    \"sex\": \"男\",\r\n    \"mobile\": \"15899954666\",\r\n    \"status\": 1\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "更新用户通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"wangq\",\r\n    \"fullname\": \"王强3\",\r\n    \"department_id\": 6,\r\n    \"roleIdList\":[1],\r\n    \"email\": \"235@qq.com\",\r\n    \"sex\": \"男\",\r\n    \"mobile\": \"15899954666\",\r\n    \"status\": 1\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/32/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "32",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取用户详情通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/authUser/6/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "authUser",
+                                "6",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "删除用户通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"insurance_category_id\":1,\r\n    \"insurance_number\":\"PGGG201811010000000182\",\r\n    \"insured_name\":\"北京奔驰汽车有限公司顺义分公司\",\r\n    \"insurance_start_date\":\"2018-11-01\",\r\n    \"insurance_end_date\":\"2023-04-30\",\r\n    \"insurance_amount\":\"6760000000\",\r\n    \"affiliated_organization\":\"朝阳支公司\",\r\n    \"insurance_target_address\":\"北京市顺义区S330昌金路\",\r\n    \"insurance_target_lon\":116.5526077338,\r\n    \"insurance_target_lat\":40.2112643729,\r\n    \"insurance_target_project_name\":\"北京奔驰顺义项目\"\r\n\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/user/32/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "user",
+                                "32",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取部门状态列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/departstatus",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "departstatus"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "设置部门状态",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"department_id\":3,\r\n    \"department_status\":\"1\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/setstatus/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "setstatus",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取部门列表-sql查询",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/sqlsearch?department_name=&department_status=",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "sqlsearch"
+                            ],
+                            "query": [
+                                {
+                                    "key": "department_name",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "department_status",
+                                    "value": "",
+                                    "description": "状态 1正常 0停用"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "添加部门",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"department_name\": \"财务处\",\r\n    \"parent_id\": 3,\r\n    \"state\": 1,\r\n    \"master\": \"王强\",\r\n    \"tel\": \"15566332339\",\r\n    \"email\": \"15566332339@qq.com\"\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "更新部门通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"department_name\": \"财务处\",\r\n    \"parent_id\": 2,\r\n    \"state\": 1,\r\n    \"master\": \"王强\",\r\n    \"tel\": \"15566332339\",\r\n    \"email\": \"15566332339@qq.com\"\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/9/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "9",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "删除部门通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"department_id\": 7\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysDepartment/delete/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysDepartment",
+                                "delete",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取角色列表-sql查询",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/sqlsearch?role_name=",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                "sqlsearch"
+                            ],
+                            "query": [
+                                {
+                                    "key": "role_name",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取菜单列表",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysMenu/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysMenu",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "添加角色",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"role_name\": \"灾害分析员34\",\r\n    \"remark\": \"灾害分析员\",\r\n    \"menuIdList\": [\r\n        15000101,\r\n        14000001\r\n    ]\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "更新角色通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"role_name\": \"灾害分析w员\",\r\n    \"remark\": \"灾害分析员r2\",\r\n    \"menuIdList\": [\r\n        15000101,\r\n        15000102,\r\n        14000001\r\n    ]\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/13/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                "13",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取角色详情通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysRole/5/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysRole",
+                                "5",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "删除角色通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"insurance_category_id\":1,\r\n    \"insurance_number\":\"PGGG201811010000000182\",\r\n    \"insured_name\":\"北京奔驰汽车有限公司顺义分公司\",\r\n    \"insurance_start_date\":\"2018-11-01\",\r\n    \"insurance_end_date\":\"2023-04-30\",\r\n    \"insurance_amount\":\"6760000000\",\r\n    \"affiliated_organization\":\"朝阳支公司\",\r\n    \"insurance_target_address\":\"北京市顺义区S330昌金路\",\r\n    \"insurance_target_lon\":116.5526077338,\r\n    \"insurance_target_lat\":40.2112643729,\r\n    \"insurance_target_project_name\":\"北京奔驰顺义项目\"\r\n\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysLog/6/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysLog",
+                                "6",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "获取日志列表-sql查询",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysLog/sqlsearch?username=",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysLog",
+                                "sqlsearch"
+                            ],
+                            "query": [
+                                {
+                                    "key": "username",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "删除日志通过编号",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    " var data = JSON.parse(responseBody);\r",
+                                    "\r",
+                                    "if (data.token) {\r",
+                                    "tests[\"Body has token\"] = true;\r",
+                                    "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                    "}\r",
+                                    "else {\r",
+                                    "tests[\"Body has token\"] = false;\r",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"insurance_category_id\":1,\r\n    \"insurance_number\":\"PGGG201811010000000182\",\r\n    \"insured_name\":\"北京奔驰汽车有限公司顺义分公司\",\r\n    \"insurance_start_date\":\"2018-11-01\",\r\n    \"insurance_end_date\":\"2023-04-30\",\r\n    \"insurance_amount\":\"6760000000\",\r\n    \"affiliated_organization\":\"朝阳支公司\",\r\n    \"insurance_target_address\":\"北京市顺义区S330昌金路\",\r\n    \"insurance_target_lon\":116.5526077338,\r\n    \"insurance_target_lat\":40.2112643729,\r\n    \"insurance_target_project_name\":\"北京奔驰顺义项目\"\r\n\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{service_host}}/sysLog/3/",
+                            "host": [
+                                "{{service_host}}"
+                            ],
+                            "path": [
+                                "sysLog",
+                                "3",
+                                ""
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "获取用户信息",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            " var data = JSON.parse(responseBody);\r",
+                            "\r",
+                            "if (data.token) {\r",
+                            "tests[\"Body has token\"] = true;\r",
+                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                            "}\r",
+                            "else {\r",
+                            "tests[\"Body has token\"] = false;\r",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"userid\":31\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/authUser/get_details/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "authUser",
+                        "get_details",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "获取验证码",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/user/verfication/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "user",
+                        "verfication",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "用户退出",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"userid\":2\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/user/logout/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "user",
+                        "logout",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "用户登陆",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            " var data = JSON.parse(responseBody);\r",
+                            "\r",
+                            "if (data.token) {\r",
+                            "tests[\"Body has token\"] = true;\r",
+                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                            "}\r",
+                            "else {\r",
+                            "tests[\"Body has token\"] = false;\r",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"username\":\"chenxw\",\r\n    \"password\":\"admin\",\r\n    \"verifcation\":\"2418H1\",\r\n    \"client_time\":1684489627117\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/user/login/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "user",
+                        "login",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "用户登陆-强制登录",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            " var data = JSON.parse(responseBody);\r",
+                            "\r",
+                            "if (data.token) {\r",
+                            "tests[\"Body has token\"] = true;\r",
+                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                            "}\r",
+                            "else {\r",
+                            "tests[\"Body has token\"] = false;\r",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"username\":\"chenxw\",\r\n    \"password\":\"admin\",\r\n    \"verifcation\":\"42FF8F\",\r\n    \"client_time\":1684489627117\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/user/loginWithForce/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "user",
+                        "loginWithForce",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "文件上传",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "type": "text",
+                        "value": "{{token}}"
+                    }
+                ],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "file",
+                            "type": "file",
+                            "src": "/E:/系统开发/新保险/zhbxygfx_service/django_project/doc/bxxmtemplate_ccx.xlsx"
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{service_host}}/ttUploadFileData/uploadFile/",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "ttUploadFileData",
+                        "uploadFile",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "获取全国的分区分省数据",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/tmDdistrict/getRegionAndProvince",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "tmDdistrict",
+                        "getRegionAndProvince"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "通过省获取地市数据",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/tmDdistrict/getCityByProvince?province_code=620000",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "tmDdistrict",
+                        "getCityByProvince"
+                    ],
+                    "query": [
+                        {
+                            "key": "province_code",
+                            "value": "620000",
+                            "description": "省编码"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "通过地市获取区县数据",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            ""
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "{{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{service_host}}/tmDdistrict/getCountyByCity?city_code=620400",
+                    "host": [
+                        "{{service_host}}"
+                    ],
+                    "path": [
+                        "tmDdistrict",
+                        "getCountyByCity"
+                    ],
+                    "query": [
+                        {
+                            "key": "city_code",
+                            "value": "620400",
+                            "description": "地市编码"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "业务操作",
+            "item": [
+                {
+                    "name": "保险项目里程碑表",
+                    "item": [
+                        {
+                            "name": "获取保险项目里程碑表列表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "新增保险项目里程碑表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"insurance_project_id\": \"328\",\r\n    \"insurance_stage_id\": \"1\",\r\n    \"stage_event\": \"风险评估事件\",\r\n    \"stage_time\": \"2022-12-23\",\r\n    \"stage_desc\": \"开始出险前的风险评估\",\r\n    \"create_user_id\": \"None\",\r\n    \"create_time\": \"2022-12-24 14:21:59\",\r\n    \"modify_user_id\": \"None\",\r\n    \"modify_time\": \"None\",\r\n    \"associated_attachment_ids\": \"83da79e0-0cc9-4d9a-872a-a69d549fc4fc\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "更新保险项目里程碑表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"insurance_project_id\": \"328\",\r\n    \"insurance_stage_id\": \"1\",\r\n    \"stage_event\": \"风险评估事件\",\r\n    \"stage_time\": \"2022-12-23\",\r\n    \"stage_desc\": \"开始出险前的风险评估\",\r\n    \"create_user_id\": \"None\",\r\n    \"create_time\": \"2022-12-24 14:21:59\",\r\n    \"modify_user_id\": \"None\",\r\n    \"modify_time\": \"None\",\r\n    \"associated_attachment_ids\": \"83da79e0-0cc9-4d9a-872a-a69d549fc4fc\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "获取保险项目里程碑表详情通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "删除保险项目里程碑表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceProjectMilestone/26/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceProjectMilestone",
+                                        "26",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "保险项目报告类型表",
+                    "item": [
+                        {
+                            "name": "获取保险项目报告类型表列表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "新增保险项目报告类型表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"report_type_name\": \"风险分析报告\",\r\n    \"report_type_code\": \"风险分析报告\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "更新保险项目报告类型表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"report_type_name\": \"风险分析报告\",\r\n    \"report_type_code\": \"风险分析报告\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "获取保险项目报告类型表详情通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "删除保险项目报告类型表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceReportType/26/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceReportType",
+                                        "26",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "保险项目风险风险评估表",
+                    "item": [
+                        {
+                            "name": "获取保险项目风险风险评估表列表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "新增保险项目风险风险评估表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"assessment_region\": \"\",\r\n    \"assessment_result\": \"\",\r\n    \"assessment_repot\": \"\",\r\n    \"create_user_id\": \"\",\r\n    \"create_time\": \"\",\r\n    \"modify_user_id\": \"\",\r\n    \"modify_time\": \"\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "更新保险项目风险风险评估表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\r\n    \"assessment_region\": \"\",\r\n    \"assessment_result\": \"\",\r\n    \"assessment_repot\": \"\",\r\n    \"create_user_id\": \"\",\r\n    \"create_time\": \"\",\r\n    \"modify_user_id\": \"\",\r\n    \"modify_time\": \"\"\r\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "获取保险项目风险风险评估表详情通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "删除保险项目风险风险评估表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceRiskAssessment/26/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceRiskAssessment",
+                                        "26",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "保险项目阶段表",
+                    "item": [
+                        {
+                            "name": "获取保险项目阶段表列表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "新增保险项目阶段表",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "更新保险项目阶段表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "获取保险项目阶段表详情通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            },
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage/17/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage",
+                                        "17",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "删除保险项目阶段表通过编号",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            " var data = JSON.parse(responseBody);\r",
+                                            "\r",
+                                            "if (data.token) {\r",
+                                            "tests[\"Body has token\"] = true;\r",
+                                            "postman.setEnvironmentVariable(\"token\", \"Token \"+data.token);\r",
+                                            "}\r",
+                                            "else {\r",
+                                            "tests[\"Body has token\"] = false;\r",
+                                            "}"
+                                        ],
+                                        "type": "text/javascript"
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "{{token}}",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{service_host}/ttInsuranceStage/26/",
+                                    "host": [
+                                        "{{service_host}}"
+                                    ],
+                                    "path": [
+                                        "ttInsuranceStage",
+                                        "26",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

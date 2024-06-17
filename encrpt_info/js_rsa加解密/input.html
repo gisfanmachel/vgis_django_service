@@ -1,0 +1,53 @@
+<!--
+ * @Author: your name
+ * @Date: 2022-03-18 13:32:31
+ * @LastEditTime: 2022-03-18 14:04:56
+ * @LastEditors: Please set LastEditors
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \消防e:\系统开发\去产能\GITEE\qcn_front\public\encrypt\input.html
+-->
+
+<script src="jsencrypt.min.js"></script>
+
+采用RSA加密算法进行加解密 <br> <br><br> 此文件中的钥匙请妥善保存
+<br><br> 原始字符：
+
+<input type="text" id="originValue" size="80"><br>
+
+<input type="button" value="开始加密" onclick="encryptStr()"><br>加密后字符：
+<input type="text" id="encryptValue" size="80"><input type="button" value="复制" onclick="copyValue()">
+
+
+<br>
+
+<input type="button" value="开始解密" onclick="decryptStr()"><br>解密后字符：
+<input type="text" id="decrpytValue" size="80">
+
+<script>
+    function encryptStr() {
+        <!-- RSA的公钥-->
+        var pk = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqK8UhcyWz1W7/vxDl+2CX32+cM/iGwW4qabjoYBarizlY0Fiv/bGLAePhStAO4UYoG6P15KluAoFaghTMeWLfu4Ev4ryqNLjW1jL56MuUZGWEPJzbFoVZdTVq5Q3E2u4+lRHWrnOm4AvBuufN6j8+jsQyf96uWLrx5opVVWo6KQIDAQAB";
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey(pk);
+        document.getElementById("encryptValue").value = encrypt.encrypt(document.getElementById("originValue").value);
+    }
+
+    function decryptStr() {
+        <!-- RSA的私钥-->
+        var pk = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAKorxSFzJbPVbv+/EOX7YJffb5wz+IbBbippuOhgFquLOVjQWK/9sYsB4+FK0A7hRigbo/XkqW4CgVqCFMx5Yt+7gS/ivKo0uNbWMvnoy5RkZYQ8nNsWhVl1NWrlDcTa7j6VEdauc6bgC8G6583qPz6OxDJ/3q5YuvHmilVVajopAgMBAAECgYAF3u61IbjaRHHI5vmZRZvmgXHjTLO1SnUXh4A2nCIMFwiKdN2qbLE0X4NSIXeeG82E0rdMY3Ao+HMoATbgewubJ/FR97pqD4Q1VBXKh8Q8Bz36fAH6rGgkqjxcQNroJ7hjjoI1l5VE1HCIcFs3j/UU9maOvDtHco5IaYaDFI3gFQJBAOTqrkHiEx+tT9Yg8B4uQVLc9GXi9RM7qZYmBmSlEAfB2awCI09Uc2D2zQL39Go7zeU5zDxEVoy3zYfL3v1Q7TMCQQC+TdOY4oout2tXIFkZOAMUBguYLIR7qnxPtyKxpLbKu7RnySaLS4nOaTVhz+35UR75FBCTw5fJjUd9xqi4ryMzAkEAxPW3ITCnS6YO/yov74fU5Lr//Xoda4L2Ex58ebQb6tC7vOfKAcOj0lYHZvp47b6vFP953pDd9w1eZezf3Az5SQJAeNoNvTJoVICQvzTAwF4svkOUi2ACBlLfPPRtKOkUWCzZxWsdeipPanCvwNz+IG1ewQj3+g6lTw7UTtChBx/ZtwJBALz9OTLv5VGJGwWc/T9KozfkJRRLj/hP3nKe+qjwyzOvRJET/f2NqQMNu4t1O7A4xSkA/3WHKiaREKVhpeAJyGU=";
+        var decrypt = new JSEncrypt();
+        decrypt.setPrivateKey(pk);
+        document.getElementById("decrpytValue").value = decrypt.decrypt(document.getElementById("encryptValue").value);
+    }
+
+    function copyValue() {
+        var createInput = document.createElement('input');
+        createInput.value = document.getElementById("encryptValue").value;
+        document.body.appendChild(createInput);
+        createInput.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        createInput.className = 'createInput';
+        createInput.style.display = 'none';
+    }
+</script>
+</script>
