@@ -116,5 +116,4 @@
 # 8.vgis库更新
 > pip install --upgrade vgis_utils vgis-office vgis-log vgis-database vgis-code vgis-ai vgis-encrption license_authorize -i https://pypi.python.org/simple/
 
-测试
 
