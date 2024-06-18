@@ -240,7 +240,7 @@ class SysOperator:
             return res
 
     # 获取日志列表-sql
-    def sql_search_log(self, request, username):
+    def sql_search_log(self, request, username, querystarttime, queryendtime):
         title = "获取日志列表数据"
         res = ""
         start = time.perf_counter()
@@ -250,6 +250,10 @@ class SysOperator:
             sql = "select id,username,operation,method,params,time,ip,create_date from sys_log  where 1=1 "
             if username is not None and str(username).strip() != "":
                 sql += " and username like '%{}%'".format(username)
+            if querystarttime is not None and str(querystarttime).strip() != "":
+                sql += " and create_date >= '{}'".format(querystarttime)
+            if queryendtime is not None and str(queryendtime).strip() != "":
+                sql += " and create_date <= '{}'".format(queryendtime)
             sql += " order by create_date desc"
             cursor = self.connection.cursor()
             cursor.execute(sql)
@@ -262,6 +266,9 @@ class SysOperator:
                 obj['operation'] = str(record[2])
                 obj['method'] = str(record[3])
                 obj['params'] = str(record[4])
+                # 如果是登录接口，对密码进行脱敏处理
+                if "login" in obj['method']:
+                    obj['params'] = self.replace_between(obj['params'], '&password=', '&verifcation=', '******')
                 obj['time'] = int(record[5]) if record[5] is not None and str(record[5]).strip() != "" else None
                 obj['ip'] = str(record[6])
                 obj['create_date'] = str(record[7])

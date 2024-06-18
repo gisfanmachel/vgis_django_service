@@ -119,9 +119,9 @@ class UserOperator:
                     "userid": user.id,
                     "username": user.username
                 }
-            LoggerHelper.set_end_log_info(SysLog, logger, start, "/api/user/login/", username, request, function_title)
+            LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, username, request, function_title)
         except Exception as exp:
-            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, "/api/user/login/", username,
+            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, request.path, username,
                                                              request,
                                                              function_title, None, exp)
         finally:
@@ -135,9 +135,9 @@ class UserOperator:
         try:
             user_info = {}
             # 获取获取用户姓名，部门
-            sql = "select tablea.username,tablea.fullname,tableb.department_name from auth_user tablea ,sys_department tableb"
+            sql = "select tablea.username,tablea.fullname,tableb.department_name from auth_user tablea "
+            sql += " left join sys_department tableb on tablea.department_id=tableb.department_id"
             sql += " where tablea.id={}".format(user_id)
-            sql += " and tablea.department_id=tableb.department_id "
             cursor = self.connection.cursor()
             cursor.execute(sql)
             record = cursor.fetchone()
@@ -145,12 +145,12 @@ class UserOperator:
                 user_info["userid"] = user_id
                 user_info["username"] = record[0]
                 user_info["fullname"] = record[1]
-                # user_info["department_name"] = record[2]
+                user_info["department_name"] = record[2]
 
             # --获取用户的角色（多个）
-            sql = "select distinct tablec.role_name, tablec.role_id from sys_role tablec, sys_user_role tabled"
+            sql = "select distinct tablec.role_name, tablec.role_id from sys_role tablec "
+            sql += " left join  sys_user_role tabled on tablec.role_id = tabled.role_id"
             sql += " where tabled.user_id ={}".format(user_id)
-            sql += " and tabled.role_id = tablec.role_id"
             cursor.execute(sql)
             records = cursor.fetchall()
             role_list = []
@@ -163,18 +163,16 @@ class UserOperator:
                 role_ids.append(int(record[1]))
             user_info["role_list"] = role_list
 
-
-            # --根据角色获取可访问数据和菜单
+            # --根据角色获取可访问数据权限和菜单权限
             data_list = []
             menu_list = []
             if len(role_ids) > 0:
-                sql = "select distinct tablee.menu_id, tablee.name, tablee.icon,tableg.menu_url,tablee.order_num"
-                sql += " from sys_menu tablee, sys_role_menu tablef,sys_menu_url tableg"
+                sql = "select distinct tablee.menu_id,tablee.parent_id, tablee.name, tablee.url,tablee.type,tablee.icon,tablee.order_num,tablee.is_show"
+                sql += " from sys_menu tablee"
+                sql += " left join sys_role_menu tablef on tablee.menu_id = tablef.menu_id"
                 sql += " where tablef.role_id in ({})".format(','.join([str(i) for i in role_ids]))
-                sql += " and tablef.menu_id = tablee.menu_id"
-                sql += " and tablee.name=tableg.menu_name"
                 sql += " and tablee.is_show='Y'"
-                sql += " and (tablee.icon='data' or  tablee.icon='menu')"
+                # sql += " and (tablee.icon='data' or  tablee.icon='menu')"
                 sql += " order by tablee.order_num"
                 cursor.execute(sql)
                 records = cursor.fetchall()
@@ -182,24 +180,26 @@ class UserOperator:
                 for record in records:
                     if record[0] not in menu_id_list:
                         menu_id_list.append(record[0])
-                        if record[2] == "data":
-                            data_list.append({"data_type": record[1]})
-                        if record[2] == "menu":
-                            menu_list.append({"menu_type": record[1], "menu_url": record[3]})
-            user_info["data_list"] = data_list
+                        # if record[2] == "data":
+                        #     data_list.append({"data_type": record[1]})
+                        # if record[2] == "menu":
+                        menu_list.append(
+                            {"menu_id": record[0], "parent_id": record[1], "name": record[2], "url": record[3],
+                             "type": record[4], "icon": record[5], "order_num": record[6],
+                             "is_show": record[7]})
+            # user_info["data_list"] = data_list
             user_info["menu_list"] = menu_list
 
             res = {
                 'success': True,
                 'message': user_info
             }
-            LoggerHelper.set_end_log_info(SysLog, logger, start, "/api/authUser/get_details/", request.auth.user,
+            LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, request.auth.user,
                                           request,
                                           function_title)
 
-
         except Exception as exp:
-            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, "/api/authUser/get_details/",
+            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, request.path,
                                                              request.auth.user, request,
                                                              function_title, None, exp)
         finally:
@@ -223,7 +223,7 @@ class UserOperator:
             "userid": user_id,
         }
 
-        LoggerHelper.set_end_log_info(SysLog, logger, start, "/api/user/logout/", user, request, function_title)
+        LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, user, request, function_title)
 
         return res
 
@@ -263,21 +263,24 @@ class UserOperator:
         # 将验证码保存并传递
         request.session['code'] = temp
 
-        LoggerHelper.set_end_log_info(SysLog, logger, start, "/api/user/verfication/", None, request, function_title)
+        LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, None, request, function_title)
 
         # 将得到的对象返回
         return HttpResponse(buf.getvalue(), 'image/png')
 
     # 获取用户列表-sql
-    def sql_search(self, request, username):
+    def sql_search(self, request,  username, fullname):
         title = "获取用户列表数据"
         res = ""
         start = LoggerHelper.set_start_log_info(logger)
         try:
             # 获取用户列表信息
-            sql = "select tablea.id,tablea.username,tablea.fullname,tableb.department_name,tableb.department_id,tablea.mobile,tablea.sex,tablea.status,tablea.create_time from auth_user tablea,sys_department tableb where tablea.department_id=tableb.department_id and tablea.is_superuser=false "
+            sql = "select tablea.id,tablea.username,tablea.fullname,tableb.department_name,tableb.department_id,tablea.mobile,tablea.sex,tablea.status,tablea.create_time from auth_user tablea"
+            sql+=" left join sys_department tableb on tablea.department_id=tableb.department_id where  tablea.is_superuser=false "
             if username is not None and str(username).strip() != "":
                 sql += " and tablea.username like '%{}%'".format(username)
+            if fullname is not None and str(fullname).strip() != "":
+                sql += " and tablea.fullname like '%{}%'".format(fullname)
             sql += " order by tablea.create_time desc"
             cursor = self.connection.cursor()
             cursor.execute(sql)
@@ -301,12 +304,12 @@ class UserOperator:
                 'info': data_list
             }
 
-            LoggerHelper.set_end_log_info(SysLog, logger, start, "/api/authUser/sqlsearch/", request.auth.user, request,
+            LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, request.auth.user, request,
                                           title)
 
 
         except Exception as exp:
-            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, "/api/authUser/sqlsearch/",
+            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, request.path,
                                                              request.auth.user, request,
                                                              title, None, exp)
 
@@ -320,7 +323,7 @@ class UserOperator:
         user_id = request.data["user_id"]
         user_status = request.data["user_status"]
 
-        title = "获取用户列表数据"
+        title = "设置用户状态"
         res = ""
         start = LoggerHelper.set_start_log_info(logger)
         try:
@@ -331,12 +334,12 @@ class UserOperator:
                 'info': "{}成功".format(title)
             }
 
-            LoggerHelper.set_end_log_info(SysLog, logger, start, "/api/authUser/setstatus/", request.auth.user, request,
+            LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, request.auth.user, request,
                                           title)
 
         except Exception as exp:
 
-            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, "/api/authUser/setstatus/",
+            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, request.path,
                                                              request.auth.user, request,
                                                              title, None, exp)
         finally:
