@@ -75,11 +75,8 @@
 >* 增加并发访问waitress
 >* 增加代码pyc批量编译
 >* 增加代码pyd批量编译
->* 增加django postgis支持 相关操作方式在 django.pdf  1106页 - 1259页 
-   文档图片 [img.png](img.png) 测试数据是 TM_WORLD_BORDERS-0.3.shp 是从my_project/TM_WORLD_BORDERS-0.3.zip 中解压获取，数据库需要增加postgis扩展 
->* 增加django使用文档 django.zip 中存放的是django.pdf
->* 增加 websocket 使用websocket 需要熟读websocket 的文档，理解原理，下面有一个案例https://blog.csdn.net/weixin_62935305/article/details/125422933
->* 因为websocket 需要配合redis缓存使用，所有增加了redis缓存链接 
+>* 增加django postgis支持
+>* 增加websocket支持，需要配合redis缓存使用
 >* 授权文件配置到代码目录外部
 >* 存储高频访问的数据：利用Redis进行高效缓存
 >* 增加多线程
