@@ -36,5 +36,6 @@ channels==3.0.5
 channels-redis==4.1.0
 daphne==3.0.2
 django-redis==5.4.0
+djangorestframework-gis==1.0
 drf-yasg==1.21.7
 vgis_encrption==1.0.3

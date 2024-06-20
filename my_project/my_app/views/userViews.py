@@ -151,14 +151,15 @@ class UserViewSet(viewsets.ModelViewSet):
         res = userOperator.login_by_token(request, ssoToken, auth, Token)
         return Response(res)
 
-    # 退出登录
-    @action(detail=False, methods=['POST'], url_path='logout')
-    def logout(self, request):
-        username = request.data.get('username')
-        userid = request.data.get('userid')
-        userOperator = UserOperator(connection)
-        res = userOperator.logout(request, Token, userid, auth)
-        return Response(res)
+    # # 退出登录
+    # # 移到sysView.py里，需要增加token，这样可以避免误操作（不加token的误调用）
+    # @action(detail=False, methods=['POST'], url_path='logout')
+    # def logout(self, request):
+    #     username = request.data.get('username')
+    #     userid = request.data.get('userid')
+    #     userOperator = UserOperator(connection)
+    #     res = userOperator.logout(request, Token, userid, auth)
+    #     return Response(res)
 
     # 获取验证码
     @action(detail=False, methods=['GET'], url_path='verfication')

@@ -33,7 +33,8 @@ from my_app.utils.sysmanUtility import SysmanHelper
 from my_app.views.response.baseRespone import Result
 from my_project import settings
 from my_project.token import ExpiringTokenAuthentication
-
+from rest_framework.authtoken.models import Token
+from django.contrib import auth
 
 class SysConfigViewSet(viewsets.ModelViewSet):
     queryset = SysConfig.objects.all().order_by('id')
@@ -427,6 +428,15 @@ class AuthUserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     # 自定义token认证
     authentication_classes = (ExpiringTokenAuthentication,)
+
+    # 退出登录
+    @action(detail=False, methods=['POST'], url_path='logout')
+    def logout(self, request):
+        username = request.data.get('username')
+        userid = request.data.get('userid')
+        userOperator = UserOperator(connection)
+        res = userOperator.logout(request, Token, userid, auth)
+        return Response(res)
 
     def create(self, request, *args, **kwargs):
         start = time.perf_counter()
