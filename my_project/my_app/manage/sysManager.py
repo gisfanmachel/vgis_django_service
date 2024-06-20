@@ -9,13 +9,16 @@
 import datetime
 import logging
 import time
+
 from loguru import logger
 from vgis_log.logTools import LoggerHelper
 from vgis_utils.vgis_http.httpTools import HttpHelper
 from vgis_utils.vgis_list.listTools import ListHelper
+
 from my_app.models import SysDepartment
 from my_app.models import SysLog
 from my_app.utils.sysmanUtility import SysmanHelper
+
 logger = logging.getLogger('django')
 
 
@@ -302,6 +305,481 @@ class SysOperator:
             logger.info("总共用时{}秒".format(t))
             # 日志入库
             LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", "/api/sysLog/sqlsearch",
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        finally:
+            return res
+
+    # 获取数据字典类别数据
+
+    def get_dict_catelog_list(self, request, title):
+        # title = "获取数据字典类别数据"
+        res = ""
+        start = time.perf_counter()
+        logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        res = ""
+        try:
+
+            # 获取归属于这个字典类别下的字典信息
+            sql = "select id,dict_catelog_name from sys_dict_catelog"
+            sql += " order by id asc"
+            cursor = self.connection.cursor()
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            data_list = []
+            for record in records:
+                obj = {}
+                obj['dict_catelog_id'] = int(record[0])
+                obj['dict_catelog_name'] = str(record[1]) if record[1] is not None else ""
+                data_list.append(obj)
+            res = {
+                'success': True,
+                'total': len(data_list),
+                'info': data_list
+            }
+
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        except Exception as exp:
+            logger.error("{}失败：{}".format(title, str(exp)))
+            logger.error(exp)
+            logger.error(exp.__traceback__.tb_frame.f_globals["__file__"])  # 发生异常所在的文件
+            logger.error(exp.__traceback__.tb_lineno)  # 发生异常所在的行数
+            res = {
+                'success': False,
+                'info': "{}失败：{}".format(title, str(exp))
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        finally:
+            return res
+
+    # 获取数据字典列表-sql
+    def sql_search_dict(self, request, dict_catelog_id, title):
+        # title = "获取数据字典列表数据"
+        res = ""
+        start = time.perf_counter()
+        logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        try:
+            # 获取归属于这个字典类别下的字典信息
+            sql = "select tablea.id,tablea.type_value,tablea.memo_value,tableb.dict_catelog_name from sys_dict tablea,sys_dict_catelog tableb  where 1=1 tablea.dict_catelog_id=tableb.id and tablea.dict_catelog_id={}".format(
+                dict_catelog_id)
+            sql += " order by id asc"
+            cursor = self.connection.cursor()
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            data_list = []
+            for record in records:
+                obj = {}
+                obj['id'] = int(record[0])
+                obj['type_value'] = str(record[1])
+                obj['memo_value'] = str(record[2]) if record[2] is not None else ""
+                obj['dict_catelog_name'] = str(record[3]) if record[3] is not None else ""
+                data_list.append(obj)
+            res = {
+                'success': True,
+                'total': len(data_list),
+                'info': data_list
+            }
+
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        except Exception as exp:
+            logger.error("{}失败：{}".format(title, str(exp)))
+            logger.error(exp)
+            logger.error(exp.__traceback__.tb_frame.f_globals["__file__"])  # 发生异常所在的文件
+            logger.error(exp.__traceback__.tb_lineno)  # 发生异常所在的行数
+            res = {
+                'success': False,
+                'info': "{}失败：{}".format(title, str(exp))
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        finally:
+            return res
+
+    # 通过编号获取数据字典详情
+    def get_detail_by_condition(self, request, dict_catelog_id, id, title):
+        res = ""
+        start = time.perf_counter()
+        logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        try:
+
+            # 获取归属于这个字典类别下的字典信息
+            sql = "select tablea.id,tablea.type_value,tablea.memo_value,tableb.dict_catelog_name from sys_dict tablea,sys_dict_catelog tableb  where 1=1 tablea.dict_catelog_id=tableb.id and tablea.dict_catelog_id={} and tablea.id={}".format(
+                dict_catelog_id, id)
+            sql += " order by id asc"
+            cursor = self.connection.cursor()
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            data_list = []
+            for record in records:
+                obj = {}
+                obj['dict_catelog_id'] = dict_catelog_id
+                obj['dict_catelog_name'] = str(record[3]) if record[3] is not None else ""
+                obj['id'] = int(record[0])
+                obj['type_value'] = str(record[1])
+                obj['memo_value'] = str(record[2]) if record[2] is not None else ""
+
+                data_list.append(obj)
+            res = {
+                'success': True,
+                'total': len(data_list),
+                'info': data_list
+            }
+
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        except Exception as exp:
+            logger.error("{}失败：{}".format(title, str(exp)))
+            logger.error(exp)
+            logger.error(exp.__traceback__.tb_frame.f_globals["__file__"])  # 发生异常所在的文件
+            logger.error(exp.__traceback__.tb_lineno)  # 发生异常所在的行数
+            res = {
+                'success': False,
+                'info': "{}失败：{}".format(title, str(exp))
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        finally:
+            return res
+
+    def get_max_id(self, tablename):
+        sql = "select max(id) from {}".format(tablename)
+        cursor = self.connection.cursor()
+        cursor.execute(sql)
+        record = cursor.fetchone()
+        return int(record[0]) if record is not None else 0
+
+    # 添加数据字典
+    def add_dict(self, request, title):
+        # title = "获取数据字典"
+        res = ""
+        start = time.perf_counter()
+        logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        try:
+            dict_catelog_id = request.data.get("dict_catelog_id")
+            type_value = request.data.get("type_value")
+            memo_value = request.data.get("memo_value")
+            cursor = self.connection.cursor()
+            # 先判断是否有重复
+            sql = "select count(*) from sys_dict where dict_catelog_id ={} and type_value='{}'".format(dict_catelog_id,
+                                                                                                       type_value)
+            cursor.execute(sql)
+            record = cursor.fetchone()
+            if record[0] > 0:
+                res = {
+                    'success': False,
+                    'info': "添加数据字典失败，该字典类别下已存在该字典信息"
+                }
+                logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                end = time.perf_counter()
+                t = end - start
+                logger.info("总共用时{}秒".format(t))
+                LoggerHelper.insert_log_info(SysLog, request.auth.user, res['info'], request.path,
+                                             HttpHelper.get_params_request(request),
+                                             t, HttpHelper.get_ip_request(request))
+            else:
+                sql = "insert into sys_dict (id,dict_catelog_id,type_value,memo_value) values ({},'{}','{}') ".format(
+                    self.get_max_id("sys_dict") + 1, dict_catelog_id,
+                    type_value, memo_value
+                )
+
+                cursor.execute(sql)
+                self.connection.commit()
+                res = {
+                    'success': True,
+                    'info': "添加数据字典成功"
+                }
+                logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                end = time.perf_counter()
+                t = end - start
+                logger.info("总共用时{}秒".format(t))
+                # 日志入库
+                LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                                             HttpHelper.get_params_request(request),
+                                             t, HttpHelper.get_ip_request(request))
+        except Exception as exp:
+            logger.error("{}失败：{}".format(title, str(exp)))
+            logger.error(exp)
+            logger.error(exp.__traceback__.tb_frame.f_globals["__file__"])  # 发生异常所在的文件
+            logger.error(exp.__traceback__.tb_lineno)  # 发生异常所在的行数
+            res = {
+                'success': False,
+                'info': "{}失败：{}".format(title, str(exp))
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        finally:
+            return res
+
+    # 编辑数据字典
+    def update_dict(self, request, title):
+        res = ""
+        start = time.perf_counter()
+        logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        try:
+            dict_catelog_id = request.data.get("dict_catelog_id")
+            id = request.data.get("id")
+            type_value = request.data.get("type_value")
+            memo_value = request.data.get("memo_value")
+            cursor = self.connection.cursor()
+            # 先判断是否有重复
+            sql = "select count(*) from sys_dict where dict_catelog_id ={} and type_value='{}' and id!={}".format(
+                dict_catelog_id,
+                type_value, id)
+            cursor.execute(sql)
+            record = cursor.fetchone()
+            if record[0] > 0:
+                res = {
+                    'success': False,
+                    'info': "更新数据字典失败，该字典类别下已存在该字典信息"
+                }
+                logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                end = time.perf_counter()
+                t = end - start
+                logger.info("总共用时{}秒".format(t))
+                LoggerHelper.insert_log_info(SysLog, request.auth.user, res['info'], request.path,
+                                             HttpHelper.get_params_request(request),
+                                             t, HttpHelper.get_ip_request(request))
+            else:
+                sql = "update  sys_dict set type_value='{}',memo_value='{}' where id={} ".format(
+                    type_value,
+                    memo_value, id
+                )
+
+                cursor.execute(sql)
+                self.connection.commit()
+                res = {
+                    'success': True,
+                    'info': "更新数据字典成功"
+                }
+                logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                end = time.perf_counter()
+                t = end - start
+                logger.info("总共用时{}秒".format(t))
+                # 日志入库
+                LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                                             HttpHelper.get_params_request(request),
+                                             t, HttpHelper.get_ip_request(request))
+        except Exception as exp:
+            logger.error("{}失败：{}".format(title, str(exp)))
+            logger.error(exp)
+            logger.error(exp.__traceback__.tb_frame.f_globals["__file__"])  # 发生异常所在的文件
+            logger.error(exp.__traceback__.tb_lineno)  # 发生异常所在的行数
+            res = {
+                'success': False,
+                'info': "{}失败：{}".format(title, str(exp))
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        finally:
+            return res
+
+    # 删除数据字典
+    def delete_dict(self, request, title):
+        res = ""
+        start = time.perf_counter()
+        logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        try:
+            dict_catelog_id = request.data.get("dict_catelog_id")
+            id = request.data.get("id")
+            cursor = self.connection.cursor()
+            sql = "delete from  sys_dict where id = {} ".format(
+                id
+            )
+            cursor.execute(sql)
+            self.connection.commit()
+            res = {
+                'success': True,
+                'info': "{}成功".format(title)
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        except Exception as exp:
+            logger.error("{}失败：{}".format(title, str(exp)))
+            logger.error(exp)
+            logger.error(exp.__traceback__.tb_frame.f_globals["__file__"])  # 发生异常所在的文件
+            logger.error(exp.__traceback__.tb_lineno)  # 发生异常所在的行数
+            res = {
+                'success': False,
+                'info': "{}失败：{}".format(title, str(exp))
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        finally:
+            return res
+
+    # 获取消息列表-sql
+    def sql_search_message(self, request, username, querystarttime, queryendtime, title):
+        res = ""
+        start = time.perf_counter()
+        if querystarttime == "":
+            querystarttime = "2024-01-01 00:00:00"
+        if queryendtime == "":
+            queryendtime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        try:
+            sql = '''
+                select
+                    tablea.message,tablea.create_time,tablea.id,tablec.username,tablec.fullname
+                from
+                    sys_message tablea
+                    auth_user tablec
+                where
+                    1=1
+                    and tablea.user_id=tablec.id
+                    and tablec.username like '%{}%'
+                    and tableb.create_time>='{}'
+	                and tableb.create_time<='{}'
+                    order by tablec.username
+            '''.format(username, querystarttime, queryendtime)
+            cursor = self.connection.cursor()
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            data_list = []
+            for record in records:
+                obj = {}
+                obj['id'] = int(record[2])
+                obj['message'] = str(record[0])
+                obj['time'] = str(record[1])
+                obj['usernam'] = str(record[3])
+                obj['fullname'] = str(record[4]) if record[4] is not None else ""
+                data_list.append(obj)
+            res = {
+                'success': True,
+                'total': len(data_list),
+                'info': data_list
+            }
+
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        except Exception as exp:
+            logger.error("{}失败：{}".format(title, str(exp)))
+            logger.error(exp)
+            logger.error(exp.__traceback__.tb_frame.f_globals["__file__"])  # 发生异常所在的文件
+            logger.error(exp.__traceback__.tb_lineno)  # 发生异常所在的行数
+            res = {
+                'success': False,
+                'info': "{}失败：{}".format(title, str(exp))
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        finally:
+            return res
+
+    # 删除用户消息
+    def delete_message(self, request, title):
+        res = ""
+        start = time.perf_counter()
+        logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        try:
+            id = request.data.get("id")
+            cursor = self.connection.cursor()
+            sql = "delete from  sys_message where id = {}".format(
+                id
+            )
+            cursor.execute(sql)
+            self.connection.commit()
+            res = {
+                'success': True,
+                'info': "{}成功".format(title)
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+        except Exception as exp:
+            logger.error("{}失败：{}".format(title, str(exp)))
+            logger.error(exp)
+            logger.error(exp.__traceback__.tb_frame.f_globals["__file__"])  # 发生异常所在的文件
+            logger.error(exp.__traceback__.tb_lineno)  # 发生异常所在的行数
+            res = {
+                'success': False,
+                'info': "{}失败：{}".format(title, str(exp))
+            }
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            # 日志入库
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:

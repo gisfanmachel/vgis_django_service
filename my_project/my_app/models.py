@@ -354,3 +354,29 @@ class SysParam(models.Model):
         managed = False
         db_table = 'sys_param'
         db_table_comment = '系统参数表'
+
+class SysDict(models.Model):
+    id = models.BigAutoField(primary_key=True, db_comment="id")
+    dict_catelog_id = models.BigIntegerField(blank=True, null=True)
+    type_value = models.CharField(max_length=200, db_comment="参数键英文名称")
+    memo_value = models.CharField(max_length=200, db_comment="参数键中文名称")
+    param_value = models.CharField(max_length=255, db_comment="参数键值")
+    create_time = models.DateTimeField(blank=True, null=True, db_comment='创建时间')
+    create_user_id = models.BigIntegerField(blank=True, null=True, db_comment='创建人')
+    update_time = models.DateTimeField(blank=True, null=True, db_comment='更新时间')
+    update_user_id = models.BigIntegerField(blank=True, null=True, db_comment='更新人id')
+
+    class Meta:
+        managed = False
+        db_table = 'sys_dict'
+        db_table_comment = '系统字典表'
+
+class SysMessage(models.Model):
+    id = models.BigAutoField(primary_key=True, db_comment="id")
+    user_id = models.BigIntegerField(blank=True, null=True,db_comment="用户id")
+    message = models.CharField(max_length=2550, db_comment="消息")
+
+    class Meta:
+        managed = False
+        db_table = 'sys_message'
+        db_table_comment = '系统消息表'

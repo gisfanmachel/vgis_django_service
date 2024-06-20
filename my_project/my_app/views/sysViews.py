@@ -630,6 +630,168 @@ class SysUserTokenViewSet(viewsets.ModelViewSet):
     authentication_classes = (ExpiringTokenAuthentication,)
 
 
+# 数据字典相关操作
+class SysDictViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    # 自定义token认证
+    authentication_classes = (ExpiringTokenAuthentication,)
+
+    # 获取数据字典类别下拉
+    @action(detail=False, methods=['GET'], url_path='cateloglist')
+    def get_dict_catelog_list(self, request, *args, **kwargsst):
+        function_title = "获取数据字典类别下拉"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        try:
+            sysOperator = SysOperator(connection)
+            res = sysOperator.get_dict_catelog_list(request, function_title)
+            return Response(res)
+
+        except Exception as exp:
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, str(exp), None)
+            msg = "{}失败".format(function_title)
+            return Result.fail(msg, str(exp))
+
+    # SQL查询获取数据字典列表
+    @action(detail=False, methods=['GET'], url_path='sqlsearch')
+    def get_dict_list_by_sql(self, request, *args, **kwargsst):
+        function_title = "查询获取数据字典列表"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        try:
+            sysOperator = SysOperator(connection)
+            dict_catelog_id = self.request.query_params.get('dict_catelog_id', '')
+            res = sysOperator.sql_search_dict(request, dict_catelog_id, function_title)
+            return Response(res)
+
+        except Exception as exp:
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, str(exp), None)
+            msg = "{}失败".format(function_title)
+            return Result.fail(msg, str(exp))
+
+    # 通过编号获取数据字典详情
+    @action(detail=False, methods=['GET'], url_path='getdetail')
+    def get_detail_by_condition(self, request, *args, **kwargsst):
+        function_title = "通过编号获取数据字典详情"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        try:
+            sysOperator = SysOperator(connection)
+            dict_catelog_id = self.request.query_params.get('dict_catelog_id', '')
+            id = self.request.query_params.get('id', '')
+            res = sysOperator.get_detail_by_condition(request, dict_catelog_id, id, function_title)
+            return Response(res)
+
+        except Exception as exp:
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, str(exp), None)
+            msg = "{}失败".format(function_title)
+            return Result.fail(msg, str(exp))
+
+    # 添加数据字典
+    @action(detail=False, methods=['POST'], url_path='add')
+    def add_dict_by_catelog(self, request, *args, **kwargsst):
+        function_title = "添加数据字典"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        try:
+            sysOperator = SysOperator(connection)
+            res = sysOperator.add_dict(request, function_title)
+            return Response(res)
+
+        except Exception as exp:
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, str(exp), None)
+            msg = "{}失败".format(function_title)
+            return Result.fail(msg, str(exp))
+
+    # 修改加数据字典
+    @action(detail=False, methods=['POST'], url_path='update')
+    def update_dict_by_catelog(self, request, *args, **kwargsst):
+        function_title = "修改数据字典"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        try:
+            sysOperator = SysOperator(connection)
+            res = sysOperator.update_dict(request, function_title)
+            return Response(res)
+
+        except Exception as exp:
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, str(exp), None)
+            msg = "{}失败".format(function_title)
+            return Result.fail(msg, str(exp))
+
+    # 删除数据字典
+    @action(detail=False, methods=['POST'], url_path='delete')
+    def delete_dict_by_catelog(self, request, *args, **kwargsst):
+        function_title = "删除数据字典"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        try:
+            sysOperator = SysOperator(connection)
+            res = sysOperator.delete_dict(request, function_title)
+            return Response(res)
+
+        except Exception as exp:
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, str(exp), None)
+            msg = "{}失败".format(function_title)
+            return Result.fail(msg, str(exp))
+
+
+# 系统消息相关操作
+class SysMessageViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    # 自定义token认证
+    authentication_classes = (ExpiringTokenAuthentication,)
+
+    # SQL查询获取消息列表
+    @action(detail=False, methods=['GET'], url_path='sqlsearch')
+    def get_message_list_by_sql(self, request, *args, **kwargsst):
+        function_title = "查询获取消息列表"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        try:
+            sysOperator = SysOperator(connection)
+            username = self.request.query_params.get('username', '')
+            querystarttime = self.request.query_params.get('querystarttime', '')
+            queryendtime = self.request.query_params.get('queryendtime', '')
+            res = sysOperator.sql_search_message(request, username, querystarttime, queryendtime, function_title)
+            return Response(res)
+
+        except Exception as exp:
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, str(exp), None)
+            msg = "{}失败".format(function_title)
+            return Result.fail(msg, str(exp))
+
+    # 删除数用户消息
+    @action(detail=False, methods=['POST'], url_path='delete')
+    def delete_message_by_id(self, request, *args, **kwargsst):
+        function_title = "删除用户消息"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        try:
+            sysOperator = SysOperator(connection)
+            res = sysOperator.delete_message(request, function_title)
+            return Response(res)
+
+        except Exception as exp:
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, str(exp), None)
+            msg = "{}失败".format(function_title)
+            return Result.fail(msg, str(exp))
 
 # 系统参数相关操作
 class SysParamViewSet(viewsets.ModelViewSet):

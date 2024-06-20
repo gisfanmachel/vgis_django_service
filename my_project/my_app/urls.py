@@ -14,7 +14,7 @@ from my_app.views.userViews import UserViewSet
 from my_app.views.businessViews import TtUploadFileDataViewSet, TmDdistrictViewSet
 from my_app.views.sysViews import SysConfigViewSet, SysDepartmentViewSet, SysLogViewSet, SysMenuViewSet, \
     SysOssViewSet, SysRoleViewSet, SysRoleMenuViewSet, SysUserViewSet, SysUserRoleViewSet, SysUserTokenViewSet, \
-    AuthUserViewSet
+    AuthUserViewSet, SysDictViewSet, SysMessageViewSet, SysParamViewSet
 
 router = DefaultRouter()
 # 用户表（已废弃）路由器
@@ -41,6 +41,12 @@ router.register(r'sysUser', SysUserViewSet, basename='sysUser')
 router.register(r'sysUserRole', SysUserRoleViewSet, basename='sysUserRole')
 # 系统用户token表由器
 router.register(r'sysUserToken', SysUserTokenViewSet, basename='sysUserToken')
+# 系统字典管理由器
+router.register(r'sysDict', SysDictViewSet, basename='sysDict')
+# 系统消息管理由器
+router.register(r'sysMessage', SysMessageViewSet, basename='sysMessage')
+# 系统参数管理由器
+router.register(r'sysParam', SysParamViewSet, basename='sysParam')
 # 上传文件表由器
 router.register(r'ttUploadFileData', TtUploadFileDataViewSet, basename='ttUploadFileData')
 # 行政区划表由器
