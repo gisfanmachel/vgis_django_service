@@ -14,7 +14,7 @@
 from rest_framework import serializers
 from my_app.models import AuthUser, TtUploadFileData, SysConfig, SysDepartment, SysLog, SysMenu, SysOss, SysRole, \
     SysRoleMenu, SysUser, \
-    SysUserRole, SysUserToken, TmDdistrict
+    SysUserRole, SysUserToken, TmDdistrict, SysParam
 
 
 # 用户信息表序列化器
@@ -103,4 +103,10 @@ class SysUserRoleSerializer(serializers.ModelSerializer):
 class SysUserTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = SysUserToken
+        fields = "__all__"
+
+#系统参数
+class SysParamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SysParam
         fields = "__all__"

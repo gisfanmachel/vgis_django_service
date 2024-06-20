@@ -21,7 +21,7 @@ from vgis_utils.vgis_datetime.datetimeTools import DateTimeHelper
 
 # 用户相关操作类
 from my_app.apps import MyAppConfig
-from my_app.models import AuthUser, SysLog
+from my_app.models import AuthUser, SysLog, SysParam
 from my_app.utils.sysmanUtility import SysmanHelper
 from my_project import settings
 from my_project.settings import IS_USE_VERIFICATION_CODE
@@ -33,6 +33,37 @@ class UserOperator:
     def __init__(self, connection):
         self.connection = connection
 
+
+    def get_LOGIN_LOCKED_TIME(self):
+        obj = SysParam.objects.get(param_en_key='LOGIN_LOCKED_TIME')
+        if obj is not None:
+            return int(obj.param_value)
+        else:
+            return 600
+
+    def get_LOGIN_ERROR_ATTEMPTS(self):
+        obj = SysParam.objects.get(param_en_key='LOGIN_ERROR_ATTEMPTS')
+        if obj is not None:
+            return int(obj.param_value)
+        else:
+            return 4
+
+    def return_is_use_verification_code(self,request):
+        res = {
+            'success': True,
+            'code': 1,
+            'value': self.get_is_use_verification_code()
+        }
+        return res
+
+
+
+    def get_is_use_verification_code(self):
+        obj = SysParam.objects.get(param_en_key='IS_USE_VERIFICATION_CODE')
+        if obj is not None:
+            return True if obj.param_value=="是" else False
+        else:
+            return False
     # 登录
     # 通过用户名和密码登录
     # 连续输错4次密码，锁定10分钟，10分钟后没输错一次密码都重新锁定10分钟---参数可配置
@@ -62,9 +93,9 @@ class UserOperator:
                         userObject.login_error_attempts = 1
                     else:
                         userObject.login_error_attempts += 1
-                    if userObject.login_error_attempts >= settings.LOGIN_ERROR_ATTEMPTS:
+                    if userObject.login_error_attempts >= self.get_LOGIN_ERROR_ATTEMPTS():
                         # 锁定账号
-                        userObject.login_locked_until = timezone.now() + timedelta(seconds=settings.LOGIN_LOCKED_TIME)
+                        userObject.login_locked_until = timezone.now() + timedelta(seconds=self.get_LOGIN_LOCKED_TIME())
                     userObject.save()
                     res = {
                         'success': False,
@@ -75,7 +106,7 @@ class UserOperator:
                 else:
                     # 验证码
                     # 验证码
-                    if IS_USE_VERIFICATION_CODE:
+                    if self.get_is_use_verification_code():
                         try:
                             if verifcation != request.session['code']:
                                 res = {

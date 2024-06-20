@@ -166,6 +166,13 @@ class UserViewSet(viewsets.ModelViewSet):
         userOperator = UserOperator(connection)
         return userOperator.get_verifaction_code(request)
 
+    # 获取是否开启验证码
+    @action(detail=False, methods=['GET'], url_path='is_use_verfication')
+    def is_use_verfication(self, request):
+        userOperator = UserOperator(connection)
+        res = userOperator.return_is_use_verification_code(request)
+        return Response(res)
+
 
 #  分页相关操作类
 class MyPage(PageNumberPagination):

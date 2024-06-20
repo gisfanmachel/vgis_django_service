@@ -21,6 +21,7 @@ from django.utils.deprecation import MiddlewareMixin
 from vgis_utils.vgis_string.stringTools import StringHelper
 from vgis_encrption.encrptionTools import AESEncryption, RSAEncryption, FernetEncryption, StringHexMutualConvertion
 
+from my_app.models import SysParam
 from my_app.utils.encryptionUtility import encryptionHelper
 from my_project import settings
 import logging
@@ -60,6 +61,12 @@ class EncryptionMiddleware:
         self.get_response = get_response
         pass
 
+    def get_IS_ENCRYPTION(self):
+        obj = SysParam.objects.get(param_en_key='IS_ENCRYPTION')
+        if obj is not None:
+            return True if obj.param_value == "是" else False
+        else:
+            return False
 
     def __call__(self, request):
         aESEncryption=encryptionHelper.get_aes_encrytion_object()
@@ -70,7 +77,7 @@ class EncryptionMiddleware:
         # 服务端解密：十六进制转字符串---AES解密
         # AES的密钥，用RSA加密
         # RAS的公钥和私钥，用fernet加密
-        if settings.IS_ENCRYPTION:
+        if self.get_IS_ENCRYPTION():
             logger.info("request.method:{}".format(request.method))
             logger.info("request.path:{}".format(request.path))
             # 这里的reqeust是 django.core.handlers.wsgi.WGSIRequest，不是rest_framework.request.Request

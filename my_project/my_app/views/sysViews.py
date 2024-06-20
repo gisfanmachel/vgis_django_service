@@ -23,11 +23,12 @@ from vgis_utils.vgis_http.httpTools import HttpHelper
 from my_app.manage.sysManager import SysOperator
 from my_app.manage.userManager import UserOperator
 from my_app.models import SysConfig, SysDepartment, SysLog, SysMenu, SysOss, SysRole, SysRoleMenu, SysUser, \
-    SysUserRole, SysUserToken, AuthUser
+    SysUserRole, SysUserToken, AuthUser, SysParam
 from my_app.serializers import SysConfigSerializer, SysDepartmentSerializer, SysLogSerializer, SysMenuSerializer, \
     SysOssSerializer, SysRoleSerializer, SysRoleMenuSerializer, SysUserSerializer, SysUserRoleSerializer, \
-    SysUserTokenSerializer, AuthUserSerializer
+    SysUserTokenSerializer, AuthUserSerializer, SysParamSerializer
 from my_app.utils.passwordUtility import PasswordHelper
+from my_app.utils.snowflake_id_util import SnowflakeIDUtil
 from my_app.utils.sysmanUtility import SysmanHelper
 from my_app.views.response.baseRespone import Result
 from my_project import settings
@@ -144,6 +145,35 @@ class SysLogViewSet(viewsets.ModelViewSet):
         queryendtime = self.request.query_params.get('queryendtime', '')
         res = sysOperator.sql_search_log(request, username, querystarttime, queryendtime)
         return Response(res)
+  # #删除日志
+    def destroy(self, request, *args, **kwargs):
+        title = "删除日志"
+        res = ""
+        id = kwargs["pk"]
+        start = time.perf_counter()
+        try:
+            super().destroy(request, *args, **kwargs)
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+                                         request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+            res = {
+                'success': True,
+                'info': "{}(编号为{})成功".format(title,id)
+            }
+        except Exception as exp:
+            res = {
+                'success': True,
+                'info': "{}(编号为{})失败，原因为：{}".format(title,id, str(exp))
+            }
+        finally:
+            res
+
+        return Response(res)
 
 
 class SysMenuViewSet(viewsets.ModelViewSet):
@@ -208,18 +238,35 @@ class SysMenuViewSet(viewsets.ModelViewSet):
 
     # #删除菜单的同时，将sys_role_menu里的菜单删除
     def destroy(self, request, *args, **kwargs):
+        title = "删除菜单"
+        res = ""
         id = kwargs["pk"]
         start = time.perf_counter()
-        SysRoleMenu.objects.filter(menu_id=id).delete()
-        logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        end = time.perf_counter()
-        t = end - start
-        logger.info("总共用时{}秒".format(t))
-        LoggerHelper.insert_log_info(SysLog, request.auth.user, "删除菜单",
-                                     request.path,
-                                     HttpHelper.get_params_request(request),
-                                     t, HttpHelper.get_ip_request(request))
-        return super().destroy(request, *args, **kwargs)
+        try:
+            SysRoleMenu.objects.filter(menu_id=id).delete()
+            super().destroy(request, *args, **kwargs)
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+                                         request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+            res = {
+                'success': True,
+                'info': "{}(编号为{})成功".format(title, id)
+            }
+        except Exception as exp:
+            res = {
+                'success': True,
+                'info': "{}(编号为{})失败，原因为：{}".format(title, id, str(exp))
+            }
+        finally:
+            res
+
+        return Response(res)
+
 
 
 class SysOssViewSet(viewsets.ModelViewSet):
@@ -328,20 +375,35 @@ class SysRoleViewSet(viewsets.ModelViewSet):
 
     # # 删除角色的同时，将sys_role_menu \sys_user_role里的角色删除
     def destroy(self, request, *args, **kwargs):
+        title = "删除角色"
+        res = ""
         id = kwargs["pk"]
         start = time.perf_counter()
-        SysUserRole.objects.filter(role_id=id).delete()
-        SysRoleMenu.objects.filter(role_id=id).delete()
-        logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        end = time.perf_counter()
-        t = end - start
-        logger.info("总共用时{}秒".format(t))
-        LoggerHelper.insert_log_info(SysLog, request.auth.user, "删除角色",
-                                     request.path,
-                                     HttpHelper.get_params_request(request),
-                                     t, HttpHelper.get_ip_request(request))
-        return super().destroy(request, *args, **kwargs)
+        try:
+            SysUserRole.objects.filter(role_id=id).delete()
+            SysRoleMenu.objects.filter(role_id=id).delete()
+            super().destroy(request, *args, **kwargs)
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+                                         request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+            res = {
+                'success': True,
+                'info': "{}(编号为{})成功".format(title, id)
+            }
+        except Exception as exp:
+            res = {
+                'success': True,
+                'info': "{}(编号为{})失败，原因为：{}".format(title, id, str(exp))
+            }
+        finally:
+            res
 
+        return Response(res)
 
 class SysRoleMenuViewSet(viewsets.ModelViewSet):
     queryset = SysRoleMenu.objects.all().order_by('id')
@@ -480,23 +542,36 @@ class AuthUserViewSet(viewsets.ModelViewSet):
         res = userOperator.get_details(request, userid)
         return Response(res)
 
+    # 删除用户，同步更新SysUserRole
     def destroy(self, request, *args, **kwargs):
-        # instance = self.get_object()
-        # self.perform_destroy(instance)
-        # return Result.ok()
-
+        title = "删除用户"
+        res = ""
         id = kwargs["pk"]
         start = time.perf_counter()
-        SysUserRole.objects.filter(user_id=id).delete()
-        logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        end = time.perf_counter()
-        t = end - start
-        logger.info("总共用时{}秒".format(t))
-        LoggerHelper.insert_log_info(SysLog, request.auth.user, "删除用户",
-                                     request.path,
-                                     HttpHelper.get_params_request(request),
-                                     t, HttpHelper.get_ip_request(request))
-        return super().destroy(request, *args, **kwargs)
+        try:
+            SysUserRole.objects.filter(user_id=id).delete()
+            super().destroy(request, *args, **kwargs)
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+                                         request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+            res = {
+                'success': True,
+                'info': "{}(编号为{})成功".format(title, id)
+            }
+        except Exception as exp:
+            res = {
+                'success': True,
+                'info': "{}(编号为{})失败，原因为：{}".format(title, id, str(exp))
+            }
+        finally:
+            res
+
+        return Response(res)
 
     # 获取用户列表-sql
     @action(detail=False, methods=['GET'], url_path='sqlsearch')
@@ -553,3 +628,98 @@ class SysUserTokenViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     # 自定义token认证
     authentication_classes = (ExpiringTokenAuthentication,)
+
+
+
+# 系统参数相关操作
+class SysParamViewSet(viewsets.ModelViewSet):
+    queryset = SysParam.objects.all().order_by('id')
+    serializer_class = SysParamSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (ExpiringTokenAuthentication,)
+
+    def list(self, request, *args, **kwargs):
+        results = SysParam.objects.all().order_by('id')
+        data = []
+        for result in results:
+            data.append(SysParamSerializer(result).data)
+        results = {'results': data}
+        return Response(results)
+
+    def create(self, request, *args, **kwargs):
+        function_title = "新增参数"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        param_en_key = request.data["param_en_key"]
+        if len(SysParam.objects.filter(param_en_key=param_en_key)) > 0:
+            error_info = "新增的参数英文名:{}已存在，请换个名称".format(param_en_key)
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, error_info, None)
+            return Result.fail(error_info, error_info)
+        else:
+            request.data["id"] = SnowflakeIDUtil.snowflakeId()
+            request.data["create_user_id"] = request.auth.user_id
+            request.data["create_time"] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            super().create(request)
+
+            LoggerHelper.set_end_log_info(SysLog, logger, start, api_path, request.auth.user, request,
+                                          function_title)
+            msg = "{}成功".format(function_title)
+            return Result.sucess(msg, None)
+
+    def update(self, request, *args, **kwargs):
+        function_title = "修改参数"
+        start = LoggerHelper.set_start_log_info(logger)
+        api_path = request.path
+        id = kwargs["pk"]
+        if len(SysParam.objects.filter(id=id)) > 0:
+            old_param_en_key = SysParam.objects.filter(id=id)[0].param_en_key
+
+        new_param_en_key = request.data["param_en_key"]
+        if old_param_en_key != new_param_en_key and len(SysParam.objects.filter(param_en_key=new_param_en_key)) > 0:
+
+            error_info = "更新的参数英文名:{}已存在，请换个名称".format(new_param_en_key)
+            LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, api_path,
+                                                       request.auth.user, request,
+                                                       function_title, error_info, None)
+            return Result.fail(error_info, error_info)
+        else:
+            request.data["update_user_id"] = request.auth.user_id
+            request.data["update_time"] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            super().update(request, *args, **kwargs)
+            LoggerHelper.set_end_log_info(SysLog, logger, start, api_path, request.auth.user, request,
+                                          function_title)
+            msg = "{}成功".format(function_title)
+            return Result.sucess(msg, None)
+
+    # #删除参数
+    def destroy(self, request, *args, **kwargs):
+        title = "删除参数"
+        res = ""
+        id = kwargs["pk"]
+        start = time.perf_counter()
+        try:
+            super().destroy(request, *args, **kwargs)
+            logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            end = time.perf_counter()
+            t = end - start
+            logger.info("总共用时{}秒".format(t))
+            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+                                         request.path,
+                                         HttpHelper.get_params_request(request),
+                                         t, HttpHelper.get_ip_request(request))
+            res = {
+                'success': True,
+                'info': "{}(编号为{})成功".format(title, id)
+            }
+        except Exception as exp:
+            res = {
+                'success': True,
+                'info': "{}(编号为{})失败，原因为：{}".format(title, id, str(exp))
+            }
+        finally:
+            res
+
+        return Response(res)
+

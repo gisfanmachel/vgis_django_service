@@ -46,7 +46,14 @@ router.register(r'ttUploadFileData', TtUploadFileDataViewSet, basename='ttUpload
 # 行政区划表由器
 router.register(r'tmDdistrict', TmDdistrictViewSet, basename='tmDdistrict')
 
+# no_auth_router = DefaultRouter()
+# # 文件相关操作
+# no_auth_router.register(r'fileop', FileOpViews, basename='fileop')
+
+
 # 根据项目名称修改url
 urlpatterns = [
-    path('my_api/', include(router.urls), name='my_api')
+    path('my_api/', include(router.urls), name='my_api'),
+    # path('fapi/', include(no_auth_router.urls), name='fapi'),
 ]
+

@@ -15,9 +15,33 @@ from rest_framework import exceptions
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.authtoken.models import Token
 
+from my_app.models import SysParam
 # 获取请求头里的token信息
 from my_project.settings import AUTH_TOKEN_AGE, TOKEN_KEY
 from my_project.utils import TimeUtil
+
+
+def get_AUTH_TOKEN_AGE():
+    obj = SysParam.objects.get(param_en_key='AUTH_TOKEN_AGE')
+    if obj is not None:
+        return int(obj.param_value)
+    else:
+        return 10800
+
+
+def get_TOKEN_KEY():
+    obj = SysParam.objects.get(param_en_key='TOKEN_KEY')
+    if obj is not None:
+        return obj.param_value
+    else:
+        return 'Authorization'
+
+def get_TOKEN_USE_CACHE():
+    obj = SysParam.objects.get(param_en_key='TOKEN_USE_CACHE')
+    if obj is not None:
+        return True if obj.param_value == "是" else False
+    else:
+        return False
 
 
 def get_authorization_header(request):
@@ -50,12 +74,15 @@ class ExpiringTokenAuthentication(BaseAuthentication):
         return self.authenticate_credentials(token)
 
     def authenticate_credentials(self, key):
-        # 增加了缓存机制
-        # 首先先从缓存中查找
-        token_cache = 'token_' + key
-        cache_user = cache.get(token_cache)
-        if cache_user:
-            return (cache_user.user, cache_user)  # 首先查看token是否在缓存中，若存在，直接返回用户
+
+        # if TOKEN_USE_CACHE:
+        if get_TOKEN_USE_CACHE():
+            # 增加了缓存机制
+            # 首先先从缓存中查找
+            token_cache = 'token_' + key
+            cache_user = cache.get(token_cache)
+            if cache_user:
+                return (cache_user.user, cache_user)  # 首先查看token是否在缓存中，若存在，直接返回用户
         try:
             token = self.model.objects.get(key=key[6:])
 
@@ -69,7 +96,8 @@ class ExpiringTokenAuthentication(BaseAuthentication):
         token_created = int(TimeUtil.string2time_stamp(str(token.created)))
 
         # 满足条件的话，就表示token已失效，提示用户重新登录刷新token.
-        if now - token_created > AUTH_TOKEN_AGE:
+        # if now - token_created > AUTH_TOKEN_AGE:
+        if now - token_created > get_AUTH_TOKEN_AGE():
             old_token = self.model.objects.filter(key=key[6:])
             user_id=old_token[0].user_id
             old_token.delete()
@@ -77,12 +105,14 @@ class ExpiringTokenAuthentication(BaseAuthentication):
             # old_insurance = SysUserLogin.objects.filter(user_id=token.user_id)
             # old_insurance.delete()
             raise exceptions.AuthenticationFailed('认证信息过期')
-
-        if token:
-            token_cache = 'token_' + key
-            cache.set(token_cache, token, AUTH_TOKEN_AGE)  # 添加 token_xxx 到缓存
+        # if TOKEN_USE_CACHE:
+        if get_TOKEN_USE_CACHE():
+            if token:
+                token_cache = 'token_' + key
+                # cache.set(token_cache, token, AUTH_TOKEN_AGE)  # 添加 token_xxx 到缓存
+                cache.set(token_cache, token, get_AUTH_TOKEN_AGE())  # 添加 token_xxx 到缓存
         return (token.user, token)
 
     def authenticate_header(self, request):
         # return 'Authorization'
-        return TOKEN_KEY
+        return get_TOKEN_KEY()

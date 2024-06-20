@@ -338,3 +338,19 @@ class WorldBorder(models.Model):
         app_label = 't231_app'
         managed = False
         db_table = 'tm_world_border'
+
+
+class SysParam(models.Model):
+    id = models.BigAutoField(primary_key=True, db_comment="id")
+    param_en_key = models.CharField(max_length=200, db_comment="参数键英文名称")
+    param_cn_key = models.CharField(max_length=200, db_comment="参数键中文名称")
+    param_value = models.CharField(max_length=255, db_comment="参数键值")
+    create_time = models.DateTimeField(blank=True, null=True, db_comment='创建时间')
+    create_user_id = models.BigIntegerField(blank=True, null=True, db_comment='创建人')
+    update_time = models.DateTimeField(blank=True, null=True, db_comment='更新时间')
+    update_user_id = models.BigIntegerField(blank=True, null=True, db_comment='更新人id')
+
+    class Meta:
+        managed = False
+        db_table = 'sys_param'
+        db_table_comment = '系统参数表'
