@@ -263,6 +263,7 @@ CACHES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'postgres',
         'PASSWORD': '*******',
         'HOST': '192.168.3.191',
