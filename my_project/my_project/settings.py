@@ -191,8 +191,7 @@ LOGGING = {
             'class': '{}.log.InterceptTimedRotatingFileHandler'.format(PROJECT_NAME),  # 这个路径看你本地放在哪里(下面的log文件)
             # 路径可以设置在外部，并同步到宿主机
             'filename': os.path.join(LOG_ROOT, 'myapp.log'),
-            # 日志文件指定为多大(50M)， 超过大小(50M)重新命名，然后写新的日志文件
-            'maxBytes': 50 * 1024 * 1024,
+            # 每天自动归档写新的日志文件
             'when': "D",
             'interval': 1,
             'backupCount': 1,
@@ -202,8 +201,7 @@ LOGGING = {
         'db': {
             'class': '{}.log.InterceptTimedRotatingFileHandler'.format(PROJECT_NAME),  # 这个路径看你本地放在哪里
             'filename': os.path.join(LOG_ROOT, 'myapp_db.log'),、
-            # 日志文件指定为多大(50M)， 超过大小(50M)重新命名，然后写新的日志文件
-            'maxBytes': 50 * 1024 * 1024,
+            # 每天自动归档写新的日志文件
             'when': "D",
             'interval': 1,
             'backupCount': 1,
