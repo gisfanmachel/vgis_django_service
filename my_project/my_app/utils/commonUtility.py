@@ -11,7 +11,11 @@ class CommonHelper:
     def __init__(self):
         pass
 
-
+    @staticmethod
+    # 将POST,GET的参数输出到日志
+    def logger_json_key_value(json_data, logger):
+        for key, value in json_data.items():
+            logger.info("{}:{}".format(key, value))
 
 
     # @staticmethod
