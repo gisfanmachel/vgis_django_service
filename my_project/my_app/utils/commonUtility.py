@@ -13,10 +13,13 @@ class CommonHelper:
 
     @staticmethod
     # 将POST,GET的参数输出到日志
-    def logger_json_key_value(json_data, logger):
+    def logger_json_key_value(request, logger):
+        if request.method == 'POST':
+            json_data = request.data
+        elif request.method == "GET":
+            json_data = request.query_params
         for key, value in json_data.items():
             logger.info("{}:{}".format(key, value))
-
 
     # @staticmethod
     # # 去掉图片或文档的http头
