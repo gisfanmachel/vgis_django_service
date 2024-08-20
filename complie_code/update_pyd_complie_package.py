@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
     # 编译通不过的特殊处理
     error_complie_files_in_source = ""
-    error_complie_files_in_source += os.path.join(source_path_complie, sub_app_name, "manage", "xinxiManager.py") + ","
+    # error_complie_files_in_source += os.path.join(source_path_complie, sub_app_name, "manage", "xinxiManager.py") + ","
     error_complie_files_in_source += os.path.join(source_path_complie, sub_sub_project_name, "ws", "ws_comsumers.py")
 
     # git_complie_need_path=os.path.join(complie_need_path, ".git")
