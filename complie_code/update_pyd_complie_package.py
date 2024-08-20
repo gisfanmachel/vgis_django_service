@@ -117,7 +117,7 @@ if __name__ == '__main__':
     exclude_complie_files += os.path.join(complie_path, "run.py")
     print(exclude_complie_files)
 
-    # 编译通不过的特殊处理
+    # # 编译通不过的特殊处理,pyd无法编译，会编译成pyc
     error_complie_files_in_source = ""
     # error_complie_files_in_source += os.path.join(source_path_complie, sub_app_name, "manage", "xinxiManager.py") + ","
     error_complie_files_in_source += os.path.join(source_path_complie, sub_sub_project_name, "ws", "ws_comsumers.py")
