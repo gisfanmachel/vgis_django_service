@@ -330,6 +330,7 @@ AUTH_TOKEN_AGE = 60 * 60 * 3
 # 项目部署的IP、端口号、网络协议
 PROJECT_WEB_PROTOCOL = 'http'
 PROJECT_SERVICE_IP = '192.168.3.152'
+# 用nginx代理出来实现后端跨域的端口
 PROJECT_SERVICE_PORT = '10841'
 
 # 广西服务器
