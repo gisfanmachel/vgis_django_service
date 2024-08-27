@@ -1,4 +1,4 @@
-pyc编译：
+pyd编译：
 
 1）修改配置文件config.json
 2）执行init_dir.py，自动创建目录
@@ -7,10 +7,20 @@ pyc编译：
     手动方式git clone下载代码  git clone https://chenxw:****@106.13.81.105:8443/r/cysxydai_service.git，这里为具体项目的git地址
 4) 执行update_pyc/pyd_complie_package.py,编译整个项目代码
 
+
 上述方法会将py源文件编译成pyc/pyd文件，但全局配置文件 setting.py仍保留， 以便修改为用户现场参数
+pyc是pyd编译失败后的替代方案
 
 如果static目录下有资源文件或数据等，需要手动拷贝到相应位置
 
 启动项目
 E:\ProgramData\miniconda3\envs\geodjango\python.exe E:\complie\cysxydai_complie\3.10\complie_pyd\cysxydai_service\manage.pyc runserver 0.0.0.0:10789
+
+-----------------------------------------------------------
+在linux环境
+
+
+将本目录下的代码拷贝到 191的 /root/cxw/complie/complie_code/cysxydai_service
+191已配好3.8,3.9,3.10的python环境
+按照上述步骤执行
 
