@@ -8,13 +8,19 @@
 # @Software: PyCharm
 import json
 import os
-
+import sys
 with open('config.json', 'r') as configfile:
     config = json.load(configfile)
 # 获取配置项的值
 python_version = config['python_version']
 all_versions = config['all_versions']
-root_path = config['root_path']
+platform = "windows"
+if sys.platform == "win32":
+    platform = "windows"
+elif sys.platform == "linux":
+    platform = "linux"
+
+root_path = config['{}_root_path'.format(platform)]
 project_name = config['project_name']
 
 python_version_list = all_versions

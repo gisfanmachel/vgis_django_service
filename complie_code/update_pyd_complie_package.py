@@ -12,19 +12,26 @@ import os
 import py_compile
 import shutil
 import subprocess
+import sys
 import time
 
 with open('config.json', 'r') as configfile:
     config = json.load(configfile)
 # 获取配置项的值
 python_version = config['python_version']
-root_path = config['root_path']
+platform = "windows"
+if sys.platform == "win32":
+    platform = "windows"
+elif sys.platform == "linux":
+    platform = "linux"
+
+root_path = config['{}_root_path'.format(platform)]
 project_name = config['project_name']
 project_sub_dir_name = config['project_sub_dir_name']
 sub_app_name = config["sub_app_name"]
 sub_project_name = config['sub_project_name']
 sub_sub_project_name = config['sub_sub_project_name']
-jmpy_exe_path = config["jmpy_exe_dir_path"]
+jmpy_exe_path = config["{}_python{}_jmpy_exe_dir_path".format(platform, python_version.replace('.', ''))]
 
 
 # 删除空白的__pycache__文件夹
@@ -87,8 +94,8 @@ def pyc_no_complie_files(all_no_complie_files):
         pyc_file = os.path.join(dir_path, "__pycache__",
                                 "{}.cpython-{}.pyc".format(file_name.split(".")[0], python_str))
         (file_pre_path, temp_filename) = os.path.split(pyc_file)
-        destfile_origin_path = os.path.abspath(os.path.dirname(file_pre_path)) + "\\" + temp_filename
-        destfile_rename_path = os.path.abspath(os.path.dirname(file_pre_path)) + "\\" + temp_filename.replace(
+        destfile_origin_path = os.path.abspath(os.path.dirname(file_pre_path)) + os.path.sep + temp_filename
+        destfile_rename_path = os.path.abspath(os.path.dirname(file_pre_path)) + os.path.sep + temp_filename.replace(
             ".cpython-{}".format(python_str), "")
         shutil.move(pyc_file, destfile_origin_path)
         os.rename(destfile_origin_path, destfile_rename_path)
@@ -117,9 +124,10 @@ if __name__ == '__main__':
     exclude_complie_files += os.path.join(complie_path, "run.py")
     print(exclude_complie_files)
 
-    # # 编译通不过的特殊处理,pyd无法编译，会编译成pyc
+    # 编译通不过的特殊处理,pyd无法编译，会编译成pyc
     error_complie_files_in_source = ""
-    # error_complie_files_in_source += os.path.join(source_path_complie, sub_app_name, "manage", "xinxiManager.py") + ","
+    error_complie_files_in_source += os.path.join(source_path_complie, sub_app_name, "manage", "chatManager.py") + ","
+    error_complie_files_in_source += os.path.join(source_path_complie, sub_app_name, "manage", "reportManager.py") + ","
     error_complie_files_in_source += os.path.join(source_path_complie, sub_sub_project_name, "ws", "ws_comsumers.py")
 
     # git_complie_need_path=os.path.join(complie_need_path, ".git")
@@ -148,13 +156,12 @@ if __name__ == '__main__':
         new_error_complie_files_in_complie = get_new_error_complie_files_in_complie(new_error_complie_files_in_source,
                                                                                     source_path_complie, complie_path)
 
-
         if os.path.exists(complie_path):
             print("开始编译代码")
             source_path_complie = source_path_complie.replace("\\", "/")
             complie_path = complie_path.replace("\\", "/")
             exclude_complie_files = exclude_complie_files.replace("\\", "/")
-            cmd = "{}\\jmpy -i {} -o {} -I {} -m 0".format(jmpy_exe_path, source_path_complie, complie_path,
+            cmd = "{}/jmpy -i {} -o {} -I {} -m 0".format(jmpy_exe_path, source_path_complie, complie_path,
                                                            exclude_complie_files)
             print(cmd)
             os.system(cmd)

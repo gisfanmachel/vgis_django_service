@@ -1,13 +1,18 @@
 {
-  "python_version": "3.10",
-  "all_versions": ["3.9", "3.10", "2.7"],
-  "root_path": "E:\\complie\\django_complie",
-  "project_name": "django_service",
-  "project_sub_dir_name": "django_service-初始化版",
-  "sub_app_name": "t231_app",
+  "python_version": "3.8",
+  "all_versions": ["3.9", "3.10", "2.7","3.8"],
+  "windows_root_path": "E:\\complie\\cysxydai_complie",
+  "linux_root_path": "/root/cxw/complie/cysxydai_complie",
+  "project_name": "cysxydai_service",
+  "project_sub_dir_name": "",
+  "sub_app_name": "my_app",
   "sub_project_name": "my_project",
   "sub_sub_project_name": "my_project",
-  "jmpy_exe_dir_path_bak": "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python310\\Scripts",
-  "jmpy_exe_dir_path": "E:\\ProgramData\\miniconda3\\envs\\geodjango\\Scripts"
+  "windows_python38_jmpy_exe_dir_path": "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python38\\Scripts",
+  "windows_python39_jmpy_exe_dir_path": "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python39\\Scripts",
+  "windows_python310_jmpy_exe_dir_path": "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python310\\Scripts",
+  "linux_python38_jmpy_exe_dir_path": "/usr/local/python38/bin",
+  "linux_python39_jmpy_exe_dir_path": "/usr/python3/bin",
+  "linux_python310_jmpy_exe_dir_path": "/usr/python310/bin"
 }
 
