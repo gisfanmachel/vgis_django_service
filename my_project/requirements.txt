@@ -23,7 +23,7 @@ PyMuPDF==1.19.0
 frontend==0.0.3
 urllib3==1.26.2
 pycryptodome==3.17
-license_authorize==1.0.4
+license_authorize==1.0.7
 vgis-utils==1.0.10
 vgis-office==1.1.5
 vgis-log==1.0.5
