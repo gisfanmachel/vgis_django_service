@@ -71,6 +71,15 @@ class UserOperator:
         function_title = "用户登录"
         try:
             start = LoggerHelper.set_start_log_info(logger)
+            # 判断用户名存不存在
+            if not AuthUser.objects.filter(username=username).exists():
+                error_message = "账号名不存在，请联系管理员。"
+                res = {
+                    'success': False,
+                    'code': -1,
+                    'message': error_message
+                }
+                return res
             userObject = AuthUser.objects.get(username=username)
             # 账号被锁
             if userObject.login_locked_until and userObject.login_locked_until > timezone.now():
