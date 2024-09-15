@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 @dataclass
 class ResultCodeMsgEnum(Enum):
-    REQUEST_SUCCESS = {"code": 200, "msg": "Request successful"}
+    REQUEST_SUCCESS = {"code": 200, "msg": "请求成功"}
     CREATE_ERROR = {'code': 1000, 'msg': '新增失败'}
 
     OPERATION_ERROR = {'code': 1001, 'msg': '操作失败'}
