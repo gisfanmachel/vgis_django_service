@@ -75,9 +75,20 @@ class Result(dict):
             msg = "更新失败"
             return Result.fail(msg, msg)
 
+
+    
     @staticmethod
-    def list(obj):
-        return Result().code_msg(ResultCodeMsgEnum.REQUEST_SUCCESS).set_obj(obj).__dict__
+    def create_enum(name, values):
+        return Enum(name, values)
+
+    @staticmethod
+    def list(obj, **kwargs):
+        message = ResultCodeMsgEnum.REQUEST_SUCCESS
+        if "message" in kwargs:
+            MyEnum = Result.create_enum('MyEnum', {'LIST_SUCCESS': {"code": 200, "msg": kwargs["message"]}})
+            message = MyEnum.LIST_SUCCESS
+        return Result().code_msg(message).set_obj(obj).__dict__
+
 
     @staticmethod
     def page_list(obj=[], page_count=0):
