@@ -368,3 +368,7 @@ LINUX_LICENSE_PATH = "/home/root/license/django_license.lic"
 
 # 多线程数
 MAX_THREAD_COUNT = 16
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+DEBUG = False
