@@ -26,5 +26,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('', include('my_app.urls'))
+    path('', include('my_app.urls')),
+    path('async_view/', asyncViews.my_view, name='async_view')
 ]
