@@ -27,5 +27,7 @@ urlpatterns = [
     path('docs/', schema_view),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', include('my_app.urls')),
-    path('async_view/', asyncViews.my_view, name='async_view')
+    path('async_view/', asyncViews.my_view, name='async_view'),
+    path('start_task/', celeryViews.start_task, name='start_task'),
+    path('check_task/', celeryViews.check_task, name='check_task'),
 ]
