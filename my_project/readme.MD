@@ -87,6 +87,7 @@
 >* 支持多个model,多个viewer,多个serializer
 >* 可配置多个路由
 >* 增加雪花ID(15位,不超过前端支持的最长数字)
+>* 增加celery异步任务   celery -A my_project worker -l info
 
 ---
 # 5.待优化:
