@@ -372,3 +372,8 @@ MAX_THREAD_COUNT = 16
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 DEBUG = False
+
+# 配置celery异步任务使用的redis cache
+CELERY_BROKER_URL = 'redis://192.168.3.191:6379/0'  # 使用Redis作为消息队列
+CELERY_RESULT_BACKEND = 'redis://192.168.3.191:6379/0'
+CELERY_TIMEZONE = 'Asia/Shanghai'
