@@ -88,6 +88,7 @@
 >* 可配置多个路由
 >* 增加雪花ID(15位,不超过前端支持的最长数字)
 >* 增加celery异步任务   celery -A my_project worker -l info
+>* 增加分页查询
 
 ---
 # 5.待优化:
