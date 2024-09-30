@@ -41,3 +41,5 @@ sequence==0.6.2.2
 chardet==3.0.4
 beautifulsoup4==4.9.3
 pywin32==306
+redis==5.1.0
+celery==5.4.0
