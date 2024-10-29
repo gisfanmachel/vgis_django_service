@@ -88,7 +88,17 @@
 >* 可配置多个路由
 >* 增加雪花ID(15位,不超过前端支持的最长数字)
 >* 增加celery异步任务   celery -A my_project worker -l info
+>* >* 启动
+>** celery -A my_project worker -l info
+>*  监测
+>** celery -A my_project inspect active
+>*  查看
+>** celery -A my_project flower --port=29613
+>** http://192.168.31.39:29613 查看
+>*  停止
+>** celery multi stop w1 -A my_project -l info
 >* 增加分页查询
+>* 增加本地化语言支持(中文，英文等)
 
 ---
 # 5.待优化:

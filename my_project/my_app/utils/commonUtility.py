@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from my_project.my_app.enum.localization_enum import SysInfoEnum
+from my_project.my_project import settings
+
 # python dict对象帮助类
 
 logger = logging.getLogger('django')
@@ -20,6 +23,19 @@ class CommonHelper:
             json_data = request.query_params
         for key, value in json_data.items():
             logger.info("{}:{}".format(key, value))
+
+    @staticmethod
+    def get_local_str(STR_KEY, request):
+        Header_LOCAL_KEY = str("http_" + settings.LOCAL_KEY).upper()
+        # 没有传入local参数或local参数为空，默认为CH
+        if Header_LOCAL_KEY not in request.META:
+            local = "CH"
+        else:
+            local = request.META.get(Header_LOCAL_KEY)
+            if local is None or local == "":
+                local = "CH"
+        return getattr(SysInfoEnum, "{}_{}".format(STR_KEY, local))
+
 
     # @staticmethod
     # # 去掉图片或文档的http头

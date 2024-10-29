@@ -21,8 +21,9 @@ from my_app.models import TtUploadFileData, \
 from my_app.serializers import TtUploadFileDataSerializer, TmDdistrictSerializer
 from my_project.token import ExpiringTokenAuthentication
 
-logger = logging.getLogger('django')
+from my_project.my_app.utils.commonUtility import CommonHelper
 
+logger = logging.getLogger('django')
 
 
 # 业务表单操作实例
@@ -114,7 +115,6 @@ logger = logging.getLogger('django')
 #         return Response(res)
 
 
-
 # 上传文件
 class TtUploadFileDataViewSet(viewsets.ModelViewSet):
     queryset = TtUploadFileData.objects.all().order_by('id')
@@ -154,6 +154,10 @@ class TmDdistrictViewSet(viewsets.ModelViewSet):
     # 获取全国的分地区分省数据
     @action(detail=False, methods=['GET'], url_path='getRegionAndProvince')
     def get_region_and_province(self, request, *args, **kwargsst):
+        # function_title = "获取全国的分地区分省数据"
+        function_title = CommonHelper.get_local_str("GET_REGION_PROVINCE_DATA", request)
+        suceess_flag = CommonHelper.get_local_str("SUCCESS", request)
+        fail_flag = CommonHelper.get_local_str("FAIL", request)
         try:
             query = CommonOperator(connection)
             res = query.get_region_and_province(request)
@@ -161,7 +165,7 @@ class TmDdistrictViewSet(viewsets.ModelViewSet):
         except Exception as exp:
             res = {
                 'success': False,
-                'info': "获取全国的分地区分省数据失败:{}".format(str(exp))
+                'info': "{}{}:{}".format(function_title, fail_flag,str(exp))
             }
             pass
         return Response(res)
