@@ -202,7 +202,7 @@ LOGGING = {
         },
         'db': {
             'class': '{}.log.InterceptTimedRotatingFileHandler'.format(PROJECT_NAME),  # 这个路径看你本地放在哪里
-            'filename': os.path.join(LOG_ROOT, 'myapp_db.log'),、
+            'filename': os.path.join(LOG_ROOT, 'myapp_db.log'),
             # 每天自动归档写新的日志文件
             'when': "D",
             'interval': 1,

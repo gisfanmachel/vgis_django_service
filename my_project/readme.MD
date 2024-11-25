@@ -126,6 +126,8 @@
 > 修改my_app/my_static为项目名称，并做全文替换my_static为新名称
 > 修改settings文件里的数据库配置
 > 修改my_app/urls.py里的my_api为项目api
+> import random
+> ''.join([random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
 
 ---
 # 8.vgis库更新
