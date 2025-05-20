@@ -123,7 +123,7 @@
  
 ---
 # 7.项目定制
-> 修改my_app/my_static为项目名称，并做全文替换my_static为新名称
+> 修改my_app/my_static为项目名称，并做全文替换my_static为新名称,settings.py里的debug=True
 > 修改settings文件里的数据库配置
 > 修改my_app/urls.py里的my_api为项目api
 > import random

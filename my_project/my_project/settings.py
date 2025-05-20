@@ -371,7 +371,9 @@ MAX_THREAD_COUNT = 16
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-DEBUG = False
+# 调试时打开，部署时关闭
+# 打开后可以通过url访问static内的静态资源
+DEBUG = True
 
 # 配置celery异步任务使用的redis cache
 CELERY_BROKER_URL = 'redis://192.168.3.191:6379/0'  # 使用Redis作为消息队列
