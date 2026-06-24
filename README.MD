@@ -44,11 +44,21 @@
 > 命令行方式
 > waitress-serve --port=10876--host=0.0.0.0 --threads=8 my_project.wsgi:application
 > 启动后会在后台产生一个waitress进程
+
+>Daphne (ASGI, 需要WebSocket)
+daphne -b 0.0.0.0 -p 10846 django_project.asgi:application
+
+>多环境配置切换
+python manage.py runserver 0.0.0.0:10846 --settings=django_project.dev.settings
+python manage.py runserver 0.0.0.0:10846 --settings=django_project.pro.settings
+
+
 > 
 > nginx方式
 > 启动多个django服务(不同的端口)
 > 然后通过nginx进行负载均衡
 ---
+
 
 # 3.定制说明
 
