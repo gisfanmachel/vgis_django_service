@@ -22,25 +22,27 @@ from my_project.utils import TimeUtil
 
 
 def get_AUTH_TOKEN_AGE():
-    obj = SysParam.objects.get(param_en_key='AUTH_TOKEN_AGE')
-    if obj is not None:
+    # 注意：SysParam.objects.get() 查不到会抛 DoesNotExist，
+    #      不能用 obj is not None 兜底，必须 try/except 才能走到默认值
+    try:
+        obj = SysParam.objects.get(param_en_key='AUTH_TOKEN_AGE')
         return int(obj.param_value)
-    else:
-        return 10800
+    except SysParam.DoesNotExist:
+        return AUTH_TOKEN_AGE
 
 
 def get_TOKEN_KEY():
-    obj = SysParam.objects.get(param_en_key='TOKEN_KEY')
-    if obj is not None:
+    try:
+        obj = SysParam.objects.get(param_en_key='TOKEN_KEY')
         return obj.param_value
-    else:
-        return 'Authorization'
+    except SysParam.DoesNotExist:
+        return TOKEN_KEY
 
 def get_TOKEN_USE_CACHE():
-    obj = SysParam.objects.get(param_en_key='TOKEN_USE_CACHE')
-    if obj is not None:
+    try:
+        obj = SysParam.objects.get(param_en_key='TOKEN_USE_CACHE')
         return True if obj.param_value == "是" else False
-    else:
+    except SysParam.DoesNotExist:
         return False
 
 

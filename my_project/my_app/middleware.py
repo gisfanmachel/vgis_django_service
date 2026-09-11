@@ -7,26 +7,15 @@
 # @Desc    ：中间件
 # @Software: PyCharm
 
-import base64
-import binascii
 import json
+import logging
 
-from Crypto.Cipher import AES
-from Crypto.Cipher import PKCS1_v1_5
-from Crypto.PublicKey import RSA
-from Crypto.Util.Padding import pad
-from cryptography.fernet import Fernet
 from django.http import HttpResponse
 from django.utils.deprecation import MiddlewareMixin
-from vgis_utils.vgis_string.stringTools import StringHelper
-from vgis_encrption.encrptionTools import AESEncryption, RSAEncryption, FernetEncryption, StringHexMutualConvertion
+from vgis_encrption.encrptionTools import StringHexMutualConvertion
 
 from my_app.models import SysParam
 from my_app.utils.encryptionUtility import encryptionHelper
-from my_project import settings
-import logging
-
-from my_project.settings import ENCRPTION
 
 logger = logging.getLogger('django')
 
@@ -62,10 +51,11 @@ class EncryptionMiddleware:
         pass
 
     def get_IS_ENCRYPTION(self):
-        obj = SysParam.objects.get(param_en_key='IS_ENCRYPTION')
-        if obj is not None:
+        # SysParam.objects.get() 查不到会抛 DoesNotExist，必须 try/except
+        try:
+            obj = SysParam.objects.get(param_en_key='IS_ENCRYPTION')
             return True if obj.param_value == "是" else False
-        else:
+        except SysParam.DoesNotExist:
             return False
 
     def __call__(self, request):

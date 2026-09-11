@@ -6,18 +6,28 @@ from typing import Optional
 
 from rest_framework.response import Response
 
+from my_app.enum.localization_enum import SysInfoEnum
 
+
+# 统一的返回码和消息枚举类
+# 约定：需要国际化的消息一律引用 SysInfoEnum，并成对提供 _EN 变体，
+#       由 Result.xxx(localization="EN") 选择。
 @dataclass
 class ResultCodeMsgEnum(Enum):
-    REQUEST_SUCCESS = {"code": 200, "msg": "请求成功"}
-    CREATE_ERROR = {'code': 1000, 'msg': '新增失败'}
+    REQUEST_SUCCESS = {"code": 200, "msg": SysInfoEnum.REQUEST_SUCCESS_CH}
+    REQUEST_SUCCESS_EN = {"code": 200, "msg": SysInfoEnum.REQUEST_SUCCESS_EN}
 
-    OPERATION_ERROR = {'code': 1001, 'msg': '操作失败'}
+    CREATE_ERROR = {'code': 1000, 'msg': SysInfoEnum.ADD_FAIL_CH}
+    CREATE_ERROR_EN = {'code': 1000, 'msg': SysInfoEnum.ADD_FAIL_EN}
 
-    ID_IS_A_MUST = {'code': 1002, 'msg': 'ID是必传参数'}
-    # Add more enums as needed
+    OPERATION_ERROR = {'code': 1001, 'msg': SysInfoEnum.OPERATE_FAIL_CH}
+    OPERATION_ERROR_EN = {'code': 1001, 'msg': SysInfoEnum.OPERATE_FAIL_EN}
+
+    ID_IS_A_MUST = {'code': 1002, 'msg': SysInfoEnum.ID_MUST_CH}
+    ID_IS_A_MUST_EN = {'code': 1002, 'msg': SysInfoEnum.ID_MUST_EN}
 
 
+# 分页结果类
 @dataclass
 class PageResult(dict):
     count: Optional[int] = None
@@ -40,8 +50,10 @@ class Result(dict):
     obj: Optional[any] = None
 
     @staticmethod
-    def ok():
-        return Response(Result().code_msg(ResultCodeMsgEnum.REQUEST_SUCCESS).__dict__)
+    def ok(localization=None):
+        success_msg = ResultCodeMsgEnum.REQUEST_SUCCESS_EN if localization == "EN" \
+            else ResultCodeMsgEnum.REQUEST_SUCCESS
+        return Response(Result().code_msg(success_msg).__dict__)
 
     @staticmethod
     def cres_ures(cres, id_name=None):
@@ -75,8 +87,6 @@ class Result(dict):
             msg = "更新失败"
             return Result.fail(msg, msg)
 
-
-    
     @staticmethod
     def create_enum(name, values):
         return Enum(name, values)
@@ -84,19 +94,23 @@ class Result(dict):
     @staticmethod
     def list(obj, **kwargs):
         message = ResultCodeMsgEnum.REQUEST_SUCCESS
+        if kwargs.get("localization") == "EN":
+            message = ResultCodeMsgEnum.REQUEST_SUCCESS_EN
         if "message" in kwargs:
             MyEnum = Result.create_enum('MyEnum', {'LIST_SUCCESS': {"code": 200, "msg": kwargs["message"]}})
             message = MyEnum.LIST_SUCCESS
         return Result().code_msg(message).set_obj(obj).__dict__
 
-
     @staticmethod
-    def page_list(obj=[], page_count=0):
+    def page_list(obj=[], page_count=0, **kwargs):
         if obj == 0:
             obj = []
         pageResult = PageResult()
         pageResult.set_count_result(page_count, obj)
-        return Result().code_msg(ResultCodeMsgEnum.REQUEST_SUCCESS).set_obj(pageResult.__dict__).__dict__
+        req_success = ResultCodeMsgEnum.REQUEST_SUCCESS
+        if kwargs.get("localization") == "EN":
+            req_success = ResultCodeMsgEnum.REQUEST_SUCCESS_EN
+        return Result().code_msg(req_success).set_obj(pageResult.__dict__).__dict__
 
     @staticmethod
     def list_response(response):
@@ -105,14 +119,19 @@ class Result(dict):
         return Response(res)
 
     @staticmethod
-    def fail(msg, obj):
+    def fail(msg, obj=None, **kwargs):
+        op_fail = ResultCodeMsgEnum.OPERATION_ERROR
+        if kwargs.get("localization") == "EN":
+            op_fail = ResultCodeMsgEnum.OPERATION_ERROR_EN
         if isinstance(obj, str):
             obj = json.dumps(obj)
+        if obj is None:
+            obj = json.dumps(msg)
         return Response(Result()
                         .set_success(False)
                         .set_msg(msg)
-                        .set_obj(json.loads(obj))
-                        .set_code(ResultCodeMsgEnum.OPERATION_ERROR.value['code'])
+                        .set_obj(json.loads(obj) if isinstance(obj, str) else obj)
+                        .set_code(op_fail.value['code'])
                         .__dict__)
 
     @staticmethod
@@ -150,7 +169,6 @@ class Result(dict):
 
     @staticmethod
     def fail_dick(resultCodeMsgEnum, obj):
-
         return Result().set_success(False).set_msg(resultCodeMsgEnum.value['msg']).set_code(
             resultCodeMsgEnum.value['code']).set_obj(obj)
 
@@ -173,10 +191,6 @@ class Result(dict):
 
     def set_msg(self, msg):
         self.msg = msg
-        return self
-
-    def set_obj(self, obj):
-        self.obj = obj
         return self
 
     def set_success(self, success):

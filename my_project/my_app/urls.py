@@ -14,7 +14,7 @@ from my_app.views.userViews import UserViewSet
 from my_app.views.businessViews import TtUploadFileDataViewSet, TmDdistrictViewSet
 from my_app.views.sysViews import SysConfigViewSet, SysDepartmentViewSet, SysLogViewSet, SysMenuViewSet, \
     SysOssViewSet, SysRoleViewSet, SysRoleMenuViewSet, SysUserViewSet, SysUserRoleViewSet, SysUserTokenViewSet, \
-    AuthUserViewSet, SysDictViewSet, SysMessageViewSet, SysParamViewSet
+    AuthUserViewSet, SysDictViewSet, SysMessageViewSet, SysParamViewSet, TtUserpassQuestionViewSet
 
 router = DefaultRouter()
 # 用户表（已废弃）路由器
@@ -49,6 +49,8 @@ router.register(r'sysMessage', SysMessageViewSet, basename='sysMessage')
 router.register(r'sysParam', SysParamViewSet, basename='sysParam')
 # 上传文件表由器
 router.register(r'ttUploadFileData', TtUploadFileDataViewSet, basename='ttUploadFileData')
+# 忘记密码的密保问题由器（登录前可访问）
+router.register(r'ttUserpassQuestion', TtUserpassQuestionViewSet, basename='ttUserpassQuestion')
 # 行政区划表由器
 router.register(r'tmDdistrict', TmDdistrictViewSet, basename='tmDdistrict')
 

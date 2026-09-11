@@ -336,9 +336,32 @@ class WorldBorder(models.Model):
     mpoly = models.MultiPolygonField()
     # Returns the string representation of the model.
     class Meta:
-        app_label = 't231_app'
         managed = False
         db_table = 'tm_world_border'
+
+
+# 忘记密码-密保问题表
+class TtUserpassQuestion(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    question = models.CharField(max_length=10000, db_comment="找回密码的问题")
+
+    class Meta:
+        managed = False
+        db_table = 'tt_userpass_question'
+        db_table_comment = '用户密保问题表'
+
+
+# 忘记密码-一次性重置令牌表
+class TtRetrivepassToken(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    key = models.CharField(max_length=1000, db_comment="一次性重置密码的key")
+    user_id = models.BigIntegerField(blank=True, null=True, db_comment="用户id")
+    create_time = models.DateTimeField(null=True, blank=True, db_comment='创建时间')
+
+    class Meta:
+        managed = False
+        db_table = 'tt_retrivepass_token'
+        db_table_comment = '密码找回令牌表'
 
 
 class SysParam(models.Model):

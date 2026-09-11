@@ -21,7 +21,7 @@ from my_app.models import TtUploadFileData, \
 from my_app.serializers import TtUploadFileDataSerializer, TmDdistrictSerializer
 from my_project.token import ExpiringTokenAuthentication
 
-from my_project.my_app.utils.commonUtility import CommonHelper
+from my_app.utils.commonUtility import CommonHelper
 
 logger = logging.getLogger('django')
 

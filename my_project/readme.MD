@@ -98,7 +98,12 @@
 >*  停止
 >** celery multi stop w1 -A my_project -l info
 >* 增加分页查询
->* 增加本地化语言支持(中文，英文等)
+>* 增加本地化语言支持(中文，英文等)：`my_app/enum/localization_enum.py` 为 CH/EN 成对的中英文字典，
+>  请求头带 `Localization: CH / EN` 即可切换提示语；`CommonHelper.get_local_str(KEY, request)`
+>* 增加统一的 ViewSet 基类 `my_app/views/custom.py::CustomModelViewSet`，
+>  把 list/retrieve/destroy 的返回收敛成 Result 结构并自动按语言返回提示
+>* 增加忘记密码（密保问题验证 + 一次性 userkey 重置密码）接口
+>* 增加跨系统免登（A 系统登录后的 token 直接在 B 系统换登录态）与 token 有效性校验接口
 
 ---
 # 5.待优化:
@@ -126,10 +131,43 @@
 > 修改my_app/my_static为项目名称，并做全文替换my_static为新名称,settings.py里的debug=True
 > 修改settings文件里的数据库配置
 > 修改my_app/urls.py里的my_api为项目api
+> 修改settings.py里的SECRET_KEY
 > import random
 > ''.join([random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
 
 ---
-# 8.vgis库更新
+# 8.新建项目后的检查清单
+> 按顺序过一遍，前 3 条是历史遗留的"开箱即炸"项，模板已修复，派生项目若从旧版本拷贝需自查：
+
+1. `my_project/urls.py` 里不要留未 import 的视图引用（曾出现过 `asyncViews` / `celeryViews` 直接写进 urlpatterns）
+2. 全文搜索 `my_project.my_app` / `my_project.my_project`，这类错误 import 前缀会让服务起不来
+3. `my_project/customPageNumberPagination.py` 必须是真正的分页类
+   （`settings.REST_FRAMEWORK.DEFAULT_PAGINATION_CLASS` 指向它，缺失则所有默认分页接口报错）
+4. `my_app/models.py` 里 `managed = False` 的模型不要写 `app_label`（指到不存在的 app 会让 `manage.py check` 失败）
+5. `settings.py` 里 `DEBUG` 只定义一次
+6. 项目级业务常量统一提到 settings（参考 `PAGE_MAX_SIZE` / `REC_MAX_BYTES`），不要散落在 manager 里
+
+## 8.1 使用"忘记密码"功能需要数据库满足
+> `auth_user` 表需有 `userpass_question` / `userpass_answer` 两列（模型里未声明这两列，
+> 由 `SysmanHelper.retrieve_password` 直接 SQL 读取，避免影响已有库）
+> 需新建 `tt_userpass_question`（密保问题字典）和 `tt_retrivepass_token`（一次性重置令牌）两张表
+> 不需要该功能时，删掉 `my_app/urls.py` 里的 `ttUserpassQuestion` 路由和 userViews 里对应的 action 即可
+
+## 8.2 多语言提示语的新增约定与自检
+> `localization_enum.py` 里每条提示必须是 `<KEY>_CH` / `<KEY>_EN` 成对出现，
+> 缺一个就会在运行期 `AttributeError`。
+> 新增提示语后跑一次自检脚本（校验 CH/EN 配对 + 代码引用的 key 是否都已定义）：
+> ```
+> python my_app/tools/check_localization_keys.py
+> ```
+> 全部通过时退出码为 0，可接入 CI 或提交前钩子。
+>
+> 业务代码里取提示语的三种方式：
+> - `CommonHelper.get_local_str("KEY", request)` —— ViewSet 里按请求头自动选语言
+> - `CommonHelper.get_local_str2("KEY", local)` —— manager 层已拿到 local（CH/EN）时
+> - `Result.fail(msg, msg, localization=CommonHelper.get_local_flag(request))` —— 统一响应体
+
+---
+# 9.vgis库更新
 > pip install --upgrade vgis_utils vgis-office vgis-log vgis-database vgis-code vgis-ai vgis-encrption license_authorize -i https://pypi.python.org/simple/
 

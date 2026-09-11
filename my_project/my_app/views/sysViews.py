@@ -15,7 +15,7 @@ from django.db import connection
 from loguru import logger
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from vgis_log.logTools import LoggerHelper
 from vgis_utils.vgis_http.httpTools import HttpHelper
@@ -23,10 +23,10 @@ from vgis_utils.vgis_http.httpTools import HttpHelper
 from my_app.manage.sysManager import SysOperator
 from my_app.manage.userManager import UserOperator
 from my_app.models import SysConfig, SysDepartment, SysLog, SysMenu, SysOss, SysRole, SysRoleMenu, SysUser, \
-    SysUserRole, SysUserToken, AuthUser, SysParam
+    SysUserRole, SysUserToken, AuthUser, SysParam, TtUserpassQuestion
 from my_app.serializers import SysConfigSerializer, SysDepartmentSerializer, SysLogSerializer, SysMenuSerializer, \
     SysOssSerializer, SysRoleSerializer, SysRoleMenuSerializer, SysUserSerializer, SysUserRoleSerializer, \
-    SysUserTokenSerializer, AuthUserSerializer, SysParamSerializer
+    SysUserTokenSerializer, AuthUserSerializer, SysParamSerializer, TtUserpassQuestionSerializer
 from my_app.utils.passwordUtility import PasswordHelper
 from my_app.utils.snowflake_id_util import SnowflakeIDUtil
 from my_app.utils.sysmanUtility import SysmanHelper
@@ -895,3 +895,11 @@ class SysParamViewSet(viewsets.ModelViewSet):
 
         return Response(res)
 
+
+
+# 忘记密码的密保问题（登录前要能拉取，因此 AllowAny 且不做 token 认证）
+class TtUserpassQuestionViewSet(viewsets.ModelViewSet):
+    queryset = TtUserpassQuestion.objects.all().order_by('id')
+    serializer_class = TtUserpassQuestionSerializer
+    permission_classes = (AllowAny,)
+    # 刻意不配 authentication_classes：登录前需要拉取密保问题

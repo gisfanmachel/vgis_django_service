@@ -7,6 +7,7 @@
 # @Desc    ：置信度系统的业务处理类
 # @Software: PyCharm
 
+import datetime
 import io
 import logging
 import random
@@ -22,6 +23,7 @@ from vgis_utils.vgis_datetime.datetimeTools import DateTimeHelper
 # 用户相关操作类
 from my_app.apps import MyAppConfig
 from my_app.models import AuthUser, SysLog, SysParam
+from my_app.utils.commonUtility import CommonHelper
 from my_app.utils.sysmanUtility import SysmanHelper
 from my_project import settings
 from my_project.settings import IS_USE_VERIFICATION_CODE
@@ -35,17 +37,19 @@ class UserOperator:
 
 
     def get_LOGIN_LOCKED_TIME(self):
-        obj = SysParam.objects.get(param_en_key='LOGIN_LOCKED_TIME')
-        if obj is not None:
+        # 注意：SysParam.objects.get() 查不到会抛 DoesNotExist，
+        #      不能用 obj is not None 兜底，必须 try/except
+        try:
+            obj = SysParam.objects.get(param_en_key='LOGIN_LOCKED_TIME')
             return int(obj.param_value)
-        else:
+        except SysParam.DoesNotExist:
             return 600
 
     def get_LOGIN_ERROR_ATTEMPTS(self):
-        obj = SysParam.objects.get(param_en_key='LOGIN_ERROR_ATTEMPTS')
-        if obj is not None:
+        try:
+            obj = SysParam.objects.get(param_en_key='LOGIN_ERROR_ATTEMPTS')
             return int(obj.param_value)
-        else:
+        except SysParam.DoesNotExist:
             return 4
 
     def return_is_use_verification_code(self,request):
@@ -59,10 +63,10 @@ class UserOperator:
 
 
     def get_is_use_verification_code(self):
-        obj = SysParam.objects.get(param_en_key='IS_USE_VERIFICATION_CODE')
-        if obj is not None:
-            return True if obj.param_value=="是" else False
-        else:
+        try:
+            obj = SysParam.objects.get(param_en_key='IS_USE_VERIFICATION_CODE')
+            return True if obj.param_value == "是" else False
+        except SysParam.DoesNotExist:
             return False
     # 登录
     # 通过用户名和密码登录
@@ -167,16 +171,22 @@ class UserOperator:
         finally:
             return res
 
-    # 获取用户详情
-    def get_details(self, request, user_id):
-        function_title = "获取用户详情"
-        start = LoggerHelper.set_start_log_info(logger)
+    # 获取用户详情（姓名/部门/角色/菜单）
+    # 返回 (user_info, res)，user_info 为 None 表示查询失败
+    def get_user_info(self, request, start, function_title, user_id, user_name):
+        sys_department_table = "sys_department"
+        sys_user_role_table = "sys_user_role"
+        sys_role_table = "sys_role"
+        sys_menu_table = "sys_menu"
+        sys_role_menu_table = "sys_role_menu"
+        logClass = SysLog
+        user_info = None
         res = ""
         try:
             user_info = {}
             # 获取获取用户姓名，部门
-            sql = "select tablea.username,tablea.fullname,tableb.department_name from auth_user tablea "
-            sql += " left join sys_department tableb on tablea.department_id=tableb.department_id"
+            sql = "select tablea.username,tablea.fullname,tablea.department_id,tableb.department_name from auth_user tablea "
+            sql += " left join {} tableb on tablea.department_id=tableb.department_id".format(sys_department_table)
             sql += " where tablea.id={}".format(user_id)
             cursor = self.connection.cursor()
             cursor.execute(sql)
@@ -185,11 +195,12 @@ class UserOperator:
                 user_info["userid"] = user_id
                 user_info["username"] = record[0]
                 user_info["fullname"] = record[1]
-                user_info["department_name"] = record[2]
+                user_info["department_id"] = record[2]
+                user_info["department_name"] = record[3]
 
             # --获取用户的角色（多个）
-            sql = "select distinct tablec.role_name, tablec.role_id from sys_role tablec "
-            sql += " left join  sys_user_role tabled on tablec.role_id = tabled.role_id"
+            sql = "select distinct tablec.role_name, tablec.role_id from {} tablec ".format(sys_role_table)
+            sql += " left join  {} tabled on tablec.role_id = tabled.role_id".format(sys_user_role_table)
             sql += " where tabled.user_id ={}".format(user_id)
             cursor.execute(sql)
             records = cursor.fetchall()
@@ -204,15 +215,13 @@ class UserOperator:
             user_info["role_list"] = role_list
 
             # --根据角色获取可访问数据权限和菜单权限
-            data_list = []
             menu_list = []
             if len(role_ids) > 0:
                 sql = "select distinct tablee.menu_id,tablee.parent_id, tablee.name, tablee.url,tablee.type,tablee.icon,tablee.order_num,tablee.is_show"
-                sql += " from sys_menu tablee"
-                sql += " left join sys_role_menu tablef on tablee.menu_id = tablef.menu_id"
+                sql += " from {} tablee".format(sys_menu_table)
+                sql += " left join {} tablef on tablee.menu_id = tablef.menu_id".format(sys_role_menu_table)
                 sql += " where tablef.role_id in ({})".format(','.join([str(i) for i in role_ids]))
                 sql += " and tablee.is_show='Y'"
-                # sql += " and (tablee.icon='data' or  tablee.icon='menu')"
                 sql += " order by tablee.order_num"
                 cursor.execute(sql)
                 records = cursor.fetchall()
@@ -220,30 +229,129 @@ class UserOperator:
                 for record in records:
                     if record[0] not in menu_id_list:
                         menu_id_list.append(record[0])
-                        # if record[2] == "data":
-                        #     data_list.append({"data_type": record[1]})
-                        # if record[2] == "menu":
                         menu_list.append(
                             {"menu_id": record[0], "parent_id": record[1], "name": record[2], "url": record[3],
                              "type": record[4], "icon": record[5], "order_num": record[6],
                              "is_show": record[7]})
-            # user_info["data_list"] = data_list
             user_info["menu_list"] = menu_list
 
-            res = {
-                'success': True,
-                'message': user_info
-            }
-            LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, request.auth.user,
+            LoggerHelper.set_end_log_info(logClass, logger, start, request.path, user_name,
                                           request,
                                           function_title)
 
         except Exception as exp:
-            res = LoggerHelper.set_end_log_info_in_exception(SysLog, logger, start, request.path,
-                                                             request.auth.user, request,
+            res = LoggerHelper.set_end_log_info_in_exception(logClass, logger, start, request.path,
+                                                             user_name, request,
                                                              function_title, None, exp)
+            user_info = None
         finally:
-            return res
+            return user_info, res
+
+    # 获取用户详情
+    def get_details(self, request, user_id):
+        function_title = CommonHelper.get_local_str("GET_USER_DETAILS", request)
+        start = LoggerHelper.set_start_log_info(logger)
+        user_info, res = self.get_user_info(request, start, function_title, user_id, request.auth.user)
+        if user_info is not None:
+            res = {
+                'success': True,
+                'message': user_info
+            }
+        return res
+
+    # 获取认证Token的有效期（单位：秒）
+    def get_AUTH_TOKEN_AGE(self):
+        try:
+            obj = SysParam.objects.get(param_en_key='AUTH_TOKEN_AGE')
+            return int(obj.param_value)
+        except SysParam.DoesNotExist:
+            return settings.AUTH_TOKEN_AGE
+
+    # 校验一个token是否已过期
+    def _check_token_expired(self, token_obj):
+        now = int(DateTimeHelper.string2time_stamp(str(datetime.datetime.now())))
+        token_created = int(DateTimeHelper.string2time_stamp(str(token_obj.created)))
+        return now - token_created > self.get_AUTH_TOKEN_AGE()
+
+    # 通过已存在的token直接登录（A系统登录后免登B系统）
+    def login_with_token(self, request, token_value, Token):
+        function_title = CommonHelper.get_local_str("LOGIN_BY_TOKEN", request)
+        start = LoggerHelper.set_start_log_info(logger)
+        user = request.user
+        old_token = Token.objects.filter(key=token_value)
+        if len(old_token) > 0:
+            user = old_token[0].user
+            if self._check_token_expired(old_token[0]):
+                res = {
+                    'success': False,
+                    'code': -1,
+                    'message': CommonHelper.get_local_str("TOKEN_EXPIRED", request)
+                }
+            else:
+                res = {
+                    'success': True,
+                    'code': 0,
+                    'message': CommonHelper.get_local_str("TOKEN_LOGIN_SUCCESS", request),
+                    "userid": user.id,
+                    "username": user.username,
+                    "token": token_value
+                }
+        else:
+            res = {
+                'success': False,
+                'code': -1,
+                'message': CommonHelper.get_local_str("TOKEN_NOT_EXIST", request)
+            }
+        LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, user, request, function_title)
+        return res
+
+    # 验证token是否过期
+    def is_token_expired(self, request, token_value, Token):
+        function_title = CommonHelper.get_local_str("VERIFY_TOKEN_EXPIRED", request)
+        start = LoggerHelper.set_start_log_info(logger)
+        user = request.user
+        old_token = Token.objects.filter(key=token_value)
+        if len(old_token) > 0:
+            res = {
+                'success': True,
+                'message': CommonHelper.get_local_str("SUCCESS_SUFFIX", request).format(function_title),
+                "is_token_expired": self._check_token_expired(old_token[0])
+            }
+        else:
+            res = {
+                'success': False,
+                'message': CommonHelper.get_local_str("FAIL_SUFFIX", request).format(function_title),
+            }
+        LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, user, request, function_title)
+        return res
+
+    # 通过用户token获取用户信息
+    def get_userinfo_by_token(self, request, token_value, Token):
+        function_title = CommonHelper.get_local_str("GET_USER_INFO_BY_TOKEN", request)
+        start = LoggerHelper.set_start_log_info(logger)
+        user = request.user
+        old_token = Token.objects.filter(key=token_value)
+        if len(old_token) > 0:
+            user = old_token[0].user
+            user_id = user.id
+            user_name = user.username
+            res = {
+                'success': True,
+                'message': CommonHelper.get_local_str("SUCCESS_SUFFIX", request).format(function_title),
+                "userid": user_id,
+                "username": user_name
+            }
+            # 只有显式传了 user_scope 才回带角色/菜单，避免每次登录都多查三张表
+            if "user_scope" in request.data:
+                user_info, res2 = self.get_user_info(request, start, function_title, user_id, user_name)
+                res["user_info"] = user_info
+        else:
+            res = {
+                'success': False,
+                'message': CommonHelper.get_local_str("FAIL_SUFFIX", request).format(function_title),
+            }
+        LoggerHelper.set_end_log_info(SysLog, logger, start, request.path, user, request, function_title)
+        return res
 
     # 退出
     def logout(self, request, Token, user_id, auth):

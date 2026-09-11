@@ -14,7 +14,7 @@
 from rest_framework import serializers
 from my_app.models import AuthUser, TtUploadFileData, SysConfig, SysDepartment, SysLog, SysMenu, SysOss, SysRole, \
     SysRoleMenu, SysUser, \
-    SysUserRole, SysUserToken, TmDdistrict, SysParam, SysDict, SysMessage
+    SysUserRole, SysUserToken, TmDdistrict, SysParam, SysDict, SysMessage, TtUserpassQuestion, TtRetrivepassToken
 
 
 # 用户信息表序列化器
@@ -121,4 +121,18 @@ class SysDictSerializer(serializers.ModelSerializer):
 class SysMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = SysMessage
+        fields = "__all__"
+
+
+# 忘记密码-密保问题序列器
+class TtUserpassQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TtUserpassQuestion
+        fields = "__all__"
+
+
+# 忘记密码-重置令牌序列器
+class TtRetrivepassTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TtRetrivepassToken
         fields = "__all__"

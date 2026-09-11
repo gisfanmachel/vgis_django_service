@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 from django.contrib import auth
 from django.db import connection
@@ -12,11 +13,15 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from my_app.manage.userManager import UserOperator
-from my_app.models import AuthUser
+from my_app.models import AuthUser, SysLog
 from my_app.serializers import AuthUserSerializer
 import datetime
+from vgis_log.logTools import LoggerHelper
 from vgis_utils.vgis_datetime.datetimeTools import DateTimeHelper
+from vgis_utils.vgis_http.httpTools import HttpHelper
 
+from my_app.utils.commonUtility import CommonHelper
+from my_app.utils.sysmanUtility import SysmanHelper
 from my_project.settings import AUTH_TOKEN_AGE, LINUX_LICENSE_PATH, WINDOWS_LICENSE_PATH
 
 '''
@@ -143,12 +148,63 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 
-    # 身份认证，传入单点登录的token
+    # 身份认证，传入A系统登录后的token，自动登录B系统
     @action(detail=False, methods=['POST'], url_path='loginByToken')
     def login_by_token(self, request, *args, **kwargs):
-        ssoToken = request.data.get('ssoToken')
-        userOperator = UserOperator()
-        res = userOperator.login_by_token(request, ssoToken, auth, Token)
+        token_value = request.data.get('token')
+        userOperator = UserOperator(connection)
+        res = userOperator.login_with_token(request, token_value, Token)
+        return Response(res)
+
+    # 验证token是否有效（含是否过期）
+    @action(detail=False, methods=['POST'], url_path='isTokenExpired')
+    def is_token_expired(self, request, *args, **kwargs):
+        token_value = request.data.get('token')
+        userOperator = UserOperator(connection)
+        res = userOperator.is_token_expired(request, token_value, Token)
+        return Response(res)
+
+    # 通过token获取用户信息
+    @action(detail=False, methods=['POST'], url_path='getUseInfoByToken')
+    def get_userinfo_by_token(self, request, *args, **kwargs):
+        token_value = request.data.get('token')
+        userOperator = UserOperator(connection)
+        res = userOperator.get_userinfo_by_token(request, token_value, Token)
+        return Response(res)
+
+    # 找回密码--密保问题验证，通过后下发一次性 userkey
+    @action(detail=False, methods=['POST'], url_path='retrieve_password')
+    def retrieve_password(self, request):
+        start = time.perf_counter()
+        username = request.data['username']
+        userpass_question = request.data['userpass_question']
+        userpass_answer = request.data['userpass_answer']
+        res = SysmanHelper.retrieve_password(username, userpass_question, userpass_answer, connection,
+                                             CommonHelper.get_local_flag(request))
+        end = time.perf_counter()
+        t = end - start
+        LoggerHelper.insert_log_info(SysLog, username, "密保问题验证",
+                                     request.path,
+                                     HttpHelper.get_params_request(request),
+                                     t, HttpHelper.get_ip_request(request))
+        return Response(res)
+
+    # 重置密码--用一次性 userkey 改密码
+    @action(detail=False, methods=['POST'], url_path='reset_password')
+    def reset_password(self, request):
+        start = time.perf_counter()
+        userid = request.data['userid']
+        userkey = request.data['userkey']
+        userpass = request.data['userpass']
+        res = SysmanHelper.reset_password(userid, userkey, userpass, connection,
+                                          CommonHelper.get_local_flag(request))
+        end = time.perf_counter()
+        t = end - start
+        username = AuthUser.objects.get(id=userid).username
+        LoggerHelper.insert_log_info(SysLog, username, "重置密码",
+                                     request.path,
+                                     HttpHelper.get_params_request(request),
+                                     t, HttpHelper.get_ip_request(request))
         return Response(res)
 
     # # 退出登录

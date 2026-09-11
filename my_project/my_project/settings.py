@@ -116,6 +116,7 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
     'Pragma',
+    'Localization',  # 支持跨域的 header 里赋 Localization（多语言）
 )
 
 REST_FRAMEWORK = {
@@ -354,6 +355,15 @@ LOGIN_LOCKED_TIME = 10 * 60
 # Token的key
 TOKEN_KEY = 'Authorization'
 
+# 本地化的key,不能太长（请求头里带 Localization: CH / EN）
+LOCAL_KEY = 'Localization'
+
+# 分页每页最大条数
+PAGE_MAX_SIZE = 200
+
+# TOKEN是否用缓存
+TOKEN_USE_CACHE = False
+
 # 加密相关信息
 ENCRPTION = {
     "key1": "uNl-LfGm6NKDQ1Uz9azZIEEzYnaLz68gz0UzaQvYFIY=",
@@ -373,7 +383,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # 调试时打开，部署时关闭
 # 打开后可以通过url访问static内的静态资源
-DEBUG = True
+# 注意：DEBUG 已在文件开头定义，这里不要再重复定义
 
 # 配置celery异步任务使用的redis cache
 CELERY_BROKER_URL = 'redis://192.168.3.191:6379/0'  # 使用Redis作为消息队列
