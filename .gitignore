@@ -1,0 +1,52 @@
+# ============================================================
+# VGIS Django 框架仓库通用忽略规则
+# 说明：my_project / tcp_server / web_socket 三个服务各自独立部署，
+#       运行时会在各自目录下生成 logs/ 与 static/upload/，一律不入库。
+# ============================================================
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ---- 虚拟环境 ----
+venv/
+.venv/
+env/
+ENV/
+
+# ---- IDE / 编辑器 ----
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# ---- 运行时产物（三个服务通用）----
+logs/
+log/
+*.log
+*.log.*
+# 上传目录（config.UPLOAD_FOLDER = static/upload）
+# 注意：带中间斜杠的 pattern 会被锚定到仓库根，必须加 **/ 才能匹配到 tcp_server/、web_socket/ 下的同名目录
+**/static/upload/
+# Django 静态资源上传目录
+my_project/my_static/upload/
+
+# ---- 测试 / 类型检查缓存 ----
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ---- 操作系统 ----
+.DS_Store
+Thumbs.db
+desktop.ini
