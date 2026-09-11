@@ -1,0 +1,4 @@
+websockets==14.2
+psycopg2-binary==2.9.9
+concurrent-log-handler==0.9.28
+toollib==1.2.5
