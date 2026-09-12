@@ -494,6 +494,28 @@ class SysOperator:
         finally:
             return res
 
+    @staticmethod
+    def replace_between(text, start_marker, end_marker, replacement="******"):
+        """
+        把 text 中 start_marker 与 end_marker 之间的内容替换为 replacement。
+        用于日志脱敏，例如把登录参数里的密码打码：
+            "a=1&password=xx&verifcation=y" -> "a=1&password=******&verifcation=y"
+
+        注意：sys_search_log 一直在调用本方法，但历史上**从未定义**，
+        导致日志列表接口一旦遇到 method 含 "login" 的记录就整个查询失败。
+        这里补上实现。任一标记找不到时原样返回，不抛异常。
+        """
+        if not text:
+            return text
+        start = text.find(start_marker)
+        if start == -1:
+            return text
+        start += len(start_marker)
+        end = text.find(end_marker, start)
+        if end == -1:
+            return text
+        return text[:start] + replacement + text[end:]
+
     def get_max_id(self, tablename):
         sql = "select max(id) from {}".format(tablename)
         cursor = self.connection.cursor()

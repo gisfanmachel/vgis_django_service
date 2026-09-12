@@ -29,9 +29,6 @@ urlpatterns = [
     path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', include('my_app.urls')),
-    # 如需暴露异步/Celery 测试接口，先 import 对应视图模块再放开下面三行：
-    # from my_app.views import asyncViews, celeryViews
-    # path('async_view/', asyncViews.my_view, name='async_view'),
-    # path('start_task/', celeryViews.start_task, name='start_task'),
-    # path('check_task/', celeryViews.check_task, name='check_task'),
+    # 原 asyncViews / celeryViews 的测试路由已移除（asyncViews.py 属残留代码，
+    # celeryViews 模块从未存在过，两者引用都会导致 URLConf 加载即报 NameError）。
 ]
