@@ -42,12 +42,14 @@ class SysmanHelper:
         return full_department_name
 
     # 获取部门信息
+    # 说明：表名是 SQL 标识符，无法用占位符，只能用 format 拼（取值来自内部常量，非用户输入）；
+    #       值一律走 %s 参数化。
     @staticmethod
     def getDepartInfo(department_id, connection, sys_department_table="sys_department"):
-        sql = "select department_id,department_name,parent_id from {} where department_id={}".format(
-            sys_department_table, department_id)
+        sql = "select department_id,department_name,parent_id from {} where department_id=%s".format(
+            sys_department_table)
         cursor = connection.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, [department_id])
         records = cursor.fetchone()
         if records is not None:
             return int(records[0]), str(records[1]), int(records[2])
@@ -57,10 +59,9 @@ class SysmanHelper:
     # 获取同级部门的order_num
     @staticmethod
     def getDepartOrderNum(parent_id, connection, sys_department_table="sys_department"):
-        sql = "select order_num from {} where parent_id={}".format(
-            sys_department_table, parent_id)
+        sql = "select order_num from {} where parent_id=%s".format(sys_department_table)
         cursor = connection.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, [parent_id])
         records = cursor.fetchall()
         if records is None:
             max_num = -1
@@ -74,10 +75,10 @@ class SysmanHelper:
     # 获取下级部门信息
     @staticmethod
     def getDepartByParent(parent_id, connection, sys_department_table="sys_department"):
-        sql = "select department_id,department_name,parent_id from {} where parent_id={}".format(
-            sys_department_table, parent_id)
+        sql = "select department_id,department_name,parent_id from {} where parent_id=%s".format(
+            sys_department_table)
         cursor = connection.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, [parent_id])
         records = cursor.fetchall()
         department_id_list = []
         if records is not None:
@@ -106,10 +107,11 @@ class SysmanHelper:
     @staticmethod
     def getRoleByUser(user_id, connection, user_scope=None,
                       sys_user_role_table="sys_user_role", sys_role_table="sys_role"):
-        sql = "select tablea.role_id,tableb.role_name from {} tablea ,{} tableb where tablea.role_id=tableb.role_id and tablea.user_id={}".format(
-            sys_user_role_table, sys_role_table, user_id)
+        sql = "select tablea.role_id,tableb.role_name from {} tablea ,{} tableb " \
+              "where tablea.role_id=tableb.role_id and tablea.user_id=%s".format(
+                  sys_user_role_table, sys_role_table)
         cursor = connection.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, [user_id])
         records = cursor.fetchall()
         role_id_list = []
         role_name_list = []
@@ -121,10 +123,9 @@ class SysmanHelper:
     # 获取菜单信息
     @staticmethod
     def getMenuByRole(role_id, connection, sys_role_menu_table="sys_role_menu"):
-        sql = "select menu_id from  {} where role_id={}".format(
-            sys_role_menu_table, role_id)
+        sql = "select menu_id from {} where role_id=%s".format(sys_role_menu_table)
         cursor = connection.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, [role_id])
         records = cursor.fetchall()
         menu_id_list = []
         for record in records:
@@ -134,18 +135,17 @@ class SysmanHelper:
     # 获取同级菜单的order_num
     @staticmethod
     def getMenuOrderNum(parent_id, connection, sys_menu_table="sys_menu"):
-        sql = "select sum(order_num) from {} where parent_id={}".format(sys_menu_table,
-                                                                        parent_id)
+        sql = "select sum(order_num) from {} where parent_id=%s".format(sys_menu_table)
         cursor = connection.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, [parent_id])
         record = cursor.fetchone()
-        if record[0] is None:
+        if record is None or record[0] is None:
             max_num = -1
         else:
-            sql = "select max(order_num) from {} where parent_id={}".format(sys_menu_table, parent_id)
-            cursor.execute(sql)
+            sql = "select max(order_num) from {} where parent_id=%s".format(sys_menu_table)
+            cursor.execute(sql, [parent_id])
             record = cursor.fetchone()
-            max_num = record[0]
+            max_num = record[0] if record is not None else -1
         return max_num
 
     # ---------------- 密码找回 ----------------

@@ -34,14 +34,17 @@ class SysOperator:
         logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             # 获取部门列表信息
-            sql = "select department_id,department_name,parent_id,state,order_num,create_time,master,tel,email,del_flag from sys_department  where 1=1 and del_flag =0"
+            sql = "select department_id,department_name,parent_id,state,order_num,create_time,master,tel,email,del_flag from sys_department where 1=1 and del_flag=0"
+            params = []
             if department_name is not None and str(department_name).strip() != "":
-                sql += " and department_name like '%{}%'".format(department_name)
+                sql += " and department_name like %s"
+                params.append("%{}%".format(department_name))
             if department_status is not None and str(department_status).strip() != "":
-                sql += " and state ='{}'".format(department_status)
+                sql += " and state = %s"
+                params.append(department_status)
             sql += " order by create_time desc"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, params)
             records = cursor.fetchall()
             data_list = []
             for record in records:
@@ -146,10 +149,11 @@ class SysOperator:
         try:
             # 获取当前部门的所有下级部门，暂时支持三级部门
             department_id_list = SysmanHelper.getDepartIdAllLevel(department_id, self.connection)
-            sql = "update sys_department  set del_flag=1 where department_id in ({})".format(
-                ListHelper.get_number_str_by_list(department_id_list))
+            # IN 子句按元素个数生成占位符，id 列表逐个参数化
+            sql = "update sys_department set del_flag=1 where department_id in ({})".format(
+                ','.join(['%s'] * len(department_id_list)))
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, department_id_list)
             self.connection.commit()
             res = {
                 'success': True,
@@ -192,12 +196,14 @@ class SysOperator:
         logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             # 获取角色列表信息
-            sql = "select role_id,role_name,remark,create_time from sys_role  where 1=1 "
+            sql = "select role_id,role_name,remark,create_time from sys_role where 1=1 "
+            params = []
             if role_name is not None and str(role_name).strip() != "":
-                sql += " and role_name like '%{}%'".format(role_name)
+                sql += " and role_name like %s"
+                params.append("%{}%".format(role_name))
             sql += " order by create_time desc"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, params)
             records = cursor.fetchall()
             data_list = []
             for record in records:
@@ -250,16 +256,20 @@ class SysOperator:
         logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             # 获取角色列表信息
-            sql = "select id,username,operation,method,params,time,ip,create_date from sys_log  where 1=1 "
+            sql = "select id,username,operation,method,params,time,ip,create_date from sys_log where 1=1 "
+            params = []
             if username is not None and str(username).strip() != "":
-                sql += " and username like '%{}%'".format(username)
+                sql += " and username like %s"
+                params.append("%{}%".format(username))
             if querystarttime is not None and str(querystarttime).strip() != "":
-                sql += " and create_date >= '{}'".format(querystarttime)
+                sql += " and create_date >= %s"
+                params.append(querystarttime)
             if queryendtime is not None and str(queryendtime).strip() != "":
-                sql += " and create_date <= '{}'".format(queryendtime)
+                sql += " and create_date <= %s"
+                params.append(queryendtime)
             sql += " order by create_date desc"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, params)
             records = cursor.fetchall()
             data_list = []
             for record in records:
@@ -573,11 +583,10 @@ class SysOperator:
             type_value = request.data.get("type_value")
             memo_value = request.data.get("memo_value")
             cursor = self.connection.cursor()
-            # 先判断是否有重复
-            sql = "select count(*) from sys_dict where dict_catelog_id ={} and type_value='{}' and id!={}".format(
-                dict_catelog_id,
-                type_value, id)
-            cursor.execute(sql)
+            # 先判断是否有重复（参数化）
+            cursor.execute(
+                "select count(*) from sys_dict where dict_catelog_id = %s and type_value = %s and id != %s",
+                [dict_catelog_id, type_value, id])
             record = cursor.fetchone()
             if record[0] > 0:
                 res = {
@@ -592,12 +601,9 @@ class SysOperator:
                                              HttpHelper.get_params_request(request),
                                              t, HttpHelper.get_ip_request(request))
             else:
-                sql = "update  sys_dict set type_value='{}',memo_value='{}' where id={} ".format(
-                    type_value,
-                    memo_value, id
-                )
-
-                cursor.execute(sql)
+                cursor.execute(
+                    "update sys_dict set type_value=%s,memo_value=%s where id=%s",
+                    [type_value, memo_value, id])
                 self.connection.commit()
                 res = {
                     'success': True,
@@ -640,10 +646,7 @@ class SysOperator:
             dict_catelog_id = request.data.get("dict_catelog_id")
             id = request.data.get("id")
             cursor = self.connection.cursor()
-            sql = "delete from  sys_dict where id = {} ".format(
-                id
-            )
-            cursor.execute(sql)
+            cursor.execute("delete from sys_dict where id = %s", [id])
             self.connection.commit()
             res = {
                 'success': True,
@@ -687,22 +690,26 @@ class SysOperator:
             queryendtime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
+            # 修正：原 SQL 里时间条件写的是 tableb.create_time，但 FROM 里只有
+            # tablea(sys_message) 和 tablec(auth_user)，根本没有 tableb 别名，SQL 必然报错；
+            # 应为 tablea.create_time（sys_message 的创建时间）。
+            # 同时值全部改为 %s 参数化。
             sql = '''
                 select
                     tablea.message,tablea.create_time,tablea.id,tablec.username,tablec.fullname
                 from
-                    sys_message tablea
+                    sys_message tablea,
                     auth_user tablec
                 where
                     1=1
                     and tablea.user_id=tablec.id
-                    and tablec.username like '%{}%'
-                    and tableb.create_time>='{}'
-	                and tableb.create_time<='{}'
-                    order by tablec.username
-            '''.format(username, querystarttime, queryendtime)
+                    and tablec.username like %s
+                    and tablea.create_time >= %s
+                    and tablea.create_time <= %s
+                order by tablec.username
+            '''
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, ["%{}%".format(username), querystarttime, queryendtime])
             records = cursor.fetchall()
             data_list = []
             for record in records:
@@ -755,10 +762,7 @@ class SysOperator:
         try:
             id = request.data.get("id")
             cursor = self.connection.cursor()
-            sql = "delete from  sys_message where id = {}".format(
-                id
-            )
-            cursor.execute(sql)
+            cursor.execute("delete from sys_message where id = %s", [id])
             self.connection.commit()
             res = {
                 'success': True,

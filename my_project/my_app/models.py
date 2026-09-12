@@ -408,6 +408,9 @@ class SysMessage(models.Model):
     id = models.BigAutoField(primary_key=True, db_comment="id")
     user_id = models.BigIntegerField(blank=True, null=True,db_comment="用户id")
     message = models.CharField(max_length=2550, db_comment="消息")
+    # sys_message 的按时间检索接口（sysManager.sql_search_message）依赖该列，
+    # 缺列会导致该接口 SQL 报错，故表与模型一并补上。
+    create_time = models.DateTimeField(blank=True, null=True, db_comment="创建时间")
 
     class Meta:
         managed = False

@@ -15,14 +15,12 @@ from rest_framework.response import Response
 from my_app.manage.userManager import UserOperator
 from my_app.models import AuthUser, SysLog
 from my_app.serializers import AuthUserSerializer
-import datetime
 from vgis_log.logTools import LoggerHelper
-from vgis_utils.vgis_datetime.datetimeTools import DateTimeHelper
 from vgis_utils.vgis_http.httpTools import HttpHelper
 
 from my_app.utils.commonUtility import CommonHelper
 from my_app.utils.sysmanUtility import SysmanHelper
-from my_project.settings import AUTH_TOKEN_AGE, LINUX_LICENSE_PATH, WINDOWS_LICENSE_PATH
+from my_project.settings import LINUX_LICENSE_PATH, WINDOWS_LICENSE_PATH
 
 '''
 ViewSets定义视图的行为,ModelViewSet默认支持以下action
@@ -76,30 +74,12 @@ class UserViewSet(viewsets.ModelViewSet):
                 # 导致「许可有效时」反而走到 else 返回"许可已过期"，普通登录永远进不去，
                 # 而 loginWithForce 用的是 == True（正确）。这里与之保持一致。
                 if license_result == True:
-                    if len(AuthUser.objects.filter(username=username)) > 0:
-                        user_id = AuthUser.objects.filter(username=username)[0].id
-                        oldToken = Token.objects.filter(user_id=user_id)
-                        if len(oldToken) > 0:
-                            now = int(DateTimeHelper.string2time_stamp(str(datetime.datetime.now())))
-                            token_created = int(DateTimeHelper.string2time_stamp(str(oldToken[0].created)))
-                            is_token_expired = False
-                            if now - token_created > AUTH_TOKEN_AGE:
-                                is_token_expired = True
-                        if len(oldToken) > 0 and is_token_expired is False:
-                            res = {
-                                'success': False,
-                                'code': -2,
-                                'message': '用户已在别处登录!'
-                            }
-                        else:
-                            userOperator = UserOperator(connection)
-                            res = userOperator.login(request, username, password, verifcation, auth, Token)
-                    else:
-                        res = {
-                            'success': False,
-                            'code': -1,
-                            'message': '用户名不正确!'
-                        }
+                    # 「已在别处登录」的判定已下沉到 UserOperator.login，且放在密码校验之后。
+                    # 原实现在这里提前判定，导致已登录的账号即使密码输错也返回
+                    # "用户已在别处登录"，既掩盖密码错误又泄露账号存在性；
+                    # 「用户名不正确」也一并由 UserOperator.login 统一返回。
+                    userOperator = UserOperator(connection)
+                    res = userOperator.login(request, username, password, verifcation, auth, Token)
                 else:
                     res = {
                         'success': False,
@@ -138,9 +118,10 @@ class UserViewSet(viewsets.ModelViewSet):
             else:
                 license_result = license_authorize.check_validity(client_time, lic_path)
                 if license_result == True:
+                    # force=True：跳过"已在别处登录"检查，直接顶掉对方的登录态
                     userOperator = UserOperator(connection)
                     res = userOperator.login(request, username, password, verifcation, auth,
-                                                                 Token)
+                                             Token, force=True)
                 else:
                     res = {
                         'success': False,

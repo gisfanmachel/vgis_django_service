@@ -42,9 +42,8 @@ class CommonOperator:
                 obj = {}
                 obj['region_name'] = str(record[0])
                 obj['region_code'] = int(record[1])
-                sql2 = "select dis_name,dis_code from tm_region where region_code={} order by id".format(
-                    obj['region_code'])
-                cursor.execute(sql2)
+                sql2 = "select dis_name,dis_code from tm_region where region_code=%s order by id"
+                cursor.execute(sql2, [obj['region_code']])
                 records2 = cursor.fetchall()
                 province_list = []
                 for record2 in records2:
@@ -101,9 +100,9 @@ class CommonOperator:
         logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             # 获取
-            sql = "select dis_name,dis_code  from tm_district where parent_code={}".format(province_code)
+            sql = "select dis_name,dis_code from tm_district where parent_code=%s"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, [province_code])
             records = cursor.fetchall()
             data_list = []
             for record in records:
@@ -158,9 +157,9 @@ class CommonOperator:
         logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             # 获取
-            sql = "select dis_name,dis_code  from tm_district where parent_code={}".format(city_code)
+            sql = "select dis_name,dis_code from tm_district where parent_code=%s"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, [city_code])
             records = cursor.fetchall()
             data_list = []
             for record in records:

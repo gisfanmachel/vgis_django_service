@@ -71,7 +71,11 @@ class UserOperator:
     # 登录
     # 通过用户名和密码登录
     # 连续输错4次密码，锁定10分钟，10分钟后没输错一次密码都重新锁定10分钟---参数可配置
-    def login(self, request, username, password, verifcation, auth, Token):
+    def login(self, request, username, password, verifcation, auth, Token, force=False):
+        """
+        :param force: False（默认）时，若该账号已有未过期的 token，拒绝登录并返回"已在别处登录"；
+                      True 时跳过该检查，直接顶掉对方的登录态（供 loginWithForce 使用）。
+        """
         function_title = "用户登录"
         try:
             start = LoggerHelper.set_start_log_info(logger)
@@ -141,6 +145,21 @@ class UserOperator:
                     userObject.save()
             # 判断登录成功的用户是否为有效用户
             if user.is_active:
+                # 「已在别处登录」的检查放在密码校验通过之后：
+                # 原实现把这一步放在 userViews 里、且早于密码校验，导致一个已登录的账号
+                # 即使密码输错也返回"用户已在别处登录"，既掩盖了密码错误、又泄露了账号存在性。
+                if not force:
+                    existing_token = Token.objects.filter(user=user).first()
+                    if existing_token is not None and not self._check_token_expired(existing_token):
+                        # 注意：本方法外层是 try/finally，finally 里那句 return res 会覆盖 try 内的 return，
+                        # 所以这里必须先把结果赋给 res 再返回，直接 return 字面量会导致
+                        # finally 里访问未赋值的 res 而抛 UnboundLocalError。
+                        res = {
+                            'success': False,
+                            'code': -2,
+                            'message': '用户已在别处登录!'
+                        }
+                        return res
                 auth.login(request, user)
                 # 删除原有的Token
                 old_token = Token.objects.filter(user=user)
@@ -184,12 +203,12 @@ class UserOperator:
         res = ""
         try:
             user_info = {}
-            # 获取获取用户姓名，部门
+            # 获取获取用户姓名，部门（表名是标识符用 format，值走 %s 参数化）
             sql = "select tablea.username,tablea.fullname,tablea.department_id,tableb.department_name from auth_user tablea "
             sql += " left join {} tableb on tablea.department_id=tableb.department_id".format(sys_department_table)
-            sql += " where tablea.id={}".format(user_id)
+            sql += " where tablea.id=%s"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, [user_id])
             record = cursor.fetchone()
             if record is not None:
                 user_info["userid"] = user_id
@@ -201,8 +220,8 @@ class UserOperator:
             # --获取用户的角色（多个）
             sql = "select distinct tablec.role_name, tablec.role_id from {} tablec ".format(sys_role_table)
             sql += " left join  {} tabled on tablec.role_id = tabled.role_id".format(sys_user_role_table)
-            sql += " where tabled.user_id ={}".format(user_id)
-            cursor.execute(sql)
+            sql += " where tabled.user_id =%s"
+            cursor.execute(sql, [user_id])
             records = cursor.fetchall()
             role_list = []
             role_ids = []
@@ -220,10 +239,11 @@ class UserOperator:
                 sql = "select distinct tablee.menu_id,tablee.parent_id, tablee.name, tablee.url,tablee.type,tablee.icon,tablee.order_num,tablee.is_show"
                 sql += " from {} tablee".format(sys_menu_table)
                 sql += " left join {} tablef on tablee.menu_id = tablef.menu_id".format(sys_role_menu_table)
-                sql += " where tablef.role_id in ({})".format(','.join([str(i) for i in role_ids]))
+                # IN 子句按元素个数动态生成占位符，role_ids 逐个参数化
+                sql += " where tablef.role_id in ({})".format(','.join(['%s'] * len(role_ids)))
                 sql += " and tablee.is_show='Y'"
                 sql += " order by tablee.order_num"
-                cursor.execute(sql)
+                cursor.execute(sql, role_ids)
                 records = cursor.fetchall()
                 menu_id_list = []
                 for record in records:
@@ -423,15 +443,20 @@ class UserOperator:
         start = LoggerHelper.set_start_log_info(logger)
         try:
             # 获取用户列表信息
+            # 注意：模糊查询条件原先是 "like '%{}%'".format(前端传值)，属典型 SQL 注入点，
+            #       改为 %s 参数化；% 通配符拼在参数值里，不放进 SQL 文本。
             sql = "select tablea.id,tablea.username,tablea.fullname,tableb.department_name,tableb.department_id,tablea.mobile,tablea.sex,tablea.status,tablea.create_time from auth_user tablea"
-            sql+=" left join sys_department tableb on tablea.department_id=tableb.department_id where  tablea.is_superuser=false "
+            sql += " left join sys_department tableb on tablea.department_id=tableb.department_id where tablea.is_superuser=false "
+            params = []
             if username is not None and str(username).strip() != "":
-                sql += " and tablea.username like '%{}%'".format(username)
+                sql += " and tablea.username like %s"
+                params.append("%{}%".format(username))
             if fullname is not None and str(fullname).strip() != "":
-                sql += " and tablea.fullname like '%{}%'".format(fullname)
+                sql += " and tablea.fullname like %s"
+                params.append("%{}%".format(fullname))
             sql += " order by tablea.create_time desc"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, params)
             records = cursor.fetchall()
             data_list = []
             for record in records:
