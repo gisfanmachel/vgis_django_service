@@ -9,7 +9,7 @@ from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from my_app.manage.userManager import UserOperator
@@ -212,6 +212,17 @@ class UserViewSet(viewsets.ModelViewSet):
     def is_use_verfication(self, request):
         userOperator = UserOperator(connection)
         res = userOperator.return_is_use_verification_code(request)
+        return Response(res)
+
+    # 退出登录（与 PNT 项目对齐：路径为 user/logout/；authUser/logout/ 同样可用）
+    # 注意：UserViewSet 整体是 AllowAny，但退出登录会删掉账号的 token，
+    #       属写操作，这里单独要求已认证，避免"不带 token 的误调用"把别人踢下线。
+    @action(detail=False, methods=['POST'], url_path='logout', permission_classes=[IsAuthenticated])
+    def logout(self, request):
+        username = request.data.get('username')
+        userid = request.data.get('userid')
+        userOperator = UserOperator(connection)
+        res = userOperator.logout(request, Token, userid, auth)
         return Response(res)
 
 

@@ -30,6 +30,7 @@ from my_app.serializers import SysConfigSerializer, SysDepartmentSerializer, Sys
 from my_app.utils.passwordUtility import PasswordHelper
 from my_app.utils.snowflake_id_util import SnowflakeIDUtil
 from my_app.utils.sysmanUtility import SysmanHelper
+from my_app.utils.commonUtility import CommonHelper
 from my_app.views.response.baseRespone import Result
 from my_project import settings
 from my_project.token import ExpiringTokenAuthentication
@@ -810,8 +811,25 @@ class SysParamViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (ExpiringTokenAuthentication,)
 
+    # 获取系统名称与版本号
+    @action(detail=False, methods=['GET'], url_path='getVersion')
+    def get_version(self, request):
+        res = {
+            "success": True,
+            "info": CommonHelper.get_local_str("SYSTEM_NAME", request),
+            "version": CommonHelper.get_local_str("SYSTEM_VERSION", request)
+        }
+        # 版本变更记录（新项目请按此格式续写）
+        # 1.00.00  初版
+        return Response(res)
+
     def list(self, request, *args, **kwargs):
-        results = SysParam.objects.all().order_by('id')
+        # 支持按参数中文键名模糊查询（与 PNT 项目保持一致）
+        param_cn_key = request.query_params.get("param_cn_key")
+        if param_cn_key:
+            results = SysParam.objects.filter(param_cn_key__contains=param_cn_key).order_by('id')
+        else:
+            results = SysParam.objects.all().order_by('id')
         data = []
         for result in results:
             data.append(SysParamSerializer(result).data)

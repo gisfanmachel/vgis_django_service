@@ -104,6 +104,9 @@
 >  把 list/retrieve/destroy 的返回收敛成 Result 结构并自动按语言返回提示
 >* 增加忘记密码（密保问题验证 + 一次性 userkey 重置密码）接口
 >* 增加跨系统免登（A 系统登录后的 token 直接在 B 系统换登录态）与 token 有效性校验接口
+>* 系统参数增加 `sysParam/getVersion/` 取系统名称与版本号；`sysParam/` 支持按 `param_cn_key` 模糊查询
+>* 退出登录同时提供 `user/logout/` 与 `authUser/logout/` 两个路径
+>  （前者挂在 AllowAny 的 UserViewSet 上，故单独要求已认证，避免不带 token 的误调用把他人踢下线）
 
 ---
 # 5.待优化:
