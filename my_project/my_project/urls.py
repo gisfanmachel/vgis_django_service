@@ -12,19 +12,21 @@ Class-based views
 Including another URLconf
     1. Import include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+
+说明（Django 6 兼容）：
+  - 原 rest_framework_swagger 已停止维护且不支持新版，改用 drf-spectacular
+  - 原 rest_framework.documentation.include_docs_urls 在 DRF 3.18 已移除，不再引用
 """
-from django.contrib import admin
-from django.urls import path
 
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.documentation import include_docs_urls
-from rest_framework_swagger.views import get_swagger_view
-schema_view = get_swagger_view(title='API文档')
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('docs/', schema_view),
+    # API 文档：/docs/ 是 Swagger UI，/docs/schema/ 是 OpenAPI schema
+    path('docs/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', include('my_app.urls')),
     # 如需暴露异步/Celery 测试接口，先 import 对应视图模块再放开下面三行：

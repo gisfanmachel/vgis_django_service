@@ -1,45 +1,51 @@
-Django==4.2.2
-django-cors-headers==4.1.0
-django-filter==23.2
-django-rest-swagger==2.2.0
-djangorestframework==3.14.0
-django-apscheduler==0.6.2
-django-sslserver==0.22
-psycopg2-binary==2.8.6
-psycopg2==2.9.9
-Pillow==9.3.0
-xlrd==1.2.0
-XlsxWriter==3.0.3
-requests==2.25.0
-scipy==1.9.0
-numpy==1.24.4
-loguru==0.6.0
-pandas==1.1.4
-python-docx==0.8.10
-openpyxl==3.1.0
-comtypes==1.1.14
-fitz==0.0.1.dev2
-PyMuPDF==1.19.0
-frontend==0.0.3
-urllib3==1.26.2
-pycryptodome==3.17
+# ===========================================================================
+# VGIS Django 框架依赖（已在 Django 6.0.6 + Python 3.12.10 下实测通过）
+# 环境：E:\claudecode\venv_6.06
+# 数据库：PostgreSQL 18.4 @ 192.168.3.40:12326 (MYDB)
+# ===========================================================================
+
+# ---- 框架核心 ----
+Django==6.0.6
+djangorestframework==3.18.1
+# 替代已停止维护、且不兼容新版 Django 的 django-rest-swagger
+drf-spectacular==0.30.0
+django-filter==26.1
+django-cors-headers==4.9.0
+django-apscheduler==0.7.0
+
+# ---- 数据库（PostGIS 引擎需要 GDAL/GEOS 动态库，Windows 见 settings.py 的 GDAL_LIBRARY_PATH）----
+psycopg2-binary==2.9.13
+djangorestframework-gis==1.3.0
+
+# ---- 异步 / 实时 ----
+celery==5.6.3
+channels==4.3.2
+channels_redis==4.3.0
+daphne==4.2.3
+django-redis==7.0.0
+# 注意：Redis 服务端是 5.0.x，redis-py 6.0 起默认走 RESP3 握手（HELLO 3），
+# 而 HELLO 命令 Redis 6.0 才支持，会导致缓存/channels/celery 全部连不上
+# （celery 的 kombu 无法通过配置注入 protocol，只能靠客户端默认值）。
+# 因此这里必须锁在 5.x。Redis 升级到 6.0+ 之后可以放开。
+redis==5.2.1
+
+# ---- 加解密 / 许可 ----
+pycryptodome==3.23.0
+cryptography==50.0.1
 license_authorize==1.0.7
-vgis-utils==1.0.10
-vgis-office==1.1.5
-vgis-log==1.0.5
-vgis-database==1.0.2
-cryptography==41.0.1
-toollib==1.2.5
-waitress==2.1.2
-channels==3.0.5
-channels-redis==4.1.0
-daphne==3.0.2
-django-redis==5.4.0
-drf-yasg==1.21.7
-vgis_encrption==1.0.3
-sequence==0.6.2.2
-chardet==3.0.4
-beautifulsoup4==4.9.3
-pywin32==306
-redis==5.1.0
-celery==5.4.0
+
+# ---- 内部库 ----
+vgis-utils==1.4.9
+vgis-log==1.0.9
+vgis-database==1.0.17
+vgis-office==1.1.8
+vgis_encrption==1.0.5
+
+# ---- 工具 / 文档处理 ----
+toollib==2.2.6
+Pillow==12.3.0
+numpy==2.5.3
+pandas==3.0.5
+
+# ---- 部署 ----
+waitress==3.0.2

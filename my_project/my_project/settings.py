@@ -51,8 +51,8 @@ INSTALLED_APPS = [
     'django_filters',
     # 身份认证
     'rest_framework.authtoken',
-    # swagger文档
-    'rest_framework_swagger',
+    # API 文档（drf-spectacular 替代已停止维护的 rest_framework_swagger）
+    'drf_spectacular',
     # 跨域
     'corsheaders',
     'channels'
@@ -144,8 +144,8 @@ REST_FRAMEWORK = {
     # 分页
     'DEFAULT_PAGINATION_CLASS': 'my_project.customPageNumberPagination.CustomPageNumberPagination',
     'PAGE_SIZE': 10,  # 每页数目
-    #  swagger文档
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
+    #  API 文档（drf-spectacular）
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
 }
 
@@ -238,11 +238,29 @@ LOGGING = {
     }
 }
 
+# Redis 地址（缓存 / channels 层 / celery broker 统一指向 192.168.3.80）
+REDIS_HOST = '192.168.3.80'
+REDIS_PORT = 6379
+# 建议按业务分 DB，避免通道层与业务缓存互相覆盖：
+#   db0 业务缓存 / db1 channels 层 / db2 celery broker+result
+REDIS_DB_CACHE = 0
+REDIS_DB_CHANNEL = 1
+REDIS_DB_CELERY = 2
+
+# 该服务器的 Redis 是 5.0.x，而 redis-py 5.x 起默认走 RESP3 握手（HELLO 3），
+# Redis 6.0 才支持 HELLO，直连会报 "unknown command `HELLO`"。
+# 因此所有 Redis 连接显式声明 protocol=2（RESP2）。
+# 若将来把 Redis 升级到 6.0+，可以把这几处 protocol 去掉。
+REDIS_PROTOCOL = 2
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("192.168.3.191", 6379)],
+            "hosts": [{"host": REDIS_HOST, "port": REDIS_PORT, "protocol": REDIS_PROTOCOL}],
+            "prefix": "vgis_channel",  # 前缀隔离，避免与其他服务串频道
+            "capacity": 1500,
+            "expiry": 10,
         },
     },
 }
@@ -251,11 +269,13 @@ CHANNEL_LAYERS = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://192.168.3.191:6379/0",
+        "LOCATION": "redis://{}:{}/{}".format(REDIS_HOST, REDIS_PORT, REDIS_DB_CACHE),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
-            "CONNECTION_POOL_KWARGS": {"max_connections": 512},
+            "CONNECTION_POOL_KWARGS": {"max_connections": 512, "protocol": REDIS_PROTOCOL},
+            # 注意：开启后 Redis 不可用时 cache 操作会静默返回 None 而不报错，
+            # 排查缓存问题时应临时关掉。
             "IGNORE_EXCEPTIONS": True,
             "SOCKET_CONNECT_TIMEOUT": 5,  # in seconds
             "SOCKET_TIMEOUT": 5,  # in seconds
@@ -268,13 +288,17 @@ CACHES = {
 
 DATABASES = {
     'default': {
+        # PostGIS 引擎（Django 6 下需要 GDAL/GEOS，见文件末尾的 GDAL_LIBRARY_PATH 配置）
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 注意：Django 4.0 起已移除 'django.db.backends.postgresql_psycopg2' 别名，只能写 'postgresql'
         'USER': 'postgres',
-        'PASSWORD': '*******',
-        'HOST': '192.168.3.191',
-        'PORT': '5432',
-        'NAME': 'DZ_AREA'
+        'PASSWORD': 'postgres',
+        'HOST': '192.168.3.40',
+        'PORT': '12326',
+        'NAME': 'MYDB',
+        'OPTIONS': {
+            'connect_timeout': 10,
+        },
     }
 }
 
@@ -306,7 +330,7 @@ TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
-USE_L10N = True
+# 注意：USE_L10N 在 Django 4.0 弃用、5.0 移除，这里不能再声明
 # 不用世界时
 USE_TZ = False
 
@@ -372,9 +396,9 @@ ENCRPTION = {
     "key4": "b3sVBbMdxJ2pgK/XYPpKVEYdVNk8bUBt9bcpCMegEec3m/nfbvdvVgPlEm1Yd6aavB8jdUR1HF1vf13l/ADVddg6Cl1Yl+vXkDaKeKHa7bHoJpLAWt7i0mIVHSMhPJdQb2qRTbaPCu8MRZNsJWivgnnTSGEHy+vvGhvxCeWcmB0="
 }
 
-# 许可文件的路径
-WINDOWS_LICENSE_PATH = "E:/license/django_license.lic"
-LINUX_LICENSE_PATH = "/home/root/license/django_license.lic"
+# 许可文件的路径（登录接口会校验，缺失或过期都会拒绝登录）
+WINDOWS_LICENSE_PATH = "C:/license/django_study_license.lic"
+LINUX_LICENSE_PATH = "/home/root/license/django_study_license.lic"
 
 # 多线程数
 MAX_THREAD_COUNT = 16
@@ -385,7 +409,49 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # 打开后可以通过url访问static内的静态资源
 # 注意：DEBUG 已在文件开头定义，这里不要再重复定义
 
-# 配置celery异步任务使用的redis cache
-CELERY_BROKER_URL = 'redis://192.168.3.191:6379/0'  # 使用Redis作为消息队列
-CELERY_RESULT_BACKEND = 'redis://192.168.3.191:6379/0'
+# 配置celery异步任务使用的redis cache（统一指向 192.168.3.80，独立 DB 避免与缓存/通道层冲突）
+CELERY_BROKER_URL = 'redis://{}:{}/{}'.format(REDIS_HOST, REDIS_PORT, REDIS_DB_CELERY)
+CELERY_RESULT_BACKEND = 'redis://{}:{}/{}'.format(REDIS_HOST, REDIS_PORT, REDIS_DB_CELERY)
 CELERY_TIMEZONE = 'Asia/Shanghai'
+CELERY_TASK_TRACK_STARTED = True
+# 任务结果保留 1 天，避免 Redis 无限增长
+CELERY_RESULT_EXPIRES = 60 * 60 * 24
+# worker 预取数：长任务场景调小可让任务分配更均衡
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+# broker 连接重试
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# ===========================================================================
+# GIS 原生库路径
+# django.contrib.gis 需要 GDAL/GEOS 动态库。Windows 上装了 GISInternals 版 GDAL
+# 但没加进 PATH 时，必须显式指定，否则报
+# "Could not find the GDAL library (tried gdal311, gdal310, ...)"
+# 部署到 Linux 时把这两行注释掉即可（服务器上一般已在 ld 路径里）。
+# ===========================================================================
+import os as _os
+
+if _os.name == 'nt':
+    _GDAL_BIN = r'C:\Program Files\GDAL\bin'
+    if _os.path.exists(_GDAL_BIN):
+        # 把 GDAL/bin 加进 DLL 搜索路径，供 GEOS/PROJ 等被依赖库定位
+        _os.add_dll_directory(_GDAL_BIN)
+        GDAL_LIBRARY_PATH = _os.path.join(_GDAL_BIN, 'gdal300.dll')
+        GEOS_LIBRARY_PATH = _os.path.join(_GDAL_BIN, 'geos_c.dll')
+        # PROJ 数据目录，坐标系转换（pyproj/GDAL）需要
+        _PROJ_DATA = _os.path.join(_GDAL_BIN, 'proj')
+        if _os.path.exists(_PROJ_DATA):
+            _os.environ.setdefault('PROJ_LIB', _PROJ_DATA)
+
+# ===========================================================================
+# API 文档（drf-spectacular）
+# 访问 /docs/ 查看 Swagger UI，/docs/schema/ 取 OpenAPI schema
+# ===========================================================================
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'VGIS Django 框架 API',
+    'DESCRIPTION': '系统管理 / 认证 / 上传 / 行政区划等通用接口',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # DRF 的 Token 认证在文档里以 Authorization 头体现
+    'SECURITY': [{'Token': []}],
+    'COMPONENT_SPLIT_REQUEST': True,
+}

@@ -37,8 +37,9 @@ log/
 # 上传目录（config.UPLOAD_FOLDER = static/upload）
 # 注意：带中间斜杠的 pattern 会被锚定到仓库根，必须加 **/ 才能匹配到 tcp_server/、web_socket/ 下的同名目录
 **/static/upload/
-# Django 静态资源上传目录
-my_project/my_static/upload/
+# Django 静态资源上传目录（settings.UPLOAD_ROOT = <APP_NAME>/<STATIC_NAME>/upload，
+# STATIC_NAME 各项目不同，这里用 **/ 兜住 my_static / pnt_static 等任意命名）
+**/*_static/upload/
 
 # ---- 测试 / 类型检查缓存 ----
 .pytest_cache/
