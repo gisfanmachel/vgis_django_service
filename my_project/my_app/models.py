@@ -57,8 +57,12 @@ class AuthUser(models.Model):
     is_active = models.BooleanField()
     date_joined = models.DateTimeField()
     department_id = models.BigIntegerField(blank=True, null=True)
-    sex = models.CharField(unique=True, max_length=255)
-    mobile = models.CharField(unique=True, max_length=100)
+    # 注意：sex / mobile 不能声明 unique=True。
+    # 数据库 auth_user 上只有主键和 username 索引，并无这两列的唯一约束；
+    # 声明 unique=True 会让 DRF 序列化器在新增用户时按"性别不能重复"校验，
+    # 导致第二个同性别的用户直接建不了（原模型为 inspectdb 误判所留）。
+    sex = models.CharField(max_length=255, blank=True, null=True)
+    mobile = models.CharField(max_length=100, blank=True, null=True)
     status = models.IntegerField(blank=True, null=True)
     create_user_id = models.BigIntegerField(blank=True, null=True)
     create_time = models.DateTimeField(null=True, blank=True)
@@ -66,6 +70,11 @@ class AuthUser(models.Model):
     modify_time = models.DateTimeField(null=True, blank=True)
     login_error_attempts = models.SmallIntegerField(default=0)
     login_locked_until = models.DateTimeField(null=True, blank=True)
+    # 忘记密码用的密保问题与答案（数据库已具备这两列；
+    # SysmanHelper.retrieve_password 走裸 SQL 读，模型里也要声明，
+    # 否则通过 ORM 写入不会落库）
+    userpass_question = models.CharField(max_length=2550, blank=True, null=True)
+    userpass_answer = models.CharField(max_length=2550, blank=True, null=True)
 
     class Meta:
         managed = False

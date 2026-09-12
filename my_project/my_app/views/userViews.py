@@ -72,7 +72,10 @@ class UserViewSet(viewsets.ModelViewSet):
                 }
             else:
                 license_result = license_authorize.check_validity(client_time, lic_path)
-                if license_result != True:
+                # 修正：原写法是 if license_result != True，条件写反了——
+                # 导致「许可有效时」反而走到 else 返回"许可已过期"，普通登录永远进不去，
+                # 而 loginWithForce 用的是 == True（正确）。这里与之保持一致。
+                if license_result == True:
                     if len(AuthUser.objects.filter(username=username)) > 0:
                         user_id = AuthUser.objects.filter(username=username)[0].id
                         oldToken = Token.objects.filter(user_id=user_id)

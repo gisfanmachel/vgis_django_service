@@ -374,11 +374,13 @@ class SysOperator:
         logger.info("开始时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             # 获取归属于这个字典类别下的字典信息
-            sql = "select tablea.id,tablea.type_value,tablea.memo_value,tableb.dict_catelog_name from sys_dict tablea,sys_dict_catelog tableb  where 1=1 tablea.dict_catelog_id=tableb.id and tablea.dict_catelog_id={}".format(
-                dict_catelog_id)
-            sql += " order by id asc"
+            # 修正：原 SQL 写成 "where 1=1 tablea.dict_catelog_id=tableb.id"，两个条件之间漏了 and
+            sql = "select tablea.id,tablea.type_value,tablea.memo_value,tableb.dict_catelog_name "
+            sql += "from sys_dict tablea,sys_dict_catelog tableb "
+            sql += "where 1=1 and tablea.dict_catelog_id=tableb.id and tablea.dict_catelog_id=%s "
+            sql += "order by tablea.id asc"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, [dict_catelog_id])
             records = cursor.fetchall()
             data_list = []
             for record in records:
@@ -430,11 +432,13 @@ class SysOperator:
         try:
 
             # 获取归属于这个字典类别下的字典信息
-            sql = "select tablea.id,tablea.type_value,tablea.memo_value,tableb.dict_catelog_name from sys_dict tablea,sys_dict_catelog tableb  where 1=1 tablea.dict_catelog_id=tableb.id and tablea.dict_catelog_id={} and tablea.id={}".format(
-                dict_catelog_id, id)
-            sql += " order by id asc"
+            # 修正：同 sql_search_dict，原 SQL 漏了 and
+            sql = "select tablea.id,tablea.type_value,tablea.memo_value,tableb.dict_catelog_name "
+            sql += "from sys_dict tablea,sys_dict_catelog tableb "
+            sql += "where 1=1 and tablea.dict_catelog_id=tableb.id and tablea.dict_catelog_id=%s and tablea.id=%s "
+            sql += "order by tablea.id asc"
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, [dict_catelog_id, id])
             records = cursor.fetchall()
             data_list = []
             for record in records:
@@ -485,7 +489,12 @@ class SysOperator:
         cursor = self.connection.cursor()
         cursor.execute(sql)
         record = cursor.fetchone()
-        return int(record[0]) if record is not None else 0
+        # 注意：空表时 max(id) 返回的是 (None,) 而不是 None，
+        # 只判断 record is not None 会对 None 调 int() 直接抛 TypeError，
+        # 导致「表为空时新增第一条数据必失败」。
+        if record is None or record[0] is None:
+            return 0
+        return int(record[0])
 
     # 添加数据字典
     def add_dict(self, request, title):
@@ -498,10 +507,9 @@ class SysOperator:
             type_value = request.data.get("type_value")
             memo_value = request.data.get("memo_value")
             cursor = self.connection.cursor()
-            # 先判断是否有重复
-            sql = "select count(*) from sys_dict where dict_catelog_id ={} and type_value='{}'".format(dict_catelog_id,
-                                                                                                       type_value)
-            cursor.execute(sql)
+            # 先判断是否有重复（参数化，避免值里含单引号时 SQL 崩、也防注入）
+            cursor.execute("select count(*) from sys_dict where dict_catelog_id = %s and type_value = %s",
+                           [dict_catelog_id, type_value])
             record = cursor.fetchone()
             if record[0] > 0:
                 res = {
@@ -516,12 +524,11 @@ class SysOperator:
                                              HttpHelper.get_params_request(request),
                                              t, HttpHelper.get_ip_request(request))
             else:
-                sql = "insert into sys_dict (id,dict_catelog_id,type_value,memo_value) values ({},'{}','{}') ".format(
-                    self.get_max_id("sys_dict") + 1, dict_catelog_id,
-                    type_value, memo_value
-                )
+                # 修正：原语句列了 4 个字段却只给了 3 个值，必然报错
+                cursor.execute(
+                    "insert into sys_dict (id,dict_catelog_id,type_value,memo_value) values (%s,%s,%s,%s)",
+                    [self.get_max_id("sys_dict") + 1, dict_catelog_id, type_value, memo_value])
 
-                cursor.execute(sql)
                 self.connection.commit()
                 res = {
                     'success': True,
