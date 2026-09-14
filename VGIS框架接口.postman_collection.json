@@ -1,0 +1,5274 @@
+{
+  "info": {
+    "name": "VGIS Django 框架 API（分模块）",
+    "_postman_id": "vgis-django-framework-modular",
+    "description": "分模块改造后的接口集合，**路径与框架实际路由一致**（由 URL 解析器生成）。\n\n用法：1) 改集合变量 service_host 为你的服务地址；2) 先跑「登录」请求；3) 把返回的 token 填到集合变量 token。\n\n模块前缀：/my_api/sysman/ · /my_api/userman/ · /my_api/common/ · /my_api/demo/\n改造前的旧路径对照见仓库根目录《接口路径变更对照表.md》。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "service_host",
+      "value": "http://192.168.3.152:10841",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "登录（先执行，拿 token 填到 token 变量）",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{service_host}}/my_api/userman/user/loginWithForce/",
+          "host": [
+            "{{service_host}}"
+          ],
+          "path": [
+            "my_api",
+            "userman",
+            "user",
+            "loginWithForce"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"Test@12345\",\n    \"client_time\": 1789000000000\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "client_time 必须是毫秒时间戳；登录成功后把返回的 token 填到集合变量 token"
+      },
+      "response": []
+    },
+    {
+      "name": "sys_manage 系统管理",
+      "item": [
+        {
+          "name": "authUser",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_details  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/get_details",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    "get_details"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "logout  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/logout",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    "logout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "set_status  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/setstatus",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    "setstatus"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "sql_search  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/sqlsearch",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    "sqlsearch"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "status_list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/authUser/userstatus",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "authUser",
+                    "userstatus"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysConfig",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysConfig",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysConfig"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysConfig",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysConfig"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysConfig/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysConfig",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysConfig/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysConfig",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysConfig/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysConfig",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysConfig/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysConfig",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysDepartment",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete_department  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment/delete",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment",
+                    "delete"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "status_list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment/departstatus",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment",
+                    "departstatus"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "set_status  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment/setstatus",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment",
+                    "setstatus"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "sql_search  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDepartment/sqlsearch",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDepartment",
+                    "sqlsearch"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysDict",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "add_dict_by_catelog  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/add",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    "add"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_dict_catelog_list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/cateloglist",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    "cateloglist"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete_dict_by_catelog  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/delete",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    "delete"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_detail_by_condition  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/getdetail",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    "getdetail"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_dict_list_by_sql  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/sqlsearch",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    "sqlsearch"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update_dict_by_catelog  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysDict/update",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysDict",
+                    "update"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysLog",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysLog",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysLog"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysLog",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysLog"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysLog/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysLog",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysLog/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysLog",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysLog/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysLog",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysLog/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysLog",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "sql_search  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysLog/sqlsearch",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysLog",
+                    "sqlsearch"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysMenu",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMenu",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMenu"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMenu",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMenu"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMenu/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMenu",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMenu/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMenu",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMenu/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMenu",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMenu/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMenu",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysMessage",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMessage",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMessage"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMessage",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMessage"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMessage/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMessage",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMessage/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMessage",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMessage/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMessage",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMessage/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMessage",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete_message_by_id  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMessage/delete",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMessage",
+                    "delete"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_message_list_by_sql  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysMessage/sqlsearch",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysMessage",
+                    "sqlsearch"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysOss",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysOss",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysOss"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysOss",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysOss"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysOss/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysOss",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysOss/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysOss",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysOss/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysOss",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysOss/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysOss",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysParam",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysParam",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysParam"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysParam",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysParam"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysParam/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysParam",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysParam/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysParam",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysParam/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysParam",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysParam/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysParam",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_version  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysParam/getVersion",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysParam",
+                    "getVersion"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysRole",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRole",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRole"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRole",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRole"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRole/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRole",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRole/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRole",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRole/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRole",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRole/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRole",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "sql_search  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRole/sqlsearch",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRole",
+                    "sqlsearch"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysRoleMenu",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRoleMenu",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRoleMenu"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRoleMenu",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRoleMenu"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRoleMenu/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRoleMenu",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRoleMenu/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRoleMenu",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRoleMenu/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRoleMenu",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysRoleMenu/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysRoleMenu",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysUser",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUser",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUser"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUser",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUser"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUser/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUser",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUser/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUser",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUser/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUser",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUser/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUser",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysUserRole",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserRole",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserRole"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserRole",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserRole"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserRole/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserRole",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserRole/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserRole",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserRole/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserRole",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserRole/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserRole",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "sysUserToken",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserToken",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserToken"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserToken",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserToken"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserToken/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserToken",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserToken/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserToken",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserToken/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserToken",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/sysman/sysUserToken/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "sysman",
+                    "sysUserToken",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "user_manage 用户与认证",
+      "item": [
+        {
+          "name": "ttUserpassQuestion",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/ttUserpassQuestion",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "ttUserpassQuestion"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/ttUserpassQuestion",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "ttUserpassQuestion"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/ttUserpassQuestion/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "ttUserpassQuestion",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/ttUserpassQuestion/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "ttUserpassQuestion",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/ttUserpassQuestion/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "ttUserpassQuestion",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/ttUserpassQuestion/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "ttUserpassQuestion",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "user",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_userinfo_by_token  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/getUseInfoByToken",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "getUseInfoByToken"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "is_token_expired  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/isTokenExpired",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "isTokenExpired"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "is_use_verfication  [list]",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/is_use_verfication",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "is_use_verfication"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "login  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/login",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "login_by_token  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/loginByToken",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "loginByToken"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "login_with_force  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/loginWithForce",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "loginWithForce"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "logout  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/logout",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "logout"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "reset_password  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/reset_password",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "reset_password"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve_password  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/retrieve_password",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "retrieve_password"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "verfication  [list]",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{service_host}}/my_api/userman/user/verfication",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "userman",
+                    "user",
+                    "verfication"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "common 公共数据",
+      "item": [
+        {
+          "name": "tmDdistrict",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_city_by_province  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict/getCityByProvince",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict",
+                    "getCityByProvince"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_county_by_city  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict/getCountyByCity",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict",
+                    "getCountyByCity"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get_region_and_province  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/tmDdistrict/getRegionAndProvince",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "tmDdistrict",
+                    "getRegionAndProvince"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "ttUploadFileData",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/ttUploadFileData",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "ttUploadFileData"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/ttUploadFileData",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "ttUploadFileData"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/ttUploadFileData/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "ttUploadFileData",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/ttUploadFileData/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "ttUploadFileData",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/ttUploadFileData/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "ttUploadFileData",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/ttUploadFileData/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "ttUploadFileData",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "upload_file  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/ttUploadFileData/uploadFile",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "ttUploadFileData",
+                    "uploadFile"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "upload_files  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/common/ttUploadFileData/uploadFiles",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "common",
+                    "ttUploadFileData",
+                    "uploadFiles"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "demo 演示模块（CRUD/分页/Excel 模板）",
+      "item": [
+        {
+          "name": "ttDemoItem",
+          "item": [
+            {
+              "name": "list  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "destroy  [list]",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "retrieve  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    ":pk"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "partial_update  [list]",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update  [list]",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/:pk",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    ":pk"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "add  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/add",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    "add"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete_data  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/delete",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    "delete"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "download_template  [list]",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/download_template",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    "download_template"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "export_excel  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/export_excel",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    "export_excel"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "import_excel  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/import_excel",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    "import_excel"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "query_list  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/query_list",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    "query_list"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update_data  [list]",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Token {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{service_host}}/my_api/demo/ttDemoItem/update",
+                  "host": [
+                    "{{service_host}}"
+                  ],
+                  "path": [
+                    "my_api",
+                    "demo",
+                    "ttDemoItem",
+                    "update"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

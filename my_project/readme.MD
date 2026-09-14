@@ -69,7 +69,8 @@ my_app/
 
 > 接口路径已由「单前缀」改为「分模块前缀」，例如
 > `/my_api/sysDict/add/` → `/my_api/sysman/sysDict/add/`。
-> 完整的新旧对照见仓库根目录的《接口路径变更对照表.md》。
+> 完整的新旧对照见仓库根目录的《接口路径变更对照表.md》，
+> 可直接导入的 Postman 集合见《VGIS框架接口.postman_collection.json》。
 
 ## 2.5启动服务 
 > 通过django的runserver启动
