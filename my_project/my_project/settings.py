@@ -422,25 +422,91 @@ CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # ===========================================================================
-# GIS 原生库路径
-# django.contrib.gis 需要 GDAL/GEOS 动态库。Windows 上装了 GISInternals 版 GDAL
-# 但没加进 PATH 时，必须显式指定，否则报
-# "Could not find the GDAL library (tried gdal311, gdal310, ...)"
-# 部署到 Linux 时把这两行注释掉即可（服务器上一般已在 ld 路径里）。
+# GIS 原生库路径（GDAL / GEOS / PROJ）
+#
+# 为什么必须显式配置（Windows）：
+#   1) django.contrib.gis 需要 GDAL 动态库，而 Django 只按
+#      gdal311 / gdal310 / ... / gdal300 这类"带版本号"的文件名去找；
+#      conda-forge 构建的 GDAL 文件名是裸的 gdal.dll，自动发现必然失败，
+#      报 "Could not find the GDAL library (tried gdal311, gdal310, ...)"。
+#   2) venv 里自带的 osgeo Python 绑定（_gdal.pyd）依赖**同目录**的 gdal.dll。
+#      若 Django 指向另一份 GDAL（例如旧的 C:\Program Files\GDAL，3.0.4），
+#      同一进程会加载两个版本的 GDAL，且 osgeo 会直接 ImportError。
+#      所以这里优先选与 venv 配套的那一份。
+#
+# 可用环境变量 GDAL_BIN_DIR 覆盖（优先级最高），便于换机器/换版本。
+# 部署到 Linux 时本节自动跳过（服务器上一般已在 ld 路径里）。
 # ===========================================================================
 import os as _os
 
 if _os.name == 'nt':
-    _GDAL_BIN = r'C:\Program Files\GDAL\bin'
-    if _os.path.exists(_GDAL_BIN):
-        # 把 GDAL/bin 加进 DLL 搜索路径，供 GEOS/PROJ 等被依赖库定位
-        _os.add_dll_directory(_GDAL_BIN)
-        GDAL_LIBRARY_PATH = _os.path.join(_GDAL_BIN, 'gdal300.dll')
-        GEOS_LIBRARY_PATH = _os.path.join(_GDAL_BIN, 'geos_c.dll')
-        # PROJ 数据目录，坐标系转换（pyproj/GDAL）需要
-        _PROJ_DATA = _os.path.join(_GDAL_BIN, 'proj')
-        if _os.path.exists(_PROJ_DATA):
-            _os.environ.setdefault('PROJ_LIB', _PROJ_DATA)
+    # 候选目录按优先级排列
+    _GDAL_CANDIDATES = [
+        _os.environ.get('GDAL_BIN_DIR'),                      # 显式指定，最高优先级
+        r'E:\claudecode\_tools\gdal-3.13.3\Library\bin',      # 与 venv_6.06 配套的 GDAL 3.13.3
+        r'C:\Program Files\GDAL\bin',                          # 旧的独立安装（GDAL 3.0.x）
+        r'C:\OSGeo4W64\bin',
+        r'C:\OSGeo4W\bin',
+    ]
+    # 不同发行版对 GDAL 主库的命名不同，按常见顺序找
+    _GDAL_DLL_NAMES = ['gdal.dll', 'gdal313.dll', 'gdal311.dll',
+                       'gdal310.dll', 'gdal309.dll', 'gdal300.dll']
+
+    for _base in _GDAL_CANDIDATES:
+        if not _base or not _os.path.isdir(_base):
+            continue
+        _gdal_dll = next((_os.path.join(_base, n) for n in _GDAL_DLL_NAMES
+                          if _os.path.exists(_os.path.join(_base, n))), None)
+        if _gdal_dll is None:
+            continue
+
+        # 把该目录加进 DLL 搜索路径，让 _gdal.pyd / GEOS / PROJ 等能定位到同目录依赖
+        try:
+            _os.add_dll_directory(_base)
+        except (AttributeError, OSError):
+            pass
+        # 同时置于 PATH 最前：子进程、以及靠 PATH 定位原生库的第三方包
+        # （pyproj / fiona / rasterio / geopandas）才能用到同一份 GDAL
+        if _base not in _os.environ.get('PATH', '').split(_os.pathsep):
+            _os.environ['PATH'] = _base + _os.pathsep + _os.environ.get('PATH', '')
+
+        GDAL_LIBRARY_PATH = _gdal_dll
+        _geos = _os.path.join(_base, 'geos_c.dll')
+        if _os.path.exists(_geos):
+            GEOS_LIBRARY_PATH = _geos
+
+        # PROJ/GDAL 数据目录：conda 版在 <prefix>/share/xxx，独立安装版在 bin/proj、bin/gdata
+        #
+        # 注意：这里必须**直接覆盖**而不是 setdefault。
+        # 本机系统级环境里装过 GeoServer/GISInternals，已存在
+        #   PROJ_LIB=C:\Program Files\gdal\bin\proj6\share      （2019 年的 proj.db）
+        #   GDAL_DATA=C:\Program Files\gdal\bin\gdal-data
+        #   GDAL_DRIVER_PATH=C:\Program Files\gdal\bin\gdal\plugins
+        # 这些属于旧的 GDAL 3.0.4。若保留，新版 GDAL 会读到旧 proj.db 并报
+        # "proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR ... It comes from another PROJ installation"，
+        # 或加载到为旧版编译的驱动插件。既然已经选定了某份 GDAL，就用它配套的数据目录。
+        _prefix = _os.path.dirname(_base)
+        for _p in (_os.path.join(_prefix, 'share', 'proj'),      # conda: Library/share/proj
+                   _os.path.join(_base, 'proj')):                 # GISInternals: bin/proj
+            if _os.path.isdir(_p):
+                _os.environ['PROJ_LIB'] = _p
+                break
+        for _g in (_os.path.join(_prefix, 'share', 'gdal'),      # conda: Library/share/gdal
+                   _os.path.join(_base, 'gdata')):                # GISInternals: bin/gdata
+            if _os.path.isdir(_g):
+                _os.environ['GDAL_DATA'] = _g
+                break
+
+        # 驱动插件目录：只有选定的 GDAL 自己有才设，否则清掉外部残留值，
+        # 避免加载到为其它 GDAL 版本编译的插件
+        _plugins = next((p for p in (_os.path.join(_prefix, 'lib', 'gdalplugins'),  # conda
+                                     _os.path.join(_base, 'gdal', 'plugins'))       # GISInternals
+                         if _os.path.isdir(p)), None)
+        if _plugins:
+            _os.environ['GDAL_DRIVER_PATH'] = _plugins
+        else:
+            _os.environ.pop('GDAL_DRIVER_PATH', None)
+        break
 
 # ===========================================================================
 # API 文档（drf-spectacular）
