@@ -440,11 +440,14 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 import os as _os
 
 if _os.name == 'nt':
+    # 与 venv_6.06 配套的那份 GDAL（venv 里的 osgeo 绑定依赖它同目录的 gdal.dll）
+    _GDAL_PREFERRED = r'E:\claudecode\_tools\gdal-3.13.3\Library\bin'
+
     # 候选目录按优先级排列
     _GDAL_CANDIDATES = [
-        _os.environ.get('GDAL_BIN_DIR'),                      # 显式指定，最高优先级
-        r'E:\claudecode\_tools\gdal-3.13.3\Library\bin',      # 与 venv_6.06 配套的 GDAL 3.13.3
-        r'C:\Program Files\GDAL\bin',                          # 旧的独立安装（GDAL 3.0.x）
+        _os.environ.get('GDAL_BIN_DIR'),    # 显式指定，最高优先级
+        _GDAL_PREFERRED,                    # 与 venv_6.06 配套的 GDAL 3.13.3
+        r'C:\Program Files\GDAL\bin',       # 旧的独立安装（GDAL 3.0.x），仅兜底
         r'C:\OSGeo4W64\bin',
         r'C:\OSGeo4W\bin',
     ]
@@ -474,6 +477,29 @@ if _os.name == 'nt':
         _geos = _os.path.join(_base, 'geos_c.dll')
         if _os.path.exists(_geos):
             GEOS_LIBRARY_PATH = _geos
+
+        # 用到的不是与 venv 配套的那份 GDAL 时给出明确警告。
+        # 否则一旦配套目录被删/改名，会静默回落到旧的 3.0.x：Django 侧照样能启动，
+        # 但 venv 的 osgeo 会报 "DLL load failed while importing _gdal"，
+        # 而报错完全指不到"GDAL 选错了"，排查很绕。
+        if _base != _GDAL_PREFERRED:
+            import warnings as _warnings
+
+            _warnings.warn(
+                "[VGIS] 当前选用的 GDAL 不是与 venv 配套的那份，osgeo 绑定可能不可用。\n"
+                "       实际选用: {}\n"
+                "       配套路径: {}{}\n"
+                "       影响: venv 里 osgeo 的 _gdal.pyd 依赖【同目录】的 gdal.dll，"
+                "版本不配套时 import osgeo 会失败，且进程内可能同时加载两个版本的 GDAL。\n"
+                "       处理: 确认上面的配套路径存在；或把它设到环境变量 GDAL_BIN_DIR 显式指定。".format(
+                    _base,
+                    _GDAL_PREFERRED,
+                    _os.environ.get('GDAL_BIN_DIR') and "（GDAL_BIN_DIR 已设为 {}）".format(
+                        _os.environ['GDAL_BIN_DIR']) or "",
+                ),
+                RuntimeWarning,
+                stacklevel=1,
+            )
 
         # PROJ/GDAL 数据目录：conda 版在 <prefix>/share/xxx，独立安装版在 bin/proj、bin/gdata
         #
