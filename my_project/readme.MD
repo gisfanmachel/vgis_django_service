@@ -26,10 +26,50 @@
 >python manage.py inspectdb<br>
 >python manage.py inspectdb >my_app/models2.py
 
-### 2.4 代码结构
-> 共用urls类型
-> 写自己的seririlzer类、models类、view类、manage类、utils类
-> 
+### 2.4 代码结构（分模块组织）
+> 业务代码按模块放独立目录，一个模块一个包，**包内自带全套文件、自成单元**：
+
+```
+my_app/
+├── module/                      # 各业务模块，一模块一目录
+│   ├── sys_manage/              # 系统管理：配置/部门/日志/菜单/OSS/角色/用户/参数/字典/消息
+│   ├── user_manage/             # 用户认证：登录/Token/验证码/忘记密码
+│   ├── common/                  # 公共数据：行政区划/文件上传
+│   └── demo/                    # ★ 模板模块：CRUD + 分页 + Excel 导入导出
+│       ├── __init__.py
+│       ├── urls.py              # 本模块路由（前缀写死在这里，如 my_api/demo/）
+│       ├── views.py             # ViewSet：只声明四件套 + 转调 manager
+│       ├── models.py            # 本模块的 ORM 模型（managed=False + 显式 db_table）
+│       ├── serializers.py       # 本模块的序列化器
+│       ├── localization.py      # 本模块的中英文词条（类名固定 Enum，CH/EN 成对）
+│       ├── manager.py           # 本模块的业务逻辑（裸 SQL 都写这里）
+│       └── utility.py           # 本模块私有工具与常量
+├── models.py                    # 聚合器：显式 import 各模块 models（见文件内注释说明原因）
+├── checks.py                    # system check：路由前缀冲突 / 重复路径
+├── enum/localization_enum.py    # 全局公共词条（跨模块复用的放这里）
+├── utils/                       # 跨模块共享工具（commonUtility/excelUtility/paginationUtility 等）
+├── views/                       # 跨模块共享视图基类（custom.py: CustomModelViewSet、response/）
+└── middleware.py / apps.py / tasks.py / admin.py
+```
+
+**新增一个模块**：复制 `module/demo/` 整个目录改名，改里面的表名/类名/前缀，
+再到 `my_project/urls.py` 加一行 `path('', include('my_app.module.<新模块>.urls'))` 即可。
+
+**关键约定**
+- 路由前缀**写在各模块自己的 urls.py 里**（`my_api/<模块名>/`），顶层只做 include；
+  前缀冲突由 `my_app/checks.py` 的 system check 在 `manage.py check` / 启动时校验
+- 模型一律 `managed = False` + 显式 `db_table`，表由 `database/` 下的 SQL 手工维护，不走迁移
+- 模块包**不是** Django app（全项目只有 `my_app` 一个 app）；
+  新增模块的 models 必须在 `my_app/models.py` 末尾加一行显式 import，否则模型不会注册
+- 词条：本模块专有的放模块内 `localization.py`，用
+  `CommonHelper.get_local_str_from_module("模块名", "KEY", request)` 取；
+  跨模块通用的放全局 `enum/localization_enum.py`。
+  新增词条后跑 `python my_app/tools/check_localization_keys.py` 自检（同时校验全局与各模块）
+- 日志统一用 `LoggerHelper.set_start_log_info` / `set_end_log_info_in_exception` 包壳
+
+> 接口路径已由「单前缀」改为「分模块前缀」，例如
+> `/my_api/sysDict/add/` → `/my_api/sysman/sysDict/add/`。
+> 完整的新旧对照见仓库根目录的《接口路径变更对照表.md》。
 
 ## 2.5启动服务 
 > 通过django的runserver启动

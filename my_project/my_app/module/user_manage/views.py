@@ -12,9 +12,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from my_app.manage.userManager import UserOperator
-from my_app.models import AuthUser, SysLog
-from my_app.serializers import AuthUserSerializer
+from my_app.module.user_manage.manager import UserOperator
+from my_app.models import SysLog
+from my_app.module.user_manage.models import AuthUser, TtUserpassQuestion
+from my_app.module.user_manage.serializers import AuthUserSerializer, TtUserpassQuestionSerializer
 from vgis_log.logTools import LoggerHelper
 from vgis_utils.vgis_http.httpTools import HttpHelper
 
@@ -230,3 +231,11 @@ class UserViewSet(viewsets.ModelViewSet):
 class MyPage(PageNumberPagination):
     page_size_query_param = "max_page"
     page_query_param = "page"
+
+
+# 忘记密码的密保问题（登录前要能拉取，因此 AllowAny 且不做 token 认证）
+class TtUserpassQuestionViewSet(viewsets.ModelViewSet):
+    queryset = TtUserpassQuestion.objects.all().order_by('id')
+    serializer_class = TtUserpassQuestionSerializer
+    permission_classes = (AllowAny,)
+    # 刻意不配 authentication_classes：登录前需要拉取密保问题

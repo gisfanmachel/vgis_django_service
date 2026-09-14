@@ -15,7 +15,7 @@ import uuid
 from vgis_log.logTools import LoggerHelper
 from vgis_utils.vgis_http.httpTools import HttpHelper
 
-from my_app import models
+from my_app.module.common import models
 from my_app.models import SysLog
 from my_project import settings
 

@@ -11,96 +11,6 @@ from django.contrib.gis.db import models
 
 
 # Create your models here.
-# 认证相关的模型
-
-
-class AuthGroup(models.Model):
-    name = models.CharField(unique=True, max_length=150)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group'
-
-
-class AuthGroupPermissions(models.Model):
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group_permissions'
-        unique_together = (('group', 'permission'),)
-
-
-class AuthPermission(models.Model):
-    name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
-    codename = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_permission'
-        unique_together = (('content_type', 'codename'),)
-
-
-class AuthUser(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    password = models.CharField(max_length=128)
-    last_login = models.DateTimeField(blank=True, null=True)
-    is_superuser = models.BooleanField()
-    username = models.CharField(unique=True, max_length=150)
-    fullname = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
-    email = models.CharField(max_length=254)
-    is_staff = models.BooleanField()
-    is_active = models.BooleanField()
-    date_joined = models.DateTimeField()
-    department_id = models.BigIntegerField(blank=True, null=True)
-    # 注意：sex / mobile 不能声明 unique=True。
-    # 数据库 auth_user 上只有主键和 username 索引，并无这两列的唯一约束；
-    # 声明 unique=True 会让 DRF 序列化器在新增用户时按"性别不能重复"校验，
-    # 导致第二个同性别的用户直接建不了（原模型为 inspectdb 误判所留）。
-    sex = models.CharField(max_length=255, blank=True, null=True)
-    mobile = models.CharField(max_length=100, blank=True, null=True)
-    status = models.IntegerField(blank=True, null=True)
-    create_user_id = models.BigIntegerField(blank=True, null=True)
-    create_time = models.DateTimeField(null=True, blank=True)
-    modify_user_id = models.BigIntegerField(blank=True, null=True)
-    modify_time = models.DateTimeField(null=True, blank=True)
-    login_error_attempts = models.SmallIntegerField(default=0)
-    login_locked_until = models.DateTimeField(null=True, blank=True)
-    # 忘记密码用的密保问题与答案（数据库已具备这两列；
-    # SysmanHelper.retrieve_password 走裸 SQL 读，模型里也要声明，
-    # 否则通过 ORM 写入不会落库）
-    userpass_question = models.CharField(max_length=2550, blank=True, null=True)
-    userpass_answer = models.CharField(max_length=2550, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user'
-
-
-class AuthUserGroups(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user_groups'
-        unique_together = (('user', 'group'),)
-
-
-class AuthUserUserPermissions(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user_user_permissions'
-        unique_together = (('user', 'permission'),)
-
-
 # Django管理相关的模型
 class DjangoAdminLog(models.Model):
     action_time = models.DateTimeField()
@@ -109,7 +19,10 @@ class DjangoAdminLog(models.Model):
     action_flag = models.SmallIntegerField()
     change_message = models.TextField()
     content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    # 用字符串惰性引用：AuthUser 已搬到 my_app.module.user_manage.models，
+    # 而本文件的模块聚合 import 在末尾，直接引用会在类定义时报 NameError。
+    # Django 会在 app registry 装配完成后解析字符串引用。
+    user = models.ForeignKey('AuthUser', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -146,256 +59,26 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
-# 业务数据相关的模型
-
-# 配置参数表
-class SysConfig(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    param_key = models.CharField(max_length=50, blank=True, null=True)
-    param_value = models.CharField(max_length=2000, blank=True, null=True)
-    status = models.IntegerField(blank=True, null=True)
-    remark = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_config'
-
-
-# 部门表
-class SysDepartment(models.Model):
-    department_id = models.BigAutoField(primary_key=True)
-    department_name = models.CharField(max_length=128, blank=True, null=True)
-    parent_id = models.BigIntegerField(blank=True, null=True)
-    state = models.CharField(max_length=1, blank=True, null=True)
-    state_date = models.DateField(blank=True, null=True)
-    order_num = models.BigIntegerField(blank=True, null=True)
-    create_user_id = models.BigIntegerField(blank=True, null=True)
-    create_time = models.DateTimeField(blank=True, null=True)
-    del_flag = models.IntegerField(blank=True, null=True)
-    master = models.CharField(max_length=255, blank=True, null=True)
-    tel = models.CharField(max_length=255, blank=True, null=True)
-    email = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_department'
-
-
-# 日志表
-class SysLog(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    username = models.CharField(max_length=50, blank=True, null=True)
-    operation = models.CharField(max_length=50, blank=True, null=True)
-    method = models.CharField(max_length=200, blank=True, null=True)
-    params = models.CharField(max_length=5000, blank=True, null=True)
-    time = models.FloatField()
-    ip = models.CharField(max_length=64, blank=True, null=True)
-    create_date = models.DateTimeField(blank=True, null=True)
-    error_info = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_log'
-
-
-# 菜单表
-class SysMenu(models.Model):
-    menu_id = models.BigAutoField(primary_key=True)
-    parent_id = models.BigIntegerField(blank=True, null=True)
-    name = models.CharField(max_length=50, blank=True, null=True)
-    url = models.CharField(max_length=200, blank=True, null=True)
-    perms = models.CharField(max_length=500, blank=True, null=True)
-    type = models.IntegerField(blank=True, null=True)
-    icon = models.CharField(max_length=50, blank=True, null=True)
-    order_num = models.IntegerField(blank=True, null=True)
-    is_show = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_menu'
-
-
-class SysOss(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    url = models.CharField(max_length=200, blank=True, null=True)
-    create_date = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_oss'
-
-
-# 角色表
-class SysRole(models.Model):
-    role_id = models.BigAutoField(primary_key=True)
-    role_name = models.CharField(max_length=100, blank=True, null=True)
-    remark = models.CharField(max_length=100, blank=True, null=True)
-    create_user_id = models.BigIntegerField(blank=True, null=True)
-    create_time = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_role'
-
-
-# 用户角色菜单表
-class SysRoleMenu(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    role_id = models.BigIntegerField(blank=True, null=True)
-    menu_id = models.BigIntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_role_menu'
-
-
-# 用户表-未用
-class SysUser(models.Model):
-    user_id = models.BigAutoField(primary_key=True)
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=100, blank=True, null=True)
-    salt = models.CharField(max_length=20, blank=True, null=True)
-    email = models.CharField(max_length=100, blank=True, null=True)
-    mobile = models.CharField(max_length=100, blank=True, null=True)
-    status = models.IntegerField(blank=True, null=True)
-    create_user_id = models.BigIntegerField(blank=True, null=True)
-    create_time = models.DateTimeField(blank=True, null=True)
-    department_id = models.BigIntegerField(blank=True, null=True)
-    sex = models.CharField(max_length=255, blank=True, null=True)
-    fullname = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_user'
-
-
-
-
-
-# 用户角色表
-class SysUserRole(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user_id = models.BigIntegerField(blank=True, null=True)
-    role_id = models.BigIntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_user_role'
-
-
-# 用户登录token表
-class SysUserToken(models.Model):
-    user_id = models.BigAutoField(primary_key=True)
-    token = models.CharField(max_length=100)
-    expire_time = models.DateTimeField(blank=True, null=True)
-    update_time = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_user_token'
-
-
-
-
-
-# 上传文件表
-class TtUploadFileData(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    upload_user_id = models.BigIntegerField(blank=True, null=True)
-    file_size = models.DecimalField(max_digits=24, decimal_places=0, blank=True, null=True)
-    file_id = models.CharField(max_length=255, blank=True, null=True)
-    file_name = models.CharField(max_length=255, blank=True, null=True)
-    upload_time = models.DateTimeField(blank=True, null=True)
-    file_suffix = models.CharField(max_length=255, blank=True, null=True)
-    path = models.CharField(max_length=512, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'tt_upload_file_data'
-
-
-# 行政区划表
-class TmDdistrict(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    dis_name = models.CharField(max_length=255, blank=True, null=True)
-    dis_code = models.IntegerField(blank=True, null=True)
-    parent_code = models.IntegerField(blank=True, null=True)
-    type = models.SmallIntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'tm_district'
-
-
-# 说明：原 WorldBorder 模型（GeoDjango 示例，tm_world_border 表）已移除。
-# 它与配套的 my_app/load.py 都来自 Django GIS 示例代码，MYDB 与 PNT 中均无该表，
-# 框架从未使用，属残留死代码。
-
-
-# 忘记密码-密保问题表
-class TtUserpassQuestion(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    question = models.CharField(max_length=10000, db_comment="找回密码的问题")
-
-    class Meta:
-        managed = False
-        db_table = 'tt_userpass_question'
-        db_table_comment = '用户密保问题表'
-
-
-# 忘记密码-一次性重置令牌表
-class TtRetrivepassToken(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    key = models.CharField(max_length=1000, db_comment="一次性重置密码的key")
-    user_id = models.BigIntegerField(blank=True, null=True, db_comment="用户id")
-    create_time = models.DateTimeField(null=True, blank=True, db_comment='创建时间')
-
-    class Meta:
-        managed = False
-        db_table = 'tt_retrivepass_token'
-        db_table_comment = '密码找回令牌表'
-
-
-class SysParam(models.Model):
-    id = models.BigAutoField(primary_key=True, db_comment="id")
-    param_en_key = models.CharField(max_length=200, db_comment="参数键英文名称")
-    param_cn_key = models.CharField(max_length=200, db_comment="参数键中文名称")
-    param_value = models.CharField(max_length=255, db_comment="参数键值")
-    create_time = models.DateTimeField(blank=True, null=True, db_comment='创建时间')
-    create_user_id = models.BigIntegerField(blank=True, null=True, db_comment='创建人')
-    update_time = models.DateTimeField(blank=True, null=True, db_comment='更新时间')
-    update_user_id = models.BigIntegerField(blank=True, null=True, db_comment='更新人id')
-
-    class Meta:
-        managed = False
-        db_table = 'sys_param'
-        db_table_comment = '系统参数表'
-
-class SysDict(models.Model):
-    id = models.BigAutoField(primary_key=True, db_comment="id")
-    dict_catelog_id = models.BigIntegerField(blank=True, null=True)
-    type_value = models.CharField(max_length=200, db_comment="参数键英文名称")
-    memo_value = models.CharField(max_length=200, db_comment="参数键中文名称")
-    param_value = models.CharField(max_length=255, db_comment="参数键值")
-    create_time = models.DateTimeField(blank=True, null=True, db_comment='创建时间')
-    create_user_id = models.BigIntegerField(blank=True, null=True, db_comment='创建人')
-    update_time = models.DateTimeField(blank=True, null=True, db_comment='更新时间')
-    update_user_id = models.BigIntegerField(blank=True, null=True, db_comment='更新人id')
-
-    class Meta:
-        managed = False
-        db_table = 'sys_dict'
-        db_table_comment = '系统字典表'
-
-class SysMessage(models.Model):
-    id = models.BigAutoField(primary_key=True, db_comment="id")
-    user_id = models.BigIntegerField(blank=True, null=True,db_comment="用户id")
-    message = models.CharField(max_length=2550, db_comment="消息")
-    # sys_message 的按时间检索接口（sysManager.sql_search_message）依赖该列，
-    # 缺列会导致该接口 SQL 报错，故表与模型一并补上。
-    create_time = models.DateTimeField(blank=True, null=True, db_comment="创建时间")
-
-    class Meta:
-        managed = False
-        db_table = 'sys_message'
-        db_table_comment = '系统消息表'
+# ===========================================================================
+# 分模块模型的显式导入
+#
+# my_app/module/<模块>/models.py 里定义的模型**不会**被 Django 自动发现：
+# 模块包不是 Django app（全项目只有 my_app 一个 app），而 apps.populate()
+# 只会自动 import my_app.models，不递归子包。因此必须在这里显式导入，
+# 否则模型不进 app registry，ORM 用不了。
+#
+# app_label 不用手写：Django 按最长前缀匹配，my_app.module.demo.models
+# 会自动归到 my_app 这个 app。
+#
+# 这里不采用"靠 URLconf 的 import 链顺带注册"的做法 —— 那样一旦某模块
+# 没被 include，它的模型会静默消失，排查成本很高。
+#
+# 注意：本块必须放在文件末尾（所有扁平模型定义之后），
+# 且下面的模型若要引用上面模块里的模型，请用字符串惰性引用（如 'AuthUser'）。
+#
+# 新增模块时在下面加一行即可。
+# ===========================================================================
+from my_app.module.common.models import *        # noqa: F401,F403,E402
+from my_app.module.sys_manage.models import *    # noqa: F401,F403,E402
+from my_app.module.user_manage.models import *   # noqa: F401,F403,E402
+from my_app.module.demo.models import *          # noqa: F401,F403,E402

@@ -1,6 +1,7 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 import datetime
+import importlib
 import logging
 
 from my_app.enum.localization_enum import SysInfoEnum
@@ -46,6 +47,35 @@ class CommonHelper:
             if local is None or local == "":
                 local = "CH"
         return local
+
+    # 分模块取词：从 my_app/module/<模块名>/localization.py 的 Enum 类里取 KEY_CH / KEY_EN
+    #
+    # 约定：每个模块自带一个 localization.py，内含类名固定为 Enum 的一组 CH/EN 词条，
+    #       不需要注册，按模块名动态 import 即可。
+    # 用法：CommonHelper.get_local_str_from_module("demo", "ADD_SUCCESS", request)
+    #
+    # 与 get_local_str 的区别：那个查全局词表 my_app/enum/localization_enum.py，
+    # 这个查指定模块自己的词表，避免所有模块的词条挤在一个文件里。
+    @staticmethod
+    def get_local_str_from_module(MODULE_NAME, STR_KEY, request):
+        if not MODULE_NAME or not isinstance(MODULE_NAME, str):
+            raise ValueError("MODULE_NAME 必须是非空字符串")
+        if not STR_KEY or not isinstance(STR_KEY, str):
+            raise ValueError("STR_KEY 必须是非空字符串")
+
+        local = CommonHelper.get_local_flag(request)
+        module_path = "my_app.module.{}.localization".format(MODULE_NAME)
+        try:
+            localization_module = importlib.import_module(module_path)
+        except ImportError as e:
+            raise ImportError("无法导入模块词表 {}: {}".format(module_path, e))
+        if not hasattr(localization_module, "Enum"):
+            raise AttributeError("模块 {} 中没有找到 Enum 类".format(module_path))
+        attr_name = "{}_{}".format(STR_KEY, local)
+        enum_class = localization_module.Enum
+        if not hasattr(enum_class, attr_name):
+            raise AttributeError("模块 {} 的 Enum 中不存在词条 {}".format(MODULE_NAME, attr_name))
+        return getattr(enum_class, attr_name)
 
     # ---------------- 参数/时间相关 ----------------
     # 判断字符串是否有效（None、空串、字符串"null"/"none" 都算无效）

@@ -15,8 +15,7 @@ from vgis_log.logTools import LoggerHelper
 from vgis_utils.vgis_http.httpTools import HttpHelper
 from vgis_utils.vgis_list.listTools import ListHelper
 
-from my_app.models import SysDepartment
-from my_app.models import SysLog
+from my_app.module.sys_manage.models import SysDepartment, SysLog
 from my_app.utils.sysmanUtility import SysmanHelper
 
 logger = logging.getLogger('django')

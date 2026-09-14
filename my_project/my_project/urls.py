@@ -28,7 +28,12 @@ urlpatterns = [
     path('docs/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('', include('my_app.urls')),
-    # 原 asyncViews / celeryViews 的测试路由已移除（asyncViews.py 属残留代码，
-    # celeryViews 模块从未存在过，两者引用都会导致 URLConf 加载即报 NameError）。
+
+    # ---- 分模块路由：各模块前缀写死在模块自己的 urls.py 里 ----
+    # 新增模块只需在这里加一行 include。
+    # 前缀冲突由 my_app/checks.py 的 system check 在启动时校验（manage.py check 也会跑）。
+    path('', include('my_app.module.sys_manage.urls')),
+    path('', include('my_app.module.common.urls')),
+    path('', include('my_app.module.user_manage.urls')),
+    path('', include('my_app.module.demo.urls')),
 ]

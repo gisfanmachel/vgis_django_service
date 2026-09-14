@@ -22,7 +22,8 @@ from vgis_utils.vgis_datetime.datetimeTools import DateTimeHelper
 
 # 用户相关操作类
 from my_app.apps import MyAppConfig
-from my_app.models import AuthUser, SysLog, SysParam
+from my_app.models import SysLog, SysParam
+from my_app.module.user_manage.models import AuthUser
 from my_app.utils.commonUtility import CommonHelper
 from my_app.utils.sysmanUtility import SysmanHelper
 from my_project import settings

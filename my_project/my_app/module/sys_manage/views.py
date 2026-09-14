@@ -20,13 +20,15 @@ from rest_framework.response import Response
 from vgis_log.logTools import LoggerHelper
 from vgis_utils.vgis_http.httpTools import HttpHelper
 
-from my_app.manage.sysManager import SysOperator
-from my_app.manage.userManager import UserOperator
-from my_app.models import SysConfig, SysDepartment, SysLog, SysMenu, SysOss, SysRole, SysRoleMenu, SysUser, \
-    SysUserRole, SysUserToken, AuthUser, SysParam, TtUserpassQuestion
-from my_app.serializers import SysConfigSerializer, SysDepartmentSerializer, SysLogSerializer, SysMenuSerializer, \
-    SysOssSerializer, SysRoleSerializer, SysRoleMenuSerializer, SysUserSerializer, SysUserRoleSerializer, \
-    SysUserTokenSerializer, AuthUserSerializer, SysParamSerializer, TtUserpassQuestionSerializer
+from my_app.module.sys_manage.manager import SysOperator
+from my_app.module.user_manage.manager import UserOperator
+from my_app.module.sys_manage.models import SysConfig, SysDepartment, SysDict, SysLog, SysMenu, SysMessage, \
+    SysOss, SysRole, SysRoleMenu, SysUser, SysUserRole, SysUserToken, SysParam
+from my_app.module.user_manage.models import AuthUser
+from my_app.module.sys_manage.serializers import SysConfigSerializer, SysDepartmentSerializer, SysDictSerializer, \
+    SysLogSerializer, SysMenuSerializer, SysMessageSerializer, SysOssSerializer, SysRoleSerializer, \
+    SysRoleMenuSerializer, SysUserSerializer, SysUserRoleSerializer, SysUserTokenSerializer, SysParamSerializer
+from my_app.module.user_manage.serializers import AuthUserSerializer
 from my_app.utils.passwordUtility import PasswordHelper
 from my_app.utils.snowflake_id_util import SnowflakeIDUtil
 from my_app.utils.sysmanUtility import SysmanHelper
@@ -643,6 +645,10 @@ class SysUserTokenViewSet(viewsets.ModelViewSet):
 
 # 数据字典相关操作
 class SysDictViewSet(viewsets.ModelViewSet):
+    # 本视图集主要用 @action 挂裸 SQL 接口，但 router 仍会生成标准 CRUD 路由，
+    # 因此必须声明 queryset/serializer_class，否则那些路由一访问就 500
+    queryset = SysDict.objects.all().order_by('id')
+    serializer_class = SysDictSerializer
     permission_classes = (IsAuthenticated,)
     # 自定义token认证
     authentication_classes = (ExpiringTokenAuthentication,)
@@ -761,6 +767,10 @@ class SysDictViewSet(viewsets.ModelViewSet):
 
 # 系统消息相关操作
 class SysMessageViewSet(viewsets.ModelViewSet):
+    # 同 SysDictViewSet：主要用 @action，但 router 会生成标准 CRUD 路由，
+    # 缺 queryset/serializer_class 会让那些路由 500
+    queryset = SysMessage.objects.all().order_by('id')
+    serializer_class = SysMessageSerializer
     permission_classes = (IsAuthenticated,)
     # 自定义token认证
     authentication_classes = (ExpiringTokenAuthentication,)
@@ -912,12 +922,3 @@ class SysParamViewSet(viewsets.ModelViewSet):
             res
 
         return Response(res)
-
-
-
-# 忘记密码的密保问题（登录前要能拉取，因此 AllowAny 且不做 token 认证）
-class TtUserpassQuestionViewSet(viewsets.ModelViewSet):
-    queryset = TtUserpassQuestion.objects.all().order_by('id')
-    serializer_class = TtUserpassQuestionSerializer
-    permission_classes = (AllowAny,)
-    # 刻意不配 authentication_classes：登录前需要拉取密保问题
