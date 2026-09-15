@@ -82,3 +82,4 @@ from my_app.module.common.models import *        # noqa: F401,F403,E402
 from my_app.module.sys_manage.models import *    # noqa: F401,F403,E402
 from my_app.module.user_manage.models import *   # noqa: F401,F403,E402
 from my_app.module.demo.models import *          # noqa: F401,F403,E402
+from my_app.module.gis_service.models import *   # noqa: F401,F403,E402

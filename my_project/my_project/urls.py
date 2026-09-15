@@ -36,4 +36,5 @@ urlpatterns = [
     path('', include('my_app.module.common.urls')),
     path('', include('my_app.module.user_manage.urls')),
     path('', include('my_app.module.demo.urls')),
+    path('', include('my_app.module.gis_service.urls')),
 ]
