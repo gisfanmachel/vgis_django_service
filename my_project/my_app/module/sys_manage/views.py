@@ -34,6 +34,8 @@ from my_app.utils.passwordUtility import PasswordHelper
 from my_app.utils.snowflake_id_util import SnowflakeIDUtil
 from my_app.utils.sysmanUtility import SysmanHelper
 from my_app.utils.commonUtility import CommonHelper
+# Stage C：表级缓存失效（在 create/update/destroy 成功路径末尾调 invalidate_table）
+from my_app.utils.cacheInvalidate import invalidate_table
 from my_app.views.response.baseRespone import Result
 from my_project import settings
 from my_project.token import ExpiringTokenAuthentication
@@ -73,6 +75,7 @@ class SysDepartmentViewSet(viewsets.ModelViewSet):
                                      request.path,
                                      HttpHelper.get_params_request(request),
                                      t, HttpHelper.get_ip_request(request))
+        invalidate_table("sys_department")  # Stage C
         return super().create(request)
 
     def update(self, request, *args, **kwargs):
@@ -88,6 +91,7 @@ class SysDepartmentViewSet(viewsets.ModelViewSet):
                                      request.path,
                                      HttpHelper.get_params_request(request),
                                      t, HttpHelper.get_ip_request(request))
+        invalidate_table("sys_department")  # Stage C
         return super().update(request, *args, **kwargs)
 
     # 获取部门列表-sql
@@ -214,6 +218,7 @@ class SysMenuViewSet(viewsets.ModelViewSet):
             LoggerHelper.set_end_log_info(SysLog, logger, start, api_path, request.auth.user, request,
                                           function_title)
             msg = "{}成功".format(function_title)
+            invalidate_table("sys_menu")  # Stage C
             return Result.sucess(msg, None)
 
     def update(self, request, *args, **kwargs):
@@ -237,6 +242,7 @@ class SysMenuViewSet(viewsets.ModelViewSet):
             LoggerHelper.set_end_log_info(SysLog, logger, start, api_path, request.auth.user, request,
                                           function_title)
             msg = "{}成功".format(function_title)
+            invalidate_table("sys_menu")  # Stage C
             return Result.sucess(msg, None)
 
 
@@ -261,6 +267,7 @@ class SysMenuViewSet(viewsets.ModelViewSet):
                 'success': True,
                 'info': "{}(编号为{})成功".format(title, id)
             }
+            invalidate_table("sys_menu")  # Stage C
         except Exception as exp:
             res = {
                 'success': True,
@@ -327,6 +334,8 @@ class SysRoleViewSet(viewsets.ModelViewSet):
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
 
+            invalidate_table("sys_role")  # Stage C
+            invalidate_table("sys_role_menu")  # Stage C
             return returnrole
 
     def update(self, request, *args, **kwargs):
@@ -367,6 +376,8 @@ class SysRoleViewSet(viewsets.ModelViewSet):
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
+            invalidate_table("sys_role")  # Stage C
+            invalidate_table("sys_role_menu")  # Stage C
             return super().update(request, *args, **kwargs)
 
     # 获取角色列表-sql
@@ -399,6 +410,9 @@ class SysRoleViewSet(viewsets.ModelViewSet):
                 'success': True,
                 'info': "{}(编号为{})成功".format(title, id)
             }
+            invalidate_table("sys_role")  # Stage C
+            invalidate_table("sys_role_menu")  # Stage C
+            invalidate_table("sys_user_role")  # Stage C
         except Exception as exp:
             res = {
                 'success': True,
@@ -490,6 +504,8 @@ class AuthUserViewSet(viewsets.ModelViewSet):
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
+            invalidate_table("auth_user")  # Stage C
+            invalidate_table("sys_user_role")  # Stage C
             return returnuser
 
     def update(self, request, *args, **kwargs):
@@ -545,6 +561,8 @@ class AuthUserViewSet(viewsets.ModelViewSet):
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
+            invalidate_table("auth_user")  # Stage C
+            invalidate_table("sys_user_role")  # Stage C
             return super().update(request, *args, **kwargs)
 
     @action(detail=False, methods=['POST'], url_path='get_details')
@@ -583,6 +601,8 @@ class AuthUserViewSet(viewsets.ModelViewSet):
                 'success': True,
                 'info': "{}(编号为{})成功".format(title, id)
             }
+            invalidate_table("auth_user")  # Stage C
+            invalidate_table("sys_user_role")  # Stage C
         except Exception as exp:
             res = {
                 'success': False,
@@ -724,6 +744,8 @@ class SysDictViewSet(viewsets.ModelViewSet):
         try:
             sysOperator = SysOperator(connection)
             res = sysOperator.add_dict(request, function_title)
+            if isinstance(res, dict) and res.get("success", False):
+                invalidate_table("sys_dict")  # Stage C
             return Response(res)
 
         except Exception as exp:
@@ -742,6 +764,8 @@ class SysDictViewSet(viewsets.ModelViewSet):
         try:
             sysOperator = SysOperator(connection)
             res = sysOperator.update_dict(request, function_title)
+            if isinstance(res, dict) and res.get("success", False):
+                invalidate_table("sys_dict")  # Stage C
             return Response(res)
 
         except Exception as exp:
@@ -760,6 +784,8 @@ class SysDictViewSet(viewsets.ModelViewSet):
         try:
             sysOperator = SysOperator(connection)
             res = sysOperator.delete_dict(request, function_title)
+            if isinstance(res, dict) and res.get("success", False):
+                invalidate_table("sys_dict")  # Stage C
             return Response(res)
 
         except Exception as exp:
@@ -870,6 +896,7 @@ class SysParamViewSet(viewsets.ModelViewSet):
             LoggerHelper.set_end_log_info(SysLog, logger, start, api_path, request.auth.user, request,
                                           function_title)
             msg = "{}成功".format(function_title)
+            invalidate_table("sys_param")  # Stage C
             return Result.sucess(msg, None)
 
     def update(self, request, *args, **kwargs):
@@ -895,6 +922,7 @@ class SysParamViewSet(viewsets.ModelViewSet):
             LoggerHelper.set_end_log_info(SysLog, logger, start, api_path, request.auth.user, request,
                                           function_title)
             msg = "{}成功".format(function_title)
+            invalidate_table("sys_param")  # Stage C
             return Result.sucess(msg, None)
 
     # #删除参数
@@ -917,6 +945,7 @@ class SysParamViewSet(viewsets.ModelViewSet):
                 'success': True,
                 'info': "{}(编号为{})成功".format(title, id)
             }
+            invalidate_table("sys_param")  # Stage C
         except Exception as exp:
             res = {
                 'success': True,
