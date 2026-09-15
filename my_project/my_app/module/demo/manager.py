@@ -28,6 +28,7 @@ from my_app.tasks import insert_log_info_async
 from my_app.utils.commonUtility import CommonHelper
 from my_app.utils.excelUtility import build_excel_file, build_template_file, read_excel_rows, XLS_SUFFIXES
 from my_app.utils.paginationUtility import PaginationHelper
+from my_app.utils.safeSQL import UnsafeIdentifierError, assert_table_allowed
 from my_project import settings
 
 # 注意：本模块的取词统一用 get_local_str_from_module（查本模块 localization.py）
@@ -51,6 +52,13 @@ ORDER_BY_WHITELIST = {
     "id", "item_code", "item_name", "category_id", "department_id",
     "amount", "item_status", "occur_date", "create_time",
 }
+
+# Stage D：update 字段白名单（UPDATE ... SET {field}=%s 也无法参数化，
+# 这里做一道防御性 assert，挡掉未来谁不小心把 data 的 key 直接 format 进去的可能）
+UPDATE_FIELD_WHITELIST = frozenset({
+    "item_code", "item_name", "category_id", "department_id",
+    "amount", "item_status", "occur_date", "remark",
+})
 
 
 class Operator:
@@ -177,6 +185,10 @@ class Operator:
                 for field in ["item_code", "item_name", "category_id", "department_id",
                               "amount", "item_status", "occur_date", "remark"]:
                     if field in data:
+                        # Stage D：防御性白名单 —— 即便 field 已经来自硬编码列表，
+                        # 还是走一遍 assert，挡住未来误把 data 直接拼进来的可能
+                        if field not in UPDATE_FIELD_WHITELIST:
+                            continue
                         sets.append("{} = %s".format(field))
                         params.append(data.get(field) or None)
                 if not sets:

@@ -14,6 +14,7 @@
 #     因为它无法参数化，直接拼字符串会有注入风险
 import logging
 
+from my_app.utils.safeSQL import ALLOWED_DIRECTIONS, UnsafeIdentifierError
 from my_project import settings
 
 logger = logging.getLogger("django")
@@ -91,12 +92,15 @@ class PaginationHelper:
         """
         order_by 无法参数化，必须白名单校验后才可拼进 SQL。
         允许 'field' 或 'field desc' / 'field asc' 形式；不合规时回落到 default。
+        Stage D：方向大小写严格走 ALLOWED_DIRECTIONS（asc/desc/ASC/DESC），
+        实际落库时统一小写，避免大小写绕过。
         """
         if not order_by or not str(order_by).strip():
             return default
         parts = str(order_by).strip().split()
         field = parts[0]
-        direction = parts[1].lower() if len(parts) > 1 else "asc"
+        direction_raw = parts[1] if len(parts) > 1 else "asc"
+        direction = direction_raw.lower()
         if field not in allowed_fields or direction not in ("asc", "desc"):
             logger.warning("order_by=%s 未通过白名单校验，回落到 %s", order_by, default)
             return default
