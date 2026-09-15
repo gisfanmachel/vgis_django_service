@@ -13,6 +13,22 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
+# Stage A：所有可调参数集中在 config.py，通过同名环境变量覆盖
+# 默认行为与改前一致（DB_REPLICA_ENABLED/PGBOUNCER_ENABLED 默认 False）
+from .config import (
+    DB_DEFAULT_NAME, DB_DEFAULT_USER, DB_DEFAULT_PASSWORD,
+    DB_DEFAULT_HOST, DB_DEFAULT_PORT,
+    DB_CONNECT_TIMEOUT, DB_KEEPALIVES_IDLE, DB_KEEPALIVES_INTERVAL,
+    DB_KEEPALIVES_COUNT, DB_CONN_MAX_AGE,
+    DB_REPLICA_ENABLED, DB_REPLICA_NAME, DB_REPLICA_USER,
+    DB_REPLICA_PASSWORD, DB_REPLICA_HOST, DB_REPLICA_PORT,
+    PGBOUNCER_ENABLED, PGBOUNCER_HOST, PGBOUNCER_PORT,
+    REDIS_HOST, REDIS_PORT, REDIS_PASSWORD,
+    REDIS_DB_CACHE, REDIS_DB_CHANNEL, REDIS_DB_CELERY, REDIS_PROTOCOL,
+    ES_ENABLED, ES_HOSTS, ES_USER, ES_PASSWORD,
+    ES_INDEX_PREFIX, ES_FLUSH_INTERVAL, ES_BATCH_SIZE,
+)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOGGER_ROOT = os.path.join(BASE_DIR, 'logger')
@@ -217,15 +233,17 @@ LOGGING = {
         },
         # 阶段 7：ES 异步 handler —— 把所有详细日志同步落到 ES，方便 Kibana 可视化
         # 与本地文件日志并行（不动 myapp.log / myapp_db.log 的现有行为）
+        # Stage A：ES 配置改读 config.py（环境变量可覆盖）
         'es': {
             'class': '{}.log.ElasticsearchHandler'.format(PROJECT_NAME),
             'level': 'INFO',
-            'es_hosts': ['http://192.168.3.40:9200'],
-            'es_user': 'elastic',
-            'es_password': 'VgisES@2026!',
-            'index_prefix': 'vgis-myapp',
-            'flush_interval': 1.0,
-            'batch_size': 100,
+            'enabled': ES_ENABLED,
+            'es_hosts': list(ES_HOSTS),
+            'es_user': ES_USER,
+            'es_password': ES_PASSWORD,
+            'index_prefix': ES_INDEX_PREFIX,
+            'flush_interval': ES_FLUSH_INTERVAL,
+            'batch_size': ES_BATCH_SIZE,
             'request_timeout': 5,
         },
     },
@@ -255,25 +273,26 @@ LOGGING = {
 }
 
 # Redis 地址（缓存 / channels 层 / celery broker 统一指向 192.168.3.80）
-REDIS_HOST = '192.168.3.80'
-REDIS_PORT = 6379
-# 建议按业务分 DB，避免通道层与业务缓存互相覆盖：
-#   db0 业务缓存 / db1 channels 层 / db2 celery broker+result
-REDIS_DB_CACHE = 0
-REDIS_DB_CHANNEL = 1
-REDIS_DB_CELERY = 2
+# Stage A：值由 config.py 提供（环境变量可覆盖）
+# 注意：下方 CHANNEL_LAYERS / CACHES / CELERY_* 都通过这里读 REDIS_HOST/PORT/DB_*。
+REDIS_HOST_LOCAL = REDIS_HOST
+REDIS_PORT_LOCAL = REDIS_PORT
+REDIS_PASSWORD_LOCAL = REDIS_PASSWORD
+REDIS_DB_CACHE_LOCAL = REDIS_DB_CACHE
+REDIS_DB_CHANNEL_LOCAL = REDIS_DB_CHANNEL
+REDIS_DB_CELERY_LOCAL = REDIS_DB_CELERY
+REDIS_PROTOCOL_LOCAL = REDIS_PROTOCOL
 
 # 该服务器的 Redis 是 5.0.x，而 redis-py 5.x 起默认走 RESP3 握手（HELLO 3），
 # Redis 6.0 才支持 HELLO，直连会报 "unknown command `HELLO`"。
 # 因此所有 Redis 连接显式声明 protocol=2（RESP2）。
 # 若将来把 Redis 升级到 6.0+，可以把这几处 protocol 去掉。
-REDIS_PROTOCOL = 2
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [{"host": REDIS_HOST, "port": REDIS_PORT, "protocol": REDIS_PROTOCOL}],
+            "hosts": [{"host": REDIS_HOST_LOCAL, "port": REDIS_PORT_LOCAL, "protocol": REDIS_PROTOCOL_LOCAL}],
             "prefix": "vgis_channel",  # 前缀隔离，避免与其他服务串频道
             "capacity": 1500,
             "expiry": 10,
@@ -282,14 +301,15 @@ CHANNEL_LAYERS = {
 }
 
 # Redis缓存库配置
+# Stage A：值由 config.py 提供
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://{}:{}/{}".format(REDIS_HOST, REDIS_PORT, REDIS_DB_CACHE),
+        "LOCATION": "redis://{}:{}/{}".format(REDIS_HOST_LOCAL, REDIS_PORT_LOCAL, REDIS_DB_CACHE_LOCAL),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
-            "CONNECTION_POOL_KWARGS": {"max_connections": 512, "protocol": REDIS_PROTOCOL},
+            "CONNECTION_POOL_KWARGS": {"max_connections": 512, "protocol": REDIS_PROTOCOL_LOCAL},
             # 注意：开启后 Redis 不可用时 cache 操作会静默返回 None 而不报错，
             # 排查缓存问题时应临时关掉。
             "IGNORE_EXCEPTIONS": True,
@@ -301,27 +321,60 @@ CACHES = {
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+# Stage B：连接硬化（libpq keepalive + statement_timeout + idle_in_transaction_session_timeout），
+#         并按 config.py 中的开关决定是否加 replica / 走 pgbouncer。
 
-DATABASES = {
-    'default': {
+def _build_db_options():
+    """libpq 选项集中在此，便于按 env 统一调整"""
+    return {
+        "connect_timeout": DB_CONNECT_TIMEOUT,
+        "keepalives": 1,
+        "keepalives_idle": DB_KEEPALIVES_IDLE,
+        "keepalives_interval": DB_KEEPALIVES_INTERVAL,
+        "keepalives_count": DB_KEEPALIVES_COUNT,
+        # PG 会话级超时：单语句 30s、空闲事务 60s 强制断开
+        "options": "-c statement_timeout=30s -c idle_in_transaction_session_timeout=60s",
+    }
+
+
+def _build_db_block(user, password, host, port, dbname):
+    return {
         # PostGIS 引擎（Django 6 下需要 GDAL/GEOS，见文件末尾的 GDAL_LIBRARY_PATH 配置）
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        # 注意：Django 4.0 起已移除 'django.db.backends.postgresql_psycopg2' 别名，只能写 'postgresql'
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '192.168.3.40',
-        'PORT': '12326',
-        'NAME': 'mydb_test',
-        'OPTIONS': {
-            'connect_timeout': 10,
-        },
-        # 阶段 5：连接池配置
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": dbname,
+        "USER": user,
+        "PASSWORD": password,
+        "HOST": host,
+        "PORT": str(port),
+        "OPTIONS": _build_db_options(),
         # CONN_MAX_AGE=60：连接保留 60 秒，避免每请求重连（PG 端 max=100，需配合）
         # CONN_HEALTH_CHECKS=True：在拿连接前做一次健康检查，剔除已被服务端关闭的连接
-        'CONN_MAX_AGE': 60,
-        'CONN_HEALTH_CHECKS': True,
+        "CONN_MAX_AGE": DB_CONN_MAX_AGE,
+        "CONN_HEALTH_CHECKS": True,
     }
+
+
+DATABASES = {
+    "default": _build_db_block(
+        DB_DEFAULT_USER, DB_DEFAULT_PASSWORD,
+        DB_DEFAULT_HOST, DB_DEFAULT_PORT, DB_DEFAULT_NAME,
+    ),
 }
+if DB_REPLICA_ENABLED:
+    DATABASES["replica"] = _build_db_block(
+        DB_REPLICA_USER, DB_REPLICA_PASSWORD,
+        DB_REPLICA_HOST, DB_REPLICA_PORT, DB_REPLICA_NAME,
+    )
+if PGBOUNCER_ENABLED:
+    # 走 pgbouncer 时所有 alias 统一指向 pgbouncer 监听地址
+    # 注意 pgbouncer 模式下 CONN_MAX_AGE 必须为 0，但本项目默认直连，
+    # 所以默认行为下不会进入此分支。
+    for alias in DATABASES:
+        DATABASES[alias]["HOST"] = PGBOUNCER_HOST
+        DATABASES[alias]["PORT"] = str(PGBOUNCER_PORT)
+
+# 读副本路由：仅当 DB_REPLICA_ENABLED 时把读流量切到 replica
+DATABASE_ROUTERS = ["my_project.db_router.PrimaryReplicaRouter"]
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -431,8 +484,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # 注意：DEBUG 已在文件开头定义，这里不要再重复定义
 
 # 配置celery异步任务使用的redis cache（统一指向 192.168.3.80，独立 DB 避免与缓存/通道层冲突）
-CELERY_BROKER_URL = 'redis://{}:{}/{}'.format(REDIS_HOST, REDIS_PORT, REDIS_DB_CELERY)
-CELERY_RESULT_BACKEND = 'redis://{}:{}/{}'.format(REDIS_HOST, REDIS_PORT, REDIS_DB_CELERY)
+# Stage A：值由 config.py 提供（环境变量可覆盖）
+CELERY_BROKER_URL = 'redis://{}:{}/{}'.format(REDIS_HOST_LOCAL, REDIS_PORT_LOCAL, REDIS_DB_CELERY_LOCAL)
+CELERY_RESULT_BACKEND = 'redis://{}:{}/{}'.format(REDIS_HOST_LOCAL, REDIS_PORT_LOCAL, REDIS_DB_CELERY_LOCAL)
 CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERY_TASK_TRACK_STARTED = True
 # 任务结果保留 1 天，避免 Redis 无限增长
@@ -568,3 +622,22 @@ SPECTACULAR_SETTINGS = {
     'SECURITY': [{'Token': []}],
     'COMPONENT_SPLIT_REQUEST': True,
 }
+
+# ===========================================================================
+# gis_service 模块配置（GIS_SSH / MINIO / TITILER / PGSTAC / NGINX）
+#
+# Stage A 的所有可调参数都在 config.py 里通过同名环境变量覆盖，
+# 这里只做 from-import，方便其它地方用 settings.GIS_* 取值。
+#
+# 设计原则：
+#   1) Vector 数据走现有 MYDB（DATABASES['default']），不另开库
+#   2) 重型发布（PMTiles / COG / STAC ingest）走 Celery 异步
+#   3) MVT 瓦片由 Django 直查 MYDB 渲染（不依赖 TiTiler）；COG 瓦片反代 TiTiler
+#   4) SSH/MinIO 只在 Celery 异步任务里用，HTTP 路径不直接连
+# ===========================================================================
+from .config import (  # noqa: E402
+    GIS_SSH_HOST, GIS_SSH_PORT, GIS_SSH_USER, GIS_SSH_PASSWORD,
+    GIS_MINIO_ENDPOINT, GIS_MINIO_USER, GIS_MINIO_PASSWORD, GIS_MINIO_BUCKET,
+    GIS_TITILER_URL, GIS_PGSTAC_DSN,
+    GIS_NGINX_HOST, GIS_NGINX_PORT, GIS_WORK_DIR,
+)

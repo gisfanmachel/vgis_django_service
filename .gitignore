@@ -51,3 +51,9 @@ htmlcov/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# ---- 本地环境变量（Stage A 配置驱动引入）----
+# 真值放 .env，不入库；.env.example 提交作为文档
+.env
+.env.local
+.env.*.local
