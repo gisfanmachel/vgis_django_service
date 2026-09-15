@@ -1,0 +1,112 @@
+# Stage E：VGIS Django 全栈 docker-compose
+#
+# 拓扑：
+#   nginx (10846) → 4×web (gunicorn 10846) → postgis 或 pgbouncer (12326)
+#                                       ↓
+#                                  redis (6379) ← 2×celery worker
+#
+# 默认启 postgis + redis + 1×web + 1×celery（其它 web/celery 用 --scale 拉起）。
+# pgbouncer 默认不启，注释里给了开关说明。
+#
+# 用法：
+#   cd deploy
+#   docker-compose up -d           # 起 1 web + 1 celery
+#   docker-compose up -d --scale web=4 --scale celery=2   # 4 web + 2 celery
+#   docker-compose down            # 停
+
+version: "3.8"
+
+x-common-env: &common-env
+  # 数据库（默认连物理 PG；如果想走 pgbouncer，把 DB_REPLICA_HOST 改成 pgbouncer 即可）
+  DB_DEFAULT_HOST: ${DB_DEFAULT_HOST:-192.168.3.40}
+  DB_DEFAULT_PORT: ${DB_DEFAULT_PORT:-12326}
+  DB_DEFAULT_NAME: ${DB_DEFAULT_NAME:-mydb_test}
+  DB_DEFAULT_USER: ${DB_DEFAULT_USER:-postgres}
+  DB_DEFAULT_PASSWORD: ${DB_DEFAULT_PASSWORD:-postgres}
+  DB_REPLICA_ENABLED: "false"
+  PGBOUNCER_ENABLED: "false"
+
+  # Redis
+  REDIS_HOST: ${REDIS_HOST:-192.168.3.80}
+  REDIS_PORT: ${REDIS_PORT:-6379}
+
+  # ES（异步日志）
+  ES_ENABLED: "true"
+  ES_HOSTS: ${ES_HOSTS:-http://192.168.3.40:9200}
+  ES_USER: ${ES_USER:-elastic}
+  ES_PASSWORD: ${ES_PASSWORD:-VgisES@2026!}
+
+services:
+  # ---- 应用：4×web ----
+  web:
+    build:
+      context: ../my_project
+      dockerfile: Dockerfile
+    image: vgis-django:stage-e
+    environment:
+      <<: *common-env
+    ports:
+      - "10846:10846"
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      replicas: 1   # 启动后用 docker-compose up -d --scale web=4 拉满
+
+  # ---- Celery worker（pool=solo：Windows / GDAL native 限制）----
+  celery:
+    image: vgis-django:stage-e
+    command: ["celery", "-A", "my_project", "worker", "--loglevel=info", "--pool=solo", "--concurrency=1"]
+    environment:
+      <<: *common-env
+    depends_on:
+      - web
+      - redis
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+
+  # ---- nginx 反代 + 负载均衡（least_conn）----
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:8080"   # 仅内网容器端口；对外 HTTPS 由前端 nginx 终止
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - web
+
+  # ---- Redis ----
+  redis:
+    image: redis:5.0-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "1gb", "--maxmemory-policy", "allkeys-lru"]
+    restart: unless-stopped
+
+  # ---- （可选）PostGIS：仅当想用容器化 PG 而非直连物理 192.168.3.40 时启用 ----
+  # 启用方法：取消下面注释 + 设置 DB_DEFAULT_HOST=postgis
+  # 注意：容器化 PG 默认无 PostGIS 扩展，需要手工 `CREATE EXTENSION postgis;`。
+  # postgis:
+  #   image: postgis/postgis:16-3.4-alpine
+  #   environment:
+  #     POSTGRES_DB: mydb_test
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #   ports:
+  #     - "12326:5432"
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+
+  # ---- （可选）pgbouncer：启用 PGBOUNCER_ENABLED=true 时同时启动 ----
+  # pgbouncer:
+  #   build: ./pgbouncer
+  #   environment:
+  #     PGBOUNCER_HOST: 0.0.0.0
+  #   ports:
+  #     - "6432:6432"
+  #   depends_on:
+  #     - postgis
+
+# volumes:
+#   pgdata:
