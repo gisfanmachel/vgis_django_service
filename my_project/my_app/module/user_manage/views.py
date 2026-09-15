@@ -16,6 +16,7 @@ from my_app.module.user_manage.manager import UserOperator
 from my_app.models import SysLog
 from my_app.module.user_manage.models import AuthUser, TtUserpassQuestion
 from my_app.module.user_manage.serializers import AuthUserSerializer, TtUserpassQuestionSerializer
+from my_app.tasks import insert_log_info_async
 from vgis_log.logTools import LoggerHelper
 from vgis_utils.vgis_http.httpTools import HttpHelper
 
@@ -168,7 +169,7 @@ class UserViewSet(viewsets.ModelViewSet):
                                              CommonHelper.get_local_flag(request))
         end = time.perf_counter()
         t = end - start
-        LoggerHelper.insert_log_info(SysLog, username, "密保问题验证",
+        insert_log_info_async("my_app.module.sys_manage.models.SysLog", username, "密保问题验证",
                                      request.path,
                                      HttpHelper.get_params_request(request),
                                      t, HttpHelper.get_ip_request(request))
@@ -185,8 +186,13 @@ class UserViewSet(viewsets.ModelViewSet):
                                           CommonHelper.get_local_flag(request))
         end = time.perf_counter()
         t = end - start
-        username = AuthUser.objects.get(id=userid).username
-        LoggerHelper.insert_log_info(SysLog, username, "重置密码",
+        # 修正 P0 bug：若 userid 不存在，AuthUser.objects.get() 会抛 DoesNotExist，
+        # 进而触发 500 而非友好返回。兜底为 str(userid)，记日志时也能区分"用户已被删"。
+        try:
+            username = AuthUser.objects.get(id=userid).username
+        except AuthUser.DoesNotExist:
+            username = str(userid)
+        insert_log_info_async("my_app.module.sys_manage.models.SysLog", username, "重置密码",
                                      request.path,
                                      HttpHelper.get_params_request(request),
                                      t, HttpHelper.get_ip_request(request))

@@ -24,6 +24,7 @@ from my_app.module.demo.utility import (
     get_required_cn_headers,
 )
 from my_app.models import SysLog
+from my_app.tasks import insert_log_info_async
 from my_app.utils.commonUtility import CommonHelper
 from my_app.utils.excelUtility import build_excel_file, build_template_file, read_excel_rows, XLS_SUFFIXES
 from my_app.utils.paginationUtility import PaginationHelper
@@ -149,7 +150,7 @@ class Operator:
 
             t = time.perf_counter() - start
             info = self._t(request, "ADD_SUCCESS").format(title)
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, info, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info, request.path,
                                          HttpHelper.get_params_request(request), t,
                                          HttpHelper.get_ip_request(request))
             return {'success': True, 'info': info, 'id': new_id}
@@ -190,7 +191,7 @@ class Operator:
 
             t = time.perf_counter() - start
             info = self._t(request, "UPDATE_SUCCESS").format(title)
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, info, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info, request.path,
                                          HttpHelper.get_params_request(request), t,
                                          HttpHelper.get_ip_request(request))
             return {'success': True, 'info': info}
@@ -214,7 +215,7 @@ class Operator:
 
             t = time.perf_counter() - start
             info = self._t(request, "DELETE_SUCCESS").format(title)
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, info, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info, request.path,
                                          HttpHelper.get_params_request(request), t,
                                          HttpHelper.get_ip_request(request))
             return {'success': True, 'info': info}
@@ -250,7 +251,7 @@ class Operator:
 
             t = time.perf_counter() - start
             info = self._t(request, "QUERY_SUCCESS")
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, info, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info, request.path,
                                          HttpHelper.get_params_request(request), t,
                                          HttpHelper.get_ip_request(request))
             return {'success': True, 'info': info, 'total': total,
@@ -286,7 +287,7 @@ class Operator:
 
             t = time.perf_counter() - start
             info = self._t(request, "EXPORT_SUCCESS").format(len(data_list))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, info, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info, request.path,
                                          HttpHelper.get_params_request(request), t,
                                          HttpHelper.get_ip_request(request))
             return {'success': True, 'info': info, 'total': len(data_list),
@@ -304,7 +305,7 @@ class Operator:
                                             file_prefix="demo_item_template")
             t = time.perf_counter() - start
             info = self._t(request, "EXPORT_SUCCESS").format(0)
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, info, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info, request.path,
                                          HttpHelper.get_params_request(request), t,
                                          HttpHelper.get_ip_request(request))
             return {'success': True, 'info': info, 'data': url, 'file_path': path}
@@ -358,7 +359,7 @@ class Operator:
             if errors:
                 t = time.perf_counter() - start
                 info = self._t(request, "OPERATION_FAIL_REASON").format(title, "{} 行校验不通过".format(len(errors)))
-                LoggerHelper.insert_log_info(SysLog, request.auth.user, info + " 导入失败", request.path,
+                insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info + " 导入失败", request.path,
                                              HttpHelper.get_params_request(request), t,
                                              HttpHelper.get_ip_request(request))
                 return {'success': False, 'info': info, 'total': len(df),
@@ -377,7 +378,7 @@ class Operator:
 
             t = time.perf_counter() - start
             info = self._t(request, "IMPORT_SUCCESS").format(len(df), created, updated)
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, info, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info, request.path,
                                          HttpHelper.get_params_request(request), t,
                                          HttpHelper.get_ip_request(request))
             return {'success': True, 'info': info, 'total': len(df),
@@ -512,7 +513,7 @@ class Operator:
         t = time.perf_counter() - start
         info = self._t(request, "OPERATION_FAIL_REASON").format(title, str(exp))
         try:
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, info, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, info, request.path,
                                          HttpHelper.get_params_request(request), t,
                                          HttpHelper.get_ip_request(request), str(exp))
         except Exception:

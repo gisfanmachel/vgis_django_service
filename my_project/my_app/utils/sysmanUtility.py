@@ -8,8 +8,11 @@
 # @Software: PyCharm
 import datetime
 import uuid
+from collections import defaultdict
 
-from my_app.models import TtRetrivepassToken, AuthUser, SysRole, SysUserRole
+from django.core.cache import cache
+
+from my_app.models import SysParam, TtRetrivepassToken, AuthUser, SysRole, SysUserRole
 from my_app.utils.commonUtility import CommonHelper
 from my_app.utils.passwordUtility import PasswordHelper
 from my_app.utils.snowflake_id_util import SnowflakeIDUtil
@@ -18,6 +21,108 @@ from my_app.utils.snowflake_id_util import SnowflakeIDUtil
 class SysmanHelper:
     def __init__(self):
         pass
+
+    # ---------------- 缓存层（阶段 4） ----------------
+    # SysParam 读多写少、读路径遍布 auth/middleware/list 接口，
+    # 缓存 5 分钟既能消除每请求 3-5 次查表，又能在管理员改值后及时生效。
+    # 注意：cast 默认 str，是为了让"是"/"否"这种中文 bool 仍能被原样读出；
+    # 数字类配置（如 AUTH_TOKEN_AGE）必须显式传 cast=int。
+    @staticmethod
+    def get_param_cached(en_key, default=None, cast=str):
+        cache_key = f'sys_param:{en_key}'
+        v = cache.get(cache_key)
+        if v is not None:
+            return cast(v)
+        try:
+            obj = SysParam.objects.get(param_en_key=en_key)
+            cache.set(cache_key, obj.param_value, 300)  # 5 min
+            return cast(obj.param_value)
+        except SysParam.DoesNotExist:
+            return cast(default) if default is not None else None
+
+    # ---------------- N+1 批量版 helper（阶段 2） ----------------
+    # 旧版单点函数（getDepartInfo/getRoleByUser/getMenuByRole）在列表里被循环调用，
+    # N 行数据触发 N 次 SQL；这里改成单条 ANY(%s) 数组参数 + Python 端内存拼装。
+
+    @staticmethod
+    def getFullDepartNameBulk(department_ids, connection,
+                              sys_department_table="sys_department"):
+        """单条 SQL 拿全部门，Python 内存递归拼父链"""
+        if not department_ids:
+            return {}
+        with connection.cursor() as cur:
+            cur.execute(
+                "SELECT department_id, department_name, parent_id FROM {} "
+                "WHERE department_id = ANY(%s)".format(sys_department_table),
+                [list(department_ids)])
+            rows = cur.fetchall()
+        id2info = {r[0]: (r[1], r[2]) for r in rows}
+        result = {}
+        for did in department_ids:
+            names = []
+            cur_id = did
+            while cur_id and cur_id != 1:
+                info = id2info.get(cur_id)
+                if not info:
+                    break
+                names.append(info[0])
+                cur_id = info[1]
+            result[did] = '/'.join(reversed(names))
+        return result
+
+    @staticmethod
+    def getRoleByUserBulk(user_ids, connection,
+                          sys_user_role_table="sys_user_role", sys_role_table="sys_role"):
+        """单条 SQL 拿所有用户的角色"""
+        out = {}
+        if not user_ids:
+            return out
+        with connection.cursor() as cur:
+            cur.execute("""
+                SELECT ur.user_id, r.role_id, r.role_name
+                FROM {0} ur
+                JOIN {1} r ON ur.role_id = r.role_id
+                WHERE ur.user_id = ANY(%s)
+            """.format(sys_user_role_table, sys_role_table), [list(user_ids)])
+            rows = cur.fetchall()
+        bucket = defaultdict(lambda: ([], []))
+        for uid, rid, rname in rows:
+            bucket[uid][0].append(int(rid))
+            bucket[uid][1].append(str(rname))
+        return {uid: (rid_list, rname_list) for uid, (rid_list, rname_list) in bucket.items()}
+
+    @staticmethod
+    def getDepartInfoBulk(dept_ids, connection,
+                          sys_department_table="sys_department"):
+        """批量拿部门名（不含父链）；供 sql_search_department 等只需展示部门名的场景"""
+        if not dept_ids:
+            return {}
+        with connection.cursor() as cur:
+            cur.execute(
+                "SELECT department_id, department_name FROM {} "
+                "WHERE department_id = ANY(%s)".format(sys_department_table),
+                [list(dept_ids)])
+            return {r[0]: r[1] for r in cur.fetchall()}
+
+    @staticmethod
+    def getMenuByRoleBulk(role_ids, connection,
+                          sys_role_menu_table="sys_role_menu",
+                          sys_menu_table="sys_menu"):
+        """批量拿每个角色关联的菜单 {menu_id, name}"""
+        out = {}
+        if not role_ids:
+            return out
+        with connection.cursor() as cur:
+            cur.execute("""
+                SELECT rm.role_id, m.menu_id, m.name
+                FROM {0} rm
+                JOIN {1} m ON rm.menu_id = m.menu_id
+                WHERE rm.role_id = ANY(%s)
+            """.format(sys_role_menu_table, sys_menu_table), [list(role_ids)])
+            bucket = defaultdict(list)
+            for rid, mid, mname in cur.fetchall():
+                bucket[rid].append({'menu_id': mid, 'name': mname})
+        return dict(bucket)
 
     # 获取当前登录用户角色
     @staticmethod

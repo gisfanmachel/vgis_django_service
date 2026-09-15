@@ -11,7 +11,7 @@ import datetime
 import os
 import time
 
-from django.db import connection
+from django.db import connection, transaction
 from loguru import logger
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -25,6 +25,7 @@ from my_app.module.user_manage.manager import UserOperator
 from my_app.module.sys_manage.models import SysConfig, SysDepartment, SysDict, SysLog, SysMenu, SysMessage, \
     SysOss, SysRole, SysRoleMenu, SysUser, SysUserRole, SysUserToken, SysParam
 from my_app.module.user_manage.models import AuthUser
+from my_app.tasks import insert_log_info_async
 from my_app.module.sys_manage.serializers import SysConfigSerializer, SysDepartmentSerializer, SysDictSerializer, \
     SysLogSerializer, SysMenuSerializer, SysMessageSerializer, SysOssSerializer, SysRoleSerializer, \
     SysRoleMenuSerializer, SysUserSerializer, SysUserRoleSerializer, SysUserTokenSerializer, SysParamSerializer
@@ -68,7 +69,7 @@ class SysDepartmentViewSet(viewsets.ModelViewSet):
         end = time.perf_counter()
         t = end - start
         logger.info("总共用时{}秒".format(t))
-        LoggerHelper.insert_log_info(SysLog, request.auth.user, "新增部门",
+        insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "新增部门",
                                      request.path,
                                      HttpHelper.get_params_request(request),
                                      t, HttpHelper.get_ip_request(request))
@@ -83,7 +84,7 @@ class SysDepartmentViewSet(viewsets.ModelViewSet):
         end = time.perf_counter()
         t = end - start
         logger.info("总共用时{}秒".format(t))
-        LoggerHelper.insert_log_info(SysLog, request.auth.user, "修改部门",
+        insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "修改部门",
                                      request.path,
                                      HttpHelper.get_params_request(request),
                                      t, HttpHelper.get_ip_request(request))
@@ -112,7 +113,7 @@ class SysDepartmentViewSet(viewsets.ModelViewSet):
         end = time.perf_counter()
         t = end - start
         logger.info("总共用时{}秒".format(t))
-        LoggerHelper.insert_log_info(SysLog, request.auth.user, "获取部门状态列表",
+        insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "获取部门状态列表",
                                      request.path,
                                      HttpHelper.get_params_request(request),
                                      t, HttpHelper.get_ip_request(request))
@@ -161,7 +162,7 @@ class SysLogViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title,
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -188,12 +189,11 @@ class SysMenuViewSet(viewsets.ModelViewSet):
     authentication_classes = (ExpiringTokenAuthentication,)
 
     def list(self, request, *args, **kwargs):
-        results = SysMenu.objects.all().order_by('menu_id')
-        data = []
-        for result in results:
-            data.append(SysMenuSerializer(result).data)
-        results = {'results': data}
-        return Response(results)
+        # 用户强约束：API 契约不动，返回 {"results":[...]}，不返回 count/next/previous。
+        # 内部加 LIMIT 500 作为硬保护，但不告诉前端。
+        qs = SysMenu.objects.all().order_by('menu_id')[:500]
+        data = [SysMenuSerializer(r).data for r in qs]
+        return Response({'results': data})
 
     def create(self, request, *args, **kwargs):
         function_title = "新增菜单"
@@ -253,7 +253,7 @@ class SysMenuViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title,
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -303,7 +303,7 @@ class SysRoleViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, "新增角色",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "新增角色",
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -322,7 +322,7 @@ class SysRoleViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, "新增角色",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "新增角色",
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -347,7 +347,7 @@ class SysRoleViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, "更新角色",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "更新角色",
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -363,7 +363,7 @@ class SysRoleViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, "更新角色",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "更新角色",
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -391,7 +391,7 @@ class SysRoleViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title,
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -455,7 +455,7 @@ class AuthUserViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, "新增用户",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "新增用户",
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -486,7 +486,7 @@ class AuthUserViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, "新增用户",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "新增用户",
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -525,7 +525,7 @@ class AuthUserViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, "更新用户",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "更新用户",
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -541,7 +541,7 @@ class AuthUserViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, "更新用户",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "更新用户",
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -561,14 +561,21 @@ class AuthUserViewSet(viewsets.ModelViewSet):
         res = ""
         id = kwargs["pk"]
         start = time.perf_counter()
+        # 修正 P0 bug：删 auth_user 前必须清 authtoken_token，
+        # 否则残留的孤儿 token 会在下一次认证时触发
+        #   User matching query does not exist，连锁崩溃其它接口。
+        # 用 transaction.atomic() 包住 SysUserRole.delete + Token.delete + super().destroy，
+        # 任一失败整体回滚，避免半删半留。
         try:
-            SysUserRole.objects.filter(user_id=id).delete()
-            super().destroy(request, *args, **kwargs)
+            with transaction.atomic():
+                SysUserRole.objects.filter(user_id=id).delete()
+                Token.objects.filter(user_id=id).delete()
+                super().destroy(request, *args, **kwargs)
             logger.info("结束时间：" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title,
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
@@ -578,11 +585,9 @@ class AuthUserViewSet(viewsets.ModelViewSet):
             }
         except Exception as exp:
             res = {
-                'success': True,
+                'success': False,
                 'info': "{}(编号为{})失败，原因为：{}".format(title, id, str(exp))
             }
-        finally:
-            res
 
         return Response(res)
 
@@ -611,7 +616,7 @@ class AuthUserViewSet(viewsets.ModelViewSet):
         t = end - start
         logger.info("总共用时{}秒".format(t))
 
-        LoggerHelper.insert_log_info(SysLog, request.auth.user, "获取用户状态列表",
+        insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, "获取用户状态列表",
                                      "/api/authUser/userstatus",
                                      HttpHelper.get_params_request(request),
                                      t, HttpHelper.get_ip_request(request))
@@ -833,18 +838,17 @@ class SysParamViewSet(viewsets.ModelViewSet):
         # 1.00.00  初版
         return Response(res)
 
+    # 用户强约束：API 契约不动。
+    # 自定义 list 保留 {"results":[...]} 响应形态；支持按参数中文键名模糊查询；
+    # 内部加 LIMIT 500 硬保护，但不告诉前端。
     def list(self, request, *args, **kwargs):
-        # 支持按参数中文键名模糊查询（与 PNT 项目保持一致）
+        qs = SysParam.objects.all().order_by('id')
         param_cn_key = request.query_params.get("param_cn_key")
         if param_cn_key:
-            results = SysParam.objects.filter(param_cn_key__contains=param_cn_key).order_by('id')
-        else:
-            results = SysParam.objects.all().order_by('id')
-        data = []
-        for result in results:
-            data.append(SysParamSerializer(result).data)
-        results = {'results': data}
-        return Response(results)
+            qs = qs.filter(param_cn_key__contains=param_cn_key)
+        qs = qs[:500]
+        data = [SysParamSerializer(r).data for r in qs]
+        return Response({'results': data})
 
     def create(self, request, *args, **kwargs):
         function_title = "新增参数"
@@ -905,7 +909,7 @@ class SysParamViewSet(viewsets.ModelViewSet):
             end = time.perf_counter()
             t = end - start
             logger.info("总共用时{}秒".format(t))
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title,
                                          request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))

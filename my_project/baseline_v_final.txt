@@ -1,0 +1,60 @@
+# Baseline @ http://127.0.0.1:10846  rounds=5  2026-09-15 13:56:25
+
+# login init: status=200
+# token=128e1e00...
+
+--- round 1 ---
+  login (re-login)                                        status=200   466.40ms
+  authUser list (12 users)                                status=200    41.10ms
+  authUser sqlsearch                                      status=200    25.75ms
+  sysDepartment sqlsearch                                 status=200    16.43ms
+  sysRole sqlsearch                                       status=200    33.36ms
+  sysMenu list                                            status=200    35.44ms
+  sysParam list                                           status=200    13.99ms
+  sysLog sqlsearch                                        status=200    26.10ms
+--- round 2 ---
+  login (re-login)                                        status=200   482.41ms
+  authUser list (12 users)                                status=200    14.92ms
+  authUser sqlsearch                                      status=200    43.57ms
+  sysDepartment sqlsearch                                 status=200    16.62ms
+  sysRole sqlsearch                                       status=200    41.71ms
+  sysMenu list                                            status=200    15.25ms
+  sysParam list                                           status=200    34.15ms
+  sysLog sqlsearch                                        status=200    25.89ms
+--- round 3 ---
+  login (re-login)                                        status=200   440.85ms
+  authUser list (12 users)                                status=200    11.78ms
+  authUser sqlsearch                                      status=200    22.13ms
+  sysDepartment sqlsearch                                 status=200    41.04ms
+  sysRole sqlsearch                                       status=200    33.23ms
+  sysMenu list                                            status=200    38.80ms
+  sysParam list                                           status=200    13.05ms
+  sysLog sqlsearch                                        status=200    23.93ms
+--- round 4 ---
+  login (re-login)                                        status=200   457.39ms
+  authUser list (12 users)                                status=200    15.42ms
+  authUser sqlsearch                                      status=200    34.56ms
+  sysDepartment sqlsearch                                 status=200    33.42ms
+  sysRole sqlsearch                                       status=200    16.38ms
+  sysMenu list                                            status=200    38.89ms
+  sysParam list                                           status=200    11.91ms
+  sysLog sqlsearch                                        status=200    25.22ms
+--- round 5 ---
+  login (re-login)                                        status=200   423.86ms
+  authUser list (12 users)                                status=200    13.96ms
+  authUser sqlsearch                                      status=200    19.51ms
+  sysDepartment sqlsearch                                 status=200    16.62ms
+  sysRole sqlsearch                                       status=200    16.40ms
+  sysMenu list                                            status=200    13.38ms
+  sysParam list                                           status=200     8.88ms
+  sysLog sqlsearch                                        status=200    36.46ms
+
+# ====================== SUMMARY ======================
+login (re-login)                                        n=5   200=5   err=0   min= 423.86ms avg= 454.18ms max= 482.41ms p95= 479.20ms
+authUser list (12 users)                                n=5   200=5   err=0   min=  11.78ms avg=  19.43ms max=  41.10ms p95=  35.97ms
+authUser sqlsearch                                      n=5   200=5   err=0   min=  19.51ms avg=  29.10ms max=  43.57ms p95=  41.77ms
+sysDepartment sqlsearch                                 n=5   200=5   err=0   min=  16.43ms avg=  24.83ms max=  41.04ms p95=  39.52ms
+sysRole sqlsearch                                       n=5   200=5   err=0   min=  16.38ms avg=  28.22ms max=  41.71ms p95=  40.04ms
+sysMenu list                                            n=5   200=5   err=0   min=  13.38ms avg=  28.35ms max=  38.89ms p95=  38.87ms
+sysParam list                                           n=5   200=5   err=0   min=   8.88ms avg=  16.40ms max=  34.15ms p95=  30.12ms
+sysLog sqlsearch                                        n=5   200=5   err=0   min=  23.93ms avg=  27.52ms max=  36.46ms p95=  34.39ms

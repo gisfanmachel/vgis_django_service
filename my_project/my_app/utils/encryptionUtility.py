@@ -12,6 +12,12 @@ from vgis_encrption.encrptionTools import FernetEncryption, RSAEncryption, AESEn
 
 from my_project.settings import ENCRPTION
 
+# 阶段 4.2：AES 加密对象模块级单例懒加载。
+# 原实现每个请求都重建 FernetEncryption + RSAEncryption + AESEncryption 三个对象，
+# RSA 解密私钥耗时显著，50 并发时直接占满 CPU。
+# 改为：进程首次调用时构建一次，之后复用。
+_AES_SINGLETON = None
+
 
 class encryptionHelper:
     def __int__(self):
@@ -19,10 +25,13 @@ class encryptionHelper:
 
     @staticmethod
     def get_aes_encrytion_object():
-        fernetEncryption = FernetEncryption(ENCRPTION["key1"].encode())
-        rSAEncryption = RSAEncryption(fernetEncryption.decrypt(ENCRPTION["key3"]), fernetEncryption.decrypt(ENCRPTION["key2"]))
-        aESEncryption = AESEncryption(rSAEncryption.decryption(ENCRPTION["key4"]))
-        return aESEncryption
+        global _AES_SINGLETON
+        if _AES_SINGLETON is None:
+            fernetEncryption = FernetEncryption(ENCRPTION["key1"].encode())
+            rSAEncryption = RSAEncryption(fernetEncryption.decrypt(ENCRPTION["key3"]),
+                                          fernetEncryption.decrypt(ENCRPTION["key2"]))
+            _AES_SINGLETON = AESEncryption(rSAEncryption.decryption(ENCRPTION["key4"]))
+        return _AES_SINGLETON
 
     @staticmethod
     def two_layers_encrpt_content(content, aESEncryption):

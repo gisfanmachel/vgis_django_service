@@ -16,6 +16,7 @@ from vgis_utils.vgis_http.httpTools import HttpHelper
 from vgis_utils.vgis_list.listTools import ListHelper
 
 from my_app.module.sys_manage.models import SysDepartment, SysLog
+from my_app.tasks import insert_log_info_async
 from my_app.utils.sysmanUtility import SysmanHelper
 
 logger = logging.getLogger('django')
@@ -42,18 +43,21 @@ class SysOperator:
                 sql += " and state = %s"
                 params.append(department_status)
             sql += " order by create_time desc"
+            sql += " LIMIT 500"
             cursor = self.connection.cursor()
             cursor.execute(sql, params)
             records = cursor.fetchall()
+            # 阶段 2 N+1 优化：原循环里每个 parent_id 都触发一次 getDepartInfo，
+            # 改为先 collect 再 Bulk 一次拿全，循环内只查 dict。
+            parent_ids = [int(r[2]) for r in records]
+            parent_name_map = SysmanHelper.getDepartInfoBulk(parent_ids, self.connection)
             data_list = []
             for record in records:
                 obj = {}
                 obj['department_id'] = int(record[0])
                 obj['department_name'] = str(record[1])
                 obj['parent_id'] = int(record[2])
-                department_id, department_name, parent_id = SysmanHelper.getDepartInfo(obj['parent_id'],
-                                                                                       self.connection)
-                obj['parent_name'] = department_name
+                obj['parent_name'] = parent_name_map.get(obj['parent_id'], "")
                 obj['state'] = "正常" if int(record[3]) == 1 else "停用"
                 obj['order_num'] = int(record[4])
                 obj['create_time'] = str(record[5])
@@ -73,7 +77,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, "/api/sysDepartment/sqlsearch",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, "/api/sysDepartment/sqlsearch",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -90,7 +94,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", "/api/sysDepartment/sqlsearch",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", "/api/sysDepartment/sqlsearch",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -115,7 +119,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, "/api/sysDepartment/departstatus",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, "/api/sysDepartment/departstatus",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -132,7 +136,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", "/api/sysDepartment/departstatus",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", "/api/sysDepartment/departstatus",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -164,7 +168,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, "/api/sysDepartment/delete/",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, "/api/sysDepartment/delete/",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -181,7 +185,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", "/api/sysDepartment/delete/",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", "/api/sysDepartment/delete/",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -201,15 +205,21 @@ class SysOperator:
                 sql += " and role_name like %s"
                 params.append("%{}%".format(role_name))
             sql += " order by create_time desc"
+            sql += " LIMIT 500"
             cursor = self.connection.cursor()
             cursor.execute(sql, params)
             records = cursor.fetchall()
+            # 阶段 2 N+1 优化：原 getMenuByRole 每个角色触发一次 SQL，
+            # 改为先 collect role_id 再 Bulk 一次拿全（同时拿到 menu 名）。
+            role_ids = [int(r[0]) for r in records]
+            menu_map = SysmanHelper.getMenuByRoleBulk(role_ids, self.connection)
             data_list = []
             for record in records:
                 obj = {}
                 obj['role_id'] = int(record[0])
                 obj['role_name'] = str(record[1])
-                obj['menu_id_list'] = SysmanHelper.getMenuByRole(int(record[0]), self.connection)
+                # 取 menu_id 列表（保持与旧版一致的扁平 list[int]）
+                obj['menu_id_list'] = [m['menu_id'] for m in menu_map.get(int(record[0]), [])]
                 obj['remark'] = str(record[2])
                 obj['create_time'] = str(record[3])
                 data_list.append(obj)
@@ -224,7 +234,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, "/api/sysRole/sqlsearch",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, "/api/sysRole/sqlsearch",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -241,7 +251,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", "/api/sysRole/sqlsearch",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", "/api/sysRole/sqlsearch",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -267,6 +277,7 @@ class SysOperator:
                 sql += " and create_date <= %s"
                 params.append(queryendtime)
             sql += " order by create_date desc"
+            sql += " LIMIT 500"
             cursor = self.connection.cursor()
             cursor.execute(sql, params)
             records = cursor.fetchall()
@@ -296,7 +307,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, "/api/sysLog/sqlsearch",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, "/api/sysLog/sqlsearch",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -313,7 +324,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", "/api/sysLog/sqlsearch",
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", "/api/sysLog/sqlsearch",
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -352,7 +363,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -369,7 +380,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -410,7 +421,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -427,7 +438,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -470,7 +481,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -487,7 +498,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -551,7 +562,7 @@ class SysOperator:
                 end = time.perf_counter()
                 t = end - start
                 logger.info("总共用时{}秒".format(t))
-                LoggerHelper.insert_log_info(SysLog, request.auth.user, res['info'], request.path,
+                insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, res['info'], request.path,
                                              HttpHelper.get_params_request(request),
                                              t, HttpHelper.get_ip_request(request))
             else:
@@ -570,7 +581,7 @@ class SysOperator:
                 t = end - start
                 logger.info("总共用时{}秒".format(t))
                 # 日志入库
-                LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, request.path,
                                              HttpHelper.get_params_request(request),
                                              t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -587,7 +598,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -618,7 +629,7 @@ class SysOperator:
                 end = time.perf_counter()
                 t = end - start
                 logger.info("总共用时{}秒".format(t))
-                LoggerHelper.insert_log_info(SysLog, request.auth.user, res['info'], request.path,
+                insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, res['info'], request.path,
                                              HttpHelper.get_params_request(request),
                                              t, HttpHelper.get_ip_request(request))
             else:
@@ -635,7 +646,7 @@ class SysOperator:
                 t = end - start
                 logger.info("总共用时{}秒".format(t))
                 # 日志入库
-                LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+                insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, request.path,
                                              HttpHelper.get_params_request(request),
                                              t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -652,7 +663,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -678,7 +689,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -695,7 +706,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -752,7 +763,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -769,7 +780,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:
@@ -794,7 +805,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title, request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title, request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         except Exception as exp:
@@ -811,7 +822,7 @@ class SysOperator:
             t = end - start
             logger.info("总共用时{}秒".format(t))
             # 日志入库
-            LoggerHelper.insert_log_info(SysLog, request.auth.user, title + "失败", request.path,
+            insert_log_info_async("my_app.module.sys_manage.models.SysLog", request.auth.user, title + "失败", request.path,
                                          HttpHelper.get_params_request(request),
                                          t, HttpHelper.get_ip_request(request))
         finally:

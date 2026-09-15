@@ -1,0 +1,14 @@
+# Pre-login: status=200  elapsed=454.4ms
+# token=ced70ff1...  (shared by all 50 workers)
+# Loadtest @ http://127.0.0.1:10846  users=50  rounds=20  2026-09-15 13:55:02
+
+# Done in 43.3s, total 7000 requests, throughput 162 req/s
+
+# ====================== LOADTEST RESULT ======================
+authUser_list                            n=1000  2xx=1000  4xx=0     5xx=0   p50= 293.28ms p95= 394.96ms p99= 435.94ms max= 456.44ms [200=1000]
+authUser_sqlsearch                       n=1000  2xx=1000  4xx=0     5xx=0   p50= 280.57ms p95= 395.58ms p99= 429.71ms max= 508.34ms [200=1000]
+sysDept_sqlsearch                        n=1000  2xx=1000  4xx=0     5xx=0   p50= 240.12ms p95= 343.04ms p99= 396.90ms max= 450.80ms [200=1000]
+sysRole_sqlsearch                        n=1000  2xx=1000  4xx=0     5xx=0   p50= 270.52ms p95= 392.52ms p99= 428.03ms max= 557.30ms [200=1000]
+sysMenu_list                             n=1000  2xx=1000  4xx=0     5xx=0   p50= 303.48ms p95= 393.70ms p99= 439.94ms max= 492.30ms [200=1000]
+sysParam_list                            n=1000  2xx=1000  4xx=0     5xx=0   p50= 331.90ms p95= 431.02ms p99= 472.87ms max= 496.16ms [200=1000]
+sysLog_sqlsearch                         n=1000  2xx=1000  4xx=0     5xx=0   p50= 371.89ms p95= 491.61ms p99= 649.72ms max= 811.45ms [200=1000]

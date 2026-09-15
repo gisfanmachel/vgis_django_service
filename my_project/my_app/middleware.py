@@ -16,12 +16,43 @@ from vgis_encrption.encrptionTools import StringHexMutualConvertion
 
 from my_app.models import SysParam
 from my_app.utils.encryptionUtility import encryptionHelper
+from my_app.utils.sysmanUtility import SysmanHelper
 
 logger = logging.getLogger('django')
 
 class DisableCSRF(MiddlewareMixin):
     def process_request(self, request):
         setattr(request, '_dont_enforce_csrf_checks', True)
+
+
+class RequestContextMiddleware:
+    """
+    请求开始时把 request_id / user_id / path / method / remote_addr 写进
+    contextvars（my_project.request_context），ES Handler 在 emit 时读出来
+    一起写进文档。
+
+    注意：这个中间件要尽量靠前，否则 EncryptionMiddleware 的 logger.info()
+    会拿不到 request_id。
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # 1. 请求开始 —— 设置 context（用新风格 middleware 时
+        #    AuthenticationMiddleware 已经跑过，request.user 可信）
+        from my_project.request_context import set_request_context, clear_request_context
+        rid = set_request_context(request)
+        # 把 request_id 也挂到 request 上，方便 view 里取
+        try:
+            setattr(request, 'request_id', rid)
+        except Exception:
+            pass
+        try:
+            response = self.get_response(request)
+        finally:
+            # 2. 请求结束 —— 清 context（防 worker 复用线程时污染）
+            clear_request_context()
+        return response
 
 
 class CORSMiddleware(MiddlewareMixin):
@@ -51,12 +82,9 @@ class EncryptionMiddleware:
         pass
 
     def get_IS_ENCRYPTION(self):
-        # SysParam.objects.get() 查不到会抛 DoesNotExist，必须 try/except
-        try:
-            obj = SysParam.objects.get(param_en_key='IS_ENCRYPTION')
-            return True if obj.param_value == "是" else False
-        except SysParam.DoesNotExist:
-            return False
+        # 阶段 4：5 分钟缓存，消除每请求 1 次查表
+        v = SysmanHelper.get_param_cached('IS_ENCRYPTION', '否')
+        return True if v == "是" else False
 
     def __call__(self, request):
         aESEncryption=encryptionHelper.get_aes_encrytion_object()

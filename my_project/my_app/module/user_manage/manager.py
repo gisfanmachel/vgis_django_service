@@ -14,6 +14,8 @@ import random
 from datetime import timedelta
 
 from PIL import Image, ImageDraw, ImageFont
+from django.db.models import F
+from django.db.models.functions import Coalesce
 from django.http import HttpResponse
 from django.utils import timezone
 from loguru import logger
@@ -38,20 +40,12 @@ class UserOperator:
 
 
     def get_LOGIN_LOCKED_TIME(self):
-        # 注意：SysParam.objects.get() 查不到会抛 DoesNotExist，
-        #      不能用 obj is not None 兜底，必须 try/except
-        try:
-            obj = SysParam.objects.get(param_en_key='LOGIN_LOCKED_TIME')
-            return int(obj.param_value)
-        except SysParam.DoesNotExist:
-            return 600
+        # 阶段 4：5 分钟缓存；默认值 600 秒（10 分钟）
+        return SysmanHelper.get_param_cached('LOGIN_LOCKED_TIME', 600, cast=int)
 
     def get_LOGIN_ERROR_ATTEMPTS(self):
-        try:
-            obj = SysParam.objects.get(param_en_key='LOGIN_ERROR_ATTEMPTS')
-            return int(obj.param_value)
-        except SysParam.DoesNotExist:
-            return 4
+        # 阶段 4：5 分钟缓存；默认值 4 次
+        return SysmanHelper.get_param_cached('LOGIN_ERROR_ATTEMPTS', 4, cast=int)
 
     def return_is_use_verification_code(self,request):
         res = {
@@ -64,11 +58,9 @@ class UserOperator:
 
 
     def get_is_use_verification_code(self):
-        try:
-            obj = SysParam.objects.get(param_en_key='IS_USE_VERIFICATION_CODE')
-            return True if obj.param_value == "是" else False
-        except SysParam.DoesNotExist:
-            return False
+        # 阶段 4：5 分钟缓存；"是" 才开
+        v = SysmanHelper.get_param_cached('IS_USE_VERIFICATION_CODE', '否')
+        return True if v == "是" else False
     # 登录
     # 通过用户名和密码登录
     # 连续输错4次密码，锁定10分钟，10分钟后没输错一次密码都重新锁定10分钟---参数可配置
@@ -80,8 +72,10 @@ class UserOperator:
         function_title = "用户登录"
         try:
             start = LoggerHelper.set_start_log_info(logger)
-            # 判断用户名存不存在
-            if not AuthUser.objects.filter(username=username).exists():
+            # 修正 P0 bug：原先"exists 判断"+"get 取对象"两次往返，
+            # 改成单条 .first() 同时承担"是否存在"与"取对象"两个职责，少一次 SQL。
+            userObject = AuthUser.objects.filter(username=username).first()
+            if userObject is None:
                 error_message = "账号名不存在，请联系管理员。"
                 res = {
                     'success': False,
@@ -89,7 +83,6 @@ class UserOperator:
                     'message': error_message
                 }
                 return res
-            userObject = AuthUser.objects.get(username=username)
             # 账号被锁
             if userObject.login_locked_until and userObject.login_locked_until > timezone.now():
                 # 账号被锁定
@@ -106,15 +99,16 @@ class UserOperator:
                 user = auth.authenticate(username=username, password=password)
                 # 登录失败
                 if not user:
-                    # 登录失败，增加失败次数
-                    if userObject.login_error_attempts is None:
-                        userObject.login_error_attempts = 1
-                    else:
-                        userObject.login_error_attempts += 1
-                    if userObject.login_error_attempts >= self.get_LOGIN_ERROR_ATTEMPTS():
-                        # 锁定账号
-                        userObject.login_locked_until = timezone.now() + timedelta(seconds=self.get_LOGIN_LOCKED_TIME())
-                    userObject.save()
+                    # 登录失败，增加失败次数（原子自增，避免两个并发请求读到相同旧值后各自 save 互相覆盖）
+                    AuthUser.objects.filter(username=username).update(
+                        login_error_attempts=Coalesce(F('login_error_attempts'), 0) + 1
+                    )
+                    # 原子自增后再读一次最新值，用于判定是否要锁
+                    userObject.refresh_from_db(fields=['login_error_attempts'])
+                    if (userObject.login_error_attempts or 0) >= self.get_LOGIN_ERROR_ATTEMPTS():
+                        AuthUser.objects.filter(username=username).update(
+                            login_locked_until=timezone.now() + timedelta(seconds=self.get_LOGIN_LOCKED_TIME())
+                        )
                     res = {
                         'success': False,
                         'code': -1,
@@ -282,11 +276,8 @@ class UserOperator:
 
     # 获取认证Token的有效期（单位：秒）
     def get_AUTH_TOKEN_AGE(self):
-        try:
-            obj = SysParam.objects.get(param_en_key='AUTH_TOKEN_AGE')
-            return int(obj.param_value)
-        except SysParam.DoesNotExist:
-            return settings.AUTH_TOKEN_AGE
+        # 阶段 4：5 分钟缓存；默认值取自 settings
+        return SysmanHelper.get_param_cached('AUTH_TOKEN_AGE', settings.AUTH_TOKEN_AGE, cast=int)
 
     # 校验一个token是否已过期
     def _check_token_expired(self, token_obj):
@@ -456,22 +447,32 @@ class UserOperator:
                 sql += " and tablea.fullname like %s"
                 params.append("%{}%".format(fullname))
             sql += " order by tablea.create_time desc"
+            sql += " LIMIT 500"
             cursor = self.connection.cursor()
             cursor.execute(sql, params)
             records = cursor.fetchall()
+            # 阶段 2：原 N+1 — 每行一次 getFullDepartName + 一次 getRoleByUser；
+            # 改为先 collect id 列表，再 Bulk 一次拿全，循环内只查 dict。
+            user_ids = [int(r[0]) for r in records]
+            dept_ids = [int(r[4]) for r in records]
+            depart_name_map = SysmanHelper.getFullDepartNameBulk(dept_ids, self.connection)
+            role_map = SysmanHelper.getRoleByUserBulk(user_ids, self.connection)
             data_list = []
             for record in records:
                 obj = {}
                 obj['user_id'] = int(record[0])
                 obj['user_name'] = str(record[1])
                 obj['full_name'] = str(record[2])
-                obj['department_name'] = SysmanHelper.getFullDepartName(int(record[4]), self.connection)
-                obj['role_id_list'], obj['role_name_list'] = SysmanHelper.getRoleByUser(int(record[0]), self.connection)
+                obj['department_name'] = depart_name_map.get(int(record[4]), "")
+                role_id_list, role_name_list = role_map.get(int(record[0]), ([], []))
+                obj['role_id_list'] = role_id_list
+                obj['role_name_list'] = role_name_list
                 obj['mobile'] = str(record[5])
                 obj['sex'] = str(record[6])
                 obj['status'] = "正常" if int(record[7]) == 1 else "停用"
                 obj['create_time'] = str(record[8])
                 data_list.append(obj)
+            # LIMIT 500 内部硬保护，截掉超出部分（API 不告诉前端）
             res = {
                 'success': True,
                 'total': len(data_list),

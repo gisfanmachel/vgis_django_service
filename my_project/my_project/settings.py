@@ -71,6 +71,9 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 阶段 7：RequestContextMiddleware 必须排在 EncryptionMiddleware 之前，
+    # 这样 EncryptionMiddleware 里的 logger.info() 才能在 ES 文档里拿到 request_id
+    '{}.middleware.RequestContextMiddleware'.format(APP_NAME),
     '{}.middleware.DisableCSRF'.format(APP_NAME),
     '{}.middleware.CORSMiddleware'.format(APP_NAME),
     '{}.middleware.EncryptionMiddleware'.format(APP_NAME)
@@ -211,27 +214,40 @@ LOGGING = {
             'formatter': 'standard',
             'encoding': 'utf-8',
             'logging_levels': ['info']  # 😒注意这里，这是自定义类多了一个参数，因为我只想让db日志有debug文件，所以我只看sql，这个可以自己设置
-        }
+        },
+        # 阶段 7：ES 异步 handler —— 把所有详细日志同步落到 ES，方便 Kibana 可视化
+        # 与本地文件日志并行（不动 myapp.log / myapp_db.log 的现有行为）
+        'es': {
+            'class': '{}.log.ElasticsearchHandler'.format(PROJECT_NAME),
+            'level': 'INFO',
+            'es_hosts': ['http://192.168.3.40:9200'],
+            'es_user': 'elastic',
+            'es_password': 'VgisES@2026!',
+            'index_prefix': 'vgis-myapp',
+            'flush_interval': 1.0,
+            'batch_size': 100,
+            'request_timeout': 5,
+        },
     },
     'loggers': {
         # Django全局绑定
         'django': {
-            'handlers': ['servers'],
+            'handlers': ['servers', 'es'],
             'propagate': True,
             'level': "INFO"
         },
         'celery': {
-            'handlers': ['servers'],
+            'handlers': ['servers', 'es'],
             'propagate': False,
             'level': "INFO"
         },
         'django.db.backends': {
-            'handlers': ['db'],
+            'handlers': ['db', 'es'],
             'propagate': False,
             'level': "DEBUG"
         },
         'django.request': {
-            'handlers': ['servers'],
+            'handlers': ['servers', 'es'],
             'propagate': False,
             'level': "DEBUG"
         },
@@ -295,10 +311,15 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': '192.168.3.40',
         'PORT': '12326',
-        'NAME': 'MYDB',
+        'NAME': 'mydb_test',
         'OPTIONS': {
             'connect_timeout': 10,
         },
+        # 阶段 5：连接池配置
+        # CONN_MAX_AGE=60：连接保留 60 秒，避免每请求重连（PG 端 max=100，需配合）
+        # CONN_HEALTH_CHECKS=True：在拿连接前做一次健康检查，剔除已被服务端关闭的连接
+        'CONN_MAX_AGE': 60,
+        'CONN_HEALTH_CHECKS': True,
     }
 }
 

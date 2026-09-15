@@ -4,7 +4,7 @@
 # @Author  : chenxw
 # @Email   : gisfanmachel@gmail.com
 # @File    : token.py.py
-# @Descr   : 
+# @Descr   :
 # @Software: PyCharm
 import datetime
 
@@ -15,35 +15,26 @@ from rest_framework import exceptions
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.authtoken.models import Token
 
-from my_app.models import SysParam
 # 获取请求头里的token信息
 from my_project.settings import AUTH_TOKEN_AGE, TOKEN_KEY
 from my_project.utils import TimeUtil
+# 阶段 4：SysParam 走 get_param_cached，5 分钟缓存消除每次认证 3-5 次查表
+from my_app.utils.sysmanUtility import SysmanHelper
 
 
 def get_AUTH_TOKEN_AGE():
-    # 注意：SysParam.objects.get() 查不到会抛 DoesNotExist，
-    #      不能用 obj is not None 兜底，必须 try/except 才能走到默认值
-    try:
-        obj = SysParam.objects.get(param_en_key='AUTH_TOKEN_AGE')
-        return int(obj.param_value)
-    except SysParam.DoesNotExist:
-        return AUTH_TOKEN_AGE
+    # 阶段 4：5 分钟缓存；默认值取自 settings（与原行为一致）
+    return SysmanHelper.get_param_cached('AUTH_TOKEN_AGE', AUTH_TOKEN_AGE, cast=int)
 
 
 def get_TOKEN_KEY():
-    try:
-        obj = SysParam.objects.get(param_en_key='TOKEN_KEY')
-        return obj.param_value
-    except SysParam.DoesNotExist:
-        return TOKEN_KEY
+    return SysmanHelper.get_param_cached('TOKEN_KEY', TOKEN_KEY)
+
 
 def get_TOKEN_USE_CACHE():
-    try:
-        obj = SysParam.objects.get(param_en_key='TOKEN_USE_CACHE')
-        return True if obj.param_value == "是" else False
-    except SysParam.DoesNotExist:
-        return False
+    # 缓存值是 "是" 才开，否则 False；与原逻辑一致
+    v = SysmanHelper.get_param_cached('TOKEN_USE_CACHE', '否')
+    return True if v == "是" else False
 
 
 def get_authorization_header(request):
