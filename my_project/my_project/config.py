@@ -16,14 +16,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def _env(key, default, cast=str):
-    """读环境变量并转换类型，未设置或转换失败时回落到默认值"""
+    """读环境变量并转换类型，未设置或转换失败时回落到默认值
+    注意：default 也会走一次 cast，保持类型一致（int default 必须传 int 字面量，
+    否则即使 env 未设也会回落到字符串 default，Django CONN_MAX_AGE 期望 int 就会报
+    'unsupported operand type(s) for +: float and str'）。"""
+    try:
+        typed_default = cast(default)
+    except (TypeError, ValueError):
+        typed_default = default
     val = os.environ.get(key)
     if val is None or str(val).strip() == "":
-        return default
+        return typed_default
     try:
         return cast(val)
     except (TypeError, ValueError):
-        return default
+        return typed_default
 
 
 def _env_bool(key, default):
