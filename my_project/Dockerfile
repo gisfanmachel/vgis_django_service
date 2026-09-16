@@ -43,7 +43,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 先 copy requirements 单独装，Docker 层缓存友好
 COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir gunicorn==23.0.0 -r /app/requirements.txt
+
+# 拆 3 步装的理由：vgis-office==1.1.8 的元数据 Requires-Dist 里写了 fitz，
+# 但 PyPI 的 fitz 已被官方 deprecate（"Package 'fitz' has been deactivated and cannot be installed.
+# Please install 'pymupdf' instead."），直接 -r 安装会挂。
+# 解法：先装除 vgis-office 之外的全部依赖 + pymupdf（提供 fitz shim 兼容层），
+#      最后用 --no-deps 单独装 vgis-office（它的真依赖已经在上一步装好）。
+RUN pip install --no-cache-dir \
+        gunicorn==23.0.0 \
+        pymupdf==1.28.2 \
+        $(grep -v '^vgis-office' /app/requirements.txt)
+RUN pip install --no-cache-dir --no-deps vgis-office==1.1.8
 
 # 再 copy 源码
 COPY . /app
