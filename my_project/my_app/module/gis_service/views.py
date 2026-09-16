@@ -249,27 +249,46 @@ def pmtiles_publish(request):
     """POST /pmtiles/publish/
 
     入参（multipart / json 都行）：
-        src            GeoJSON 文件 或 已上传文件 file_id
+        src            源文件（GeoJSON / TIFF / DEM TIFF） 或 已上传 file_id
+        tile_type      vector（默认） / raster / terrain
         layer          图层名
         name           显示名
         minzoom / maxzoom
-        props          逗号分隔属性键
+        tile_size      raster 时瓦片边长（默认 256）
+        resampling     raster 时重采样：nearest/bilinear/cubic/lanczos
+        bands          raster 时逗号分隔波段号（空 = 取前 3）
+        vertices_per_side  terrain 时顶点网格边长（默认 65）
+        props          vector 时逗号分隔属性键
+        out            输出文件名（不指定则按规则生成）
         stac_collection / stac_item  （可选；挂 STAC asset）
+        run_inline     bool；True 时跳过 Celery，本机同步执行（仅本机测试用）
+
     返回：{"task_id": "<celery uuid>", "task_pk": <int>}
     """
     start = time.perf_counter()
     try:
         data = request.data if not isinstance(request.data, dict) else dict(request.data)
         src = data.get("src")
-        if not CommonHelper.is_valid_str(src):
+        # multipart QueryDict 里 src 是单个 UploadedFile 对象；这里只校验文件名存在
+        if src is None:
             return Result.fail(_t(request, "PARAM_REQUIRED").format("src"))
+        # tile_type 在 multipart 时可能是 list（QueryDict 多值），规范化
+        raw_tile_type = data.get("tile_type") or "vector"
+        if isinstance(raw_tile_type, (list, tuple)):
+            raw_tile_type = raw_tile_type[0] if raw_tile_type else "vector"
+        tile_type = str(raw_tile_type).lower()
+        if tile_type not in ("vector", "raster", "terrain"):
+            return Result.fail("invalid tile_type: {}; use vector/raster/terrain".format(tile_type))
 
         payload, src_path = _resolve_uploaded_or_filepath(
             data, request,
-            extra_keys=("layer", "name", "minzoom", "maxzoom", "props", "out",
-                        "stac_collection", "stac_item"),
-            int_keys={"minzoom": 5, "maxzoom": 14},
+            extra_keys=("tile_type", "layer", "name", "minzoom", "maxzoom", "props", "out",
+                        "stac_collection", "stac_item",
+                        "tile_size", "resampling", "bands", "vertices_per_side"),
+            int_keys={"minzoom": 5, "maxzoom": 14,
+                      "tile_size": 256, "vertices_per_side": 65},
         )
+        payload["tile_type"] = tile_type
         payload["create_user_id"] = _user_id(request)
 
         # 落库拿到 task_pk
@@ -282,6 +301,32 @@ def pmtiles_publish(request):
             create_user_id=_user_id(request),
             create_time=timezone.now(),
         )
+
+        # run_inline：本机测试跳过 Celery，直接同步跑（manager 会自动 mark_task_*）
+        raw_run_inline = data.get("run_inline", "")
+        if isinstance(raw_run_inline, (list, tuple)):
+            raw_run_inline = raw_run_inline[0] if raw_run_inline else ""
+        run_inline = str(raw_run_inline).lower() in ("1", "true", "yes")
+        if run_inline:
+            try:
+                op = GISOperator()
+                result = op.publish_pmtiles(None, payload)
+                _log("publish pmtiles (inline) {}".format(src_path), request,
+                     time.perf_counter() - start)
+                return Result.sucess_obj({
+                    "task_pk": task.pk,
+                    "task_id": "inline-{}".format(uuid.uuid4().hex[:8]),
+                    "status": "success",
+                    "result": result,
+                    "inline": True,
+                })
+            except Exception as inline_err:
+                logger.exception("pmtiles_publish inline 失败: %s", inline_err)
+                task.status = "failure"
+                task.error = str(inline_err)
+                task.update_time = timezone.now()
+                task.save(update_fields=["status", "error", "update_time"])
+                return Result.fail(_t(request, "FAIL"), str(inline_err))
 
         # 派发 Celery
         from my_app.module.gis_service.tasks import publish_pmtiles_task
@@ -335,10 +380,17 @@ def _resolve_uploaded_or_filepath(data, request, extra_keys=(), int_keys=None):
 
     payload = {"src": src_path}
     for k in extra_keys:
-        payload[k] = data.get(k)
+        v = data.get(k)
+        # multipart QueryDict 多值场景：取第一个（与 views 入口的 tile_type 处理一致）
+        if isinstance(v, (list, tuple)):
+            v = v[0] if v else None
+        payload[k] = v
     for k, default in (int_keys or {}).items():
+        v = data.get(k)
+        if isinstance(v, (list, tuple)):
+            v = v[0] if v else default
         try:
-            payload[k] = int(data.get(k) or default)
+            payload[k] = int(v or default)
         except Exception:
             payload[k] = default
     return payload, src_path
