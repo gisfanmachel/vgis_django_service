@@ -9,7 +9,7 @@
 import datetime
 
 from django.core.cache import cache
-# from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework import HTTP_HEADER_ENCODING
 from rest_framework import exceptions
 from rest_framework.authentication import BaseAuthentication

@@ -93,13 +93,38 @@ REDIS_DB_CELERY = _env("REDIS_DB_CELERY", "2", int)
 REDIS_PROTOCOL = _env("REDIS_PROTOCOL", "2", int)
 
 # ---------------------------------------------------------------------------
+# 项目标识（多项目母版关键：ES 索引前缀、文件目录、Kibana 视图都依赖）
+# ---------------------------------------------------------------------------
+# LOG_NAMESPACE：日志/ES/Kibana 命名空间。默认 "vgis"（VGIS Django 框架基线）。
+# 派生项目（基于此框架二次开发的不同业务系统）在 .env 设置 LOG_NAMESPACE=xxx，
+# ES 索引自动变为 "xxx-myapp-YYYY.MM.DD"；多个项目的日志在 Kibana 自动分流。
+#
+# 命名建议（短且唯一）：
+#   vgis-myapp       VGIS Django 框架基线（本项目）
+#   dazhu-myapp      大足工业园区后端 (dzgyyq_service)
+#   yinni-myapp      印尼遥感 AI 服务 (yinni_rs_ai_service)
+#   39ai-myapp       39-AI 目标识别/老变化监测 (ai_service_gateway)
+#   39chg-myapp      39-chg 新变化检测 (service_chg)
+#   39paddle-myapp   39-paddle 去雾超分 (qbyw_txcf_service)
+#   jimu-myapp       39-django 极目AI (jimu_ai_service_backend)
+#   zhbxygfx-myapp   中核智慧保险 (zhbxygfx)
+#   cogpmtiles-myapp 40-cogpmtiles (stac_demo + gis_service 母版)
+#
+# 注意：PROJECT_NAME（Python 包名/模块路径）必须保持 "my_project" 不变，
+#      因为 ESHandler 路径是 "{PROJECT_NAME}.log.ElasticsearchHandler"。
+#      框架母版的 Python 包结构不变，只有 ES 命名空间随 LOG_NAMESPACE 变。
+LOG_NAMESPACE = _env("LOG_NAMESPACE", "vgis")
+
+# ---------------------------------------------------------------------------
 # Elasticsearch（异步日志）
 # ---------------------------------------------------------------------------
 ES_ENABLED = _env_bool("ES_ENABLED", True)
 ES_HOSTS = _env("ES_HOSTS", "http://192.168.3.40:9200").split(",")
 ES_USER = _env("ES_USER", "elastic")
 ES_PASSWORD = _env("ES_PASSWORD", "VgisES@2026!")
-ES_INDEX_PREFIX = _env("ES_INDEX_PREFIX", "vgis-myapp")
+# 默认索引前缀 = "{LOG_NAMESPACE}-myapp"，派生项目仅需设 LOG_NAMESPACE 即自动分流
+# 显式覆盖：ES_INDEX_PREFIX=custom-prefix
+ES_INDEX_PREFIX = _env("ES_INDEX_PREFIX", f"{LOG_NAMESPACE}-myapp")
 ES_FLUSH_INTERVAL = _env("ES_FLUSH_INTERVAL", "1.0", float)
 ES_BATCH_SIZE = _env("ES_BATCH_SIZE", "100", int)
 

@@ -36,8 +36,13 @@ LOGGER_ROOT = os.path.join(BASE_DIR, 'logger')
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 APP_NAME = "my_app"
-PROJECT_NAME = "my_project"
+PROJECT_NAME = "my_project"  # Python 包名（不能改，框架母版固定）
 STATIC_NAME = "my_static"
+# ES 日志命名空间：派生项目在 .env 设 LOG_NAMESPACE=xxx，ES 索引自动
+# 变成 "xxx-myapp-YYYY.MM.DD"。多项目日志在 Kibana 自动分流。
+# 详见 my_project/config.py:LOG_NAMESPACE 注释。
+from .config import LOG_NAMESPACE as _LOG_NAMESPACE_FROM_CONFIG
+LOG_NAMESPACE = _LOG_NAMESPACE_FROM_CONFIG  # 默认 "vgis"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '&8ue%+g+nyf8oy6ctogjia!q$o_qv@^sr44&px*63_k!=^$192'
 
