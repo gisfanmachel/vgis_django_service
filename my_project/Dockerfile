@@ -26,13 +26,18 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# 系统依赖：libpq5（PG）/ libgdal32 / libgeos-c1v5 / libproj25 / proj-bin（GDAL 数据）
+# 系统依赖：libpq5（PG）/ libgdal36 / libgeos-c1t64 / libproj25 / proj-bin / gdal-bin / gdal-data
+# 注：python:3.12-slim 当前基 Debian 13 trixie，GDAL/GEOS/PROJ 包名与 bookworm 不同
+#     - bookworm: libgdal32 / libgeos-c1v5
+#     - trixie  : libgdal36 / libgeos-c1t64
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libpq5 \
-        libgdal32 \
-        libgeos-c1v5 \
+        libgdal36 \
+        libgeos-c1t64 \
         libproj25 \
         proj-bin \
+        gdal-bin \
+        gdal-data \
         curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -43,7 +48,7 @@ RUN pip install --no-cache-dir gunicorn==23.0.0 -r /app/requirements.txt
 # 再 copy 源码
 COPY . /app
 
-# 容器内 GDAL 数据目录（debian 包一般在 /usr/share/gdal /usr/share/proj）
+# 容器内 GDAL 数据目录（debian 13 trixie：gdal-data 包路径 /usr/share/gdal，proj-bin 包路径 /usr/share/proj）
 ENV GDAL_DATA=/usr/share/gdal \
     PROJ_LIB=/usr/share/proj \
     GDAL_SKIP=DRIVER_OGR_GRASS
