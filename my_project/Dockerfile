@@ -50,6 +50,11 @@ ENV GDAL_DATA=/usr/share/gdal \
 
 EXPOSE 10846
 
+# 健康检查：每 30s 调一次 /my_api/gis/health/；失败 3 次标记 unhealthy
+# -k 允许 curl 跳过自签证书 / 5xx；-f 仅 HTTP<400 算成功
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD curl -fk http://127.0.0.1:10846/my_api/gis/health/ || exit 1
+
 # 默认用 gunicorn 起 4 worker / 16 thread；与 run.py threads 16 一致
 CMD ["gunicorn", "my_project.wsgi:application", \
      "--bind", "0.0.0.0:10846", \

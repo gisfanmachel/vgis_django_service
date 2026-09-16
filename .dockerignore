@@ -1,0 +1,96 @@
+# VGIS Django 框架 .dockerignore
+# build context = my_project/（docker-compose.yml 已配 context: ../my_project）
+# 这里列的所有路径相对 build context 解析
+
+# ---- Python 字节码 / 缓存 ----
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# ---- 虚拟环境（容器内走系统 Python）----
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ---- VCS / IDE ----
+.git/
+.gitignore
+.gitattributes
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# ---- 运行时产物 / 日志 ----
+log/
+logs/
+*.log
+*.log.*
+myapp_*.log
+
+# ---- 上传目录（settings.UPLOAD_ROOT）----
+**/static/upload/
+**/*_static/upload/
+**/media/
+xls/
+zip/
+pdf/
+file/
+geojson/
+
+# ---- 栅格 / 文档样本（不进镜像）----
+*.tif
+*.tiff
+*.img
+*.sid
+*.ecw
+*.jp2
+*.pdf
+*.docx
+*.xlsx
+
+# ---- 文档 / 编辑器产物 ----
+*.md
+!README.md
+docs/
+CHANGELOG_*.md
+接口路径变更对照表.md
+运行环境.md
+readme.MD
+README.MD
+
+# ---- 测试 / 负载样本 ----
+baseline_v*.txt
+baseline_v_final.txt
+loadtest_v*.txt
+img.png
+img_*.png
+
+# ---- 工具脚本（不进镜像）----
+tools/
+
+# ---- 部署目录（容器内单独处理）----
+deploy/
+pgbouncer/
+
+# ---- 环境变量样例（保留 .env.example 给文档用）----
+.env
+.env.*
+!.env.example
+
+# ---- Docker 自身 ----
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# ---- Node / 前端产物（如果有）----
+node_modules/
+dist/
+build/
